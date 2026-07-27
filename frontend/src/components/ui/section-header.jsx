@@ -12,8 +12,8 @@ export function SectionHeader({ title, description, action, className = '' }) {
       )}
     >
       <div>
-        {title && <h2 className="text-xl font-extrabold tracking-normal text-white">{title}</h2>}
-        {description && <p className="mt-1.5 text-sm leading-6 text-[#A6B0CF]">{description}</p>}
+        {title && <h2 className="text-xl font-extrabold tracking-normal text-[#17161D]">{title}</h2>}
+        {description && <p className="mt-1.5 text-sm leading-6 text-[#6B7280]">{description}</p>}
       </div>
       {action}
     </div>

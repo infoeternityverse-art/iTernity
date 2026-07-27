@@ -12,7 +12,7 @@ export const focusRing =
 export const disabledClasses = 'disabled:cursor-not-allowed disabled:opacity-50';
 
 export const fieldBase =
-  'w-full rounded-field border border-white/10 bg-[#0A0A0A] text-white placeholder:text-[#6C7693] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur transition duration-200 ease-premium hover:border-white/20 focus:border-brand-500/70 focus:shadow-[0_0_0_4px_rgba(172,126,231,0.14)]';
+  'w-full rounded-field border border-[#17161D]/10 bg-white text-[#17161D] placeholder:text-[#6B7280] shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] backdrop-blur transition duration-200 ease-premium hover:border-[#8969EF]/40 focus:border-[#8969EF]/70 focus:shadow-[0_0_0_4px_rgba(137,105,239,0.14)]';
 
 export const fieldError =
   'border-red-500/70 text-red-100 focus:border-red-400 focus-visible:ring-red-500/70';

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, SectionHeader } from '@/components/ui/index.js';
+import { HeroGpuVisual } from '@/components/hero/hero-gpu-visual.jsx';
 
 const features = [
   {
@@ -30,79 +31,27 @@ const steps = [
 export function HomePage() {
   return (
     <div className="space-y-16">
-      <section className="relative left-1/2 -ml-[50vw] -mt-12 flex min-h-[calc(100vh-5rem)] w-screen max-w-[100vw] items-center overflow-hidden bg-black px-4 py-16 sm:px-6 lg:px-8">
-        <div className="pointer-events-none absolute inset-0 opacity-55">
-          {Array.from({ length: 24 }).map((_, index) => (
-            <span key={index} className="hero-star" />
-          ))}
-        </div>
-        <div className="pointer-events-none absolute inset-0 opacity-40">
-          <div className="absolute left-6 top-12 h-28 w-28 rounded-full border border-white/10" />
-          <div className="absolute bottom-16 right-10 h-40 w-40 rounded-full border border-brand-500/25" />
-          <div className="absolute left-1/2 top-1/2 h-px w-[70vw] -translate-x-1/2 bg-white/10" />
-          <div className="absolute left-1/3 top-24 h-[55vh] w-px bg-white/10" />
-        </div>
+      <section className="hero-panel relative left-1/2 -ml-[50vw] -mt-12 flex min-h-screen w-screen max-w-[100vw] items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-32">
+        <div className="hero-panel-grid pointer-events-none absolute inset-0" />
+        <div className="hero-panel-dust pointer-events-none absolute inset-0" />
 
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[0.76fr_1.24fr]">
-          <div className="relative z-10 max-w-xl space-y-6 text-center lg:text-left">
-            <p className="mx-auto inline-flex rounded-full border border-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-[#A6B0CF] lg:mx-0">
-              EternityVerse
-            </p>
-            <div className="space-y-4">
-              <h1 className="text-4xl font-black leading-[0.95] tracking-normal text-white sm:text-5xl lg:text-6xl">
-                Production GPU capacity, presented with clarity.
+        <div className="hero-content-grid mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[0.45fr_0.55fr]">
+          <div className="hero-copy relative z-10 max-w-xl text-center lg:text-left">
+            <div className="space-y-6">
+              <h1 className="hero-heading">
+                Production<br />
+                GPU capacity,<br />
+                Built for<br />
+                  Modern AI.
               </h1>
-              <p className="mx-auto max-w-lg text-base leading-7 text-[#A6B0CF] lg:mx-0">
-                Browse vetted machines, describe your workload, and let the operations team match
-                you with access that fits.
+              <p className="hero-subheadline mx-auto lg:mx-0">
+                Accelerate AI Innovation with Enterprise GPU Cloud.
               </p>
-            </div>
-            <div className="grid grid-cols-3 gap-3 text-left">
-              {['Manual review', 'SSH handoff', 'Admin managed'].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-card border border-white/10 bg-white/[0.035] p-3"
-                >
-                  <p className="text-xs font-semibold text-white">{item}</p>
-                </div>
-              ))}
             </div>
           </div>
 
-          <div className="relative z-10 [perspective:1400px]">
-            <div className="hero-visual-shell relative mx-auto -translate-y-8 flex min-h-[340px] max-w-2xl origin-center items-center justify-center overflow-visible p-6 transition duration-500 sm:min-h-[430px] lg:-translate-y-12">
-              <div className="hero-visual-grid" aria-hidden="true" />
-              <div
-                className="hero-visual-stage"
-                role="img"
-                aria-label="Animated GPU infrastructure visual"
-              >
-                <div className="hero-visual-network" aria-hidden="true">
-                  {Array.from({ length: 16 }).map((_, index) => (
-                    <span key={index} className="hero-network-node" />
-                  ))}
-                </div>
-                <div className="hero-visual-rings" aria-hidden="true">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <span key={index} />
-                  ))}
-                </div>
-                <div className="hero-visual-lightning" aria-hidden="true">
-                  {Array.from({ length: 9 }).map((_, index) => (
-                    <span key={index} />
-                  ))}
-                </div>
-                <div className="hero-visual-core">
-                  <div className="hero-visual-chip">
-                    <Cpu className="h-9 w-9 text-white" />
-                    <span>GPU</span>
-                  </div>
-                </div>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <span key={index} className="hero-visual-particle" />
-                ))}
-              </div>
-            </div>
+          <div className="hero-visual-column relative z-10 min-h-[360px] min-w-0 overflow-hidden sm:min-h-[500px]">
+            <HeroGpuVisual />
           </div>
         </div>
       </section>
@@ -154,7 +103,7 @@ export function HomePage() {
             'Credential handoff workflow',
           ].map((item) => (
             <p key={item} className="flex items-center gap-2 text-[#DDE4FF]">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-brand-500" />
               {item}
             </p>
           ))}

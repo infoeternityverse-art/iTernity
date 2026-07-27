@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Github, Linkedin, Mail, Menu, Twitter, X, Youtube } from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, footerNavigation, publicNavigation } from '@/config/navigation.config.js';
@@ -13,6 +13,8 @@ import { BrandMark } from '@/components/common/brand-mark.jsx';
  */
 export function PublicLayout() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
   const socialLinks = [
     { label: 'GitHub', href: 'https://github.com', icon: Github },
@@ -34,21 +36,24 @@ export function PublicLayout() {
   ];
 
   return (
-    <div className="premium-shell flex min-h-screen flex-col text-white">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/75 backdrop-blur-2xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
+    <div className="premium-shell flex min-h-screen flex-col text-[#17161D]">
+      <header
+        className={`public-hero-header inset-x-0 top-0 z-40 ${
+          isHomePage ? 'absolute' : 'sticky public-page-header'
+        }`}
+      >
+        <div className="mx-auto w-full max-w-[1760px] px-6 sm:px-10 lg:px-20">
+          <div className="grid grid-cols-[1fr_auto] items-center gap-6 py-3 lg:grid-cols-[1fr_auto_1fr]">
             <Link
               to="/"
               onClick={closeMobileNav}
-              className="flex items-center gap-2 text-base font-black tracking-normal"
+              className="flex items-center text-base font-normal tracking-normal text-[#17161D]"
             >
-              <BrandMark />
-              {APP_NAME}
+              <BrandMark className="h-10 w-44" />
             </Link>
 
-            <div className="hidden items-center gap-6 lg:flex">
-              <nav aria-label="Public navigation" className="flex items-center gap-1">
+            <div className="hidden contents lg:contents">
+              <nav aria-label="Public navigation" className="flex items-center justify-center gap-10">
                 {publicNavigation.map((item) => (
                   <NavLink key={item.href} item={item} />
                 ))}
@@ -56,13 +61,13 @@ export function PublicLayout() {
               <Button
                 asChild
                 variant="outline"
-                className="border-brand-500/30 bg-white/[0.035] px-5 hover:bg-brand-500/15"
+                className="public-header-cta h-auto justify-self-end rounded-[14px] border-transparent bg-white px-5 py-1.5 text-base font-normal text-[#17161D] shadow-[0_14px_34px_rgba(23,22,29,0.08)] hover:border-transparent hover:bg-white hover:text-[#17161D] hover:shadow-[0_18px_42px_rgba(23,22,29,0.12)]"
               >
                 <Link to={authNavigation[0].href}>{authNavigation[0].label}</Link>
               </Button>
             </div>
 
-            <div className="flex items-center gap-2 lg:hidden">
+            <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 lg:hidden">
               <Button
                 variant="icon"
                 aria-label={isMobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -75,7 +80,7 @@ export function PublicLayout() {
           </div>
 
           {isMobileNavOpen && (
-            <div className="border-t border-white/10 py-4 lg:hidden">
+            <div className="rounded-[24px] border border-[#17161D]/10 bg-white/80 p-3 shadow-soft backdrop-blur-xl lg:hidden">
               <nav aria-label="Mobile public navigation" className="flex flex-col gap-1">
                 {publicNavigation.map((item) => (
                   <NavLink key={item.href} item={item} compact onClick={closeMobileNav} />
@@ -85,7 +90,7 @@ export function PublicLayout() {
                 <Button
                   asChild
                   variant="outline"
-                  className="w-full justify-center border-brand-500/30 bg-white/[0.035]"
+                  className="w-full justify-center bg-white"
                 >
                   <Link to={authNavigation[0].href} onClick={closeMobileNav}>
                     {authNavigation[0].label}
@@ -97,29 +102,32 @@ export function PublicLayout() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
+      <main
+        className={`mx-auto w-full flex-1 px-4 sm:px-6 lg:px-8 ${
+          isHomePage ? 'max-w-7xl py-12' : 'public-page-main max-w-7xl py-14'
+        }`}
+      >
         <Outlet />
       </main>
 
-      <footer className="mt-auto border-t border-white/10 bg-black">
+      <footer className="mt-auto border-t border-[#17161D]/10 bg-[#FBF7F2]">
         <div className="premium-divider" />
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr_0.7fr_0.7fr_0.9fr]">
             <div className="max-w-md space-y-5">
               <Link
                 to="/"
-                className="inline-flex items-center gap-3 text-lg font-black tracking-normal text-white"
+                className="inline-flex items-center text-lg font-black tracking-normal text-[#17161D]"
               >
-                <BrandMark className="h-10 w-10" />
-                {APP_NAME}
+                <BrandMark className="h-11 w-48" />
               </Link>
-              <p className="text-sm leading-6 text-[#A6B0CF]">
+              <p className="text-sm leading-6 text-[#6B7280]">
                 A professional GPU cloud marketplace for browsing packages, submitting reviewed
                 enquiries, and receiving credentials through a controlled admin workflow.
               </p>
               <a
                 href={`mailto:${env.supportEmail}`}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-brand-500"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[#17161D] transition hover:text-[#8969EF]"
               >
                 <Mail className="h-4 w-4" />
                 {env.supportEmail}
@@ -127,10 +135,10 @@ export function PublicLayout() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-white">Explore</h2>
-              <nav aria-label="Footer navigation" className="grid gap-3 text-sm text-[#A6B0CF]">
+              <h2 className="text-sm font-bold uppercase text-[#17161D]">Explore</h2>
+              <nav aria-label="Footer navigation" className="grid gap-3 text-sm text-[#6B7280]">
                 {footerNavigation.map((item) => (
-                  <Link key={item.href} to={item.href} className="transition hover:text-white">
+                  <Link key={item.href} to={item.href} className="transition hover:text-[#8969EF]">
                     {item.label}
                   </Link>
                 ))}
@@ -138,10 +146,10 @@ export function PublicLayout() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-white">Pages</h2>
-              <nav aria-label="Footer pages" className="grid gap-3 text-sm text-[#A6B0CF]">
+              <h2 className="text-sm font-bold uppercase text-[#17161D]">Pages</h2>
+              <nav aria-label="Footer pages" className="grid gap-3 text-sm text-[#6B7280]">
                 {pageLinks.map((item) => (
-                  <Link key={item.href} to={item.href} className="transition hover:text-white">
+                  <Link key={item.href} to={item.href} className="transition hover:text-[#8969EF]">
                     {item.label}
                   </Link>
                 ))}
@@ -149,10 +157,10 @@ export function PublicLayout() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-white">Legal</h2>
-              <nav aria-label="Footer legal" className="grid gap-3 text-sm text-[#A6B0CF]">
+              <h2 className="text-sm font-bold uppercase text-[#17161D]">Legal</h2>
+              <nav aria-label="Footer legal" className="grid gap-3 text-sm text-[#6B7280]">
                 {legalLinks.map((item) => (
-                  <Link key={item.label} to={item.href} className="transition hover:text-white">
+                  <Link key={item.label} to={item.href} className="transition hover:text-[#8969EF]">
                     {item.label}
                   </Link>
                 ))}
@@ -160,7 +168,7 @@ export function PublicLayout() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-white">Social</h2>
+              <h2 className="text-sm font-bold uppercase text-[#17161D]">Social</h2>
               <div className="flex flex-wrap gap-3" aria-label="Social links">
                 {socialLinks.map((item) => {
                   const Icon = item.icon;
@@ -172,20 +180,20 @@ export function PublicLayout() {
                       target="_blank"
                       rel="noreferrer"
                       aria-label={item.label}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-button border border-white/10 bg-white/[0.035] text-[#A6B0CF] transition hover:border-brand-500/60 hover:text-white"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-button border border-[#17161D]/10 bg-white text-[#6B7280] transition hover:border-[#8969EF]/50 hover:text-[#8969EF]"
                     >
                       <Icon className="h-5 w-5" />
                     </a>
                   );
                 })}
               </div>
-              <p className="max-w-xs text-sm leading-6 text-[#A6B0CF]">
+              <p className="max-w-xs text-sm leading-6 text-[#6B7280]">
                 Follow platform updates, product progress, and GPU marketplace announcements.
               </p>
             </div>
           </div>
 
-          <div className="mt-12 border-t border-white/10 pt-6 text-sm text-[#6C7693]">
+          <div className="mt-12 border-t border-[#17161D]/10 pt-6 text-sm text-[#6B7280]">
             <p>
               © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
             </p>

@@ -17,8 +17,8 @@ export function NavLink({ item, compact = false, onClick }) {
           'relative inline-flex items-center gap-2 rounded-button px-3 py-2 text-sm font-semibold transition duration-200 ease-premium after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:origin-center after:rounded-full after:bg-brand-500 after:shadow-[0_0_18px_rgba(172,126,231,0.75)] after:transition after:duration-200 after:ease-premium',
           focusRing,
           isActive
-            ? 'text-white after:scale-x-100'
-            : 'text-[#A6B0CF] after:scale-x-0 hover:text-white hover:after:scale-x-75',
+            ? 'text-[#17161D] after:scale-x-100'
+            : 'text-[#17161D]/70 after:scale-x-0 hover:text-[#8969EF] hover:after:scale-x-75',
           compact && 'w-full'
         )
       }

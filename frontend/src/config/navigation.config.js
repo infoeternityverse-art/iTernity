@@ -1,11 +1,7 @@
 import {
-  Boxes,
-  CircleHelp,
   ClipboardList,
-  Contact,
   FileClock,
   Gauge,
-  Home,
   LayoutDashboard,
   PackagePlus,
   ShieldCheck,
@@ -18,13 +14,13 @@ import {
  * Navigation config keeps route labels and menu structure out of layout components.
  */
 export const publicNavigation = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'GPUs', href: '/gpus', icon: Boxes },
-  { label: 'About', href: '/about', icon: CircleHelp },
-  { label: 'Contact', href: '/contact', icon: Contact },
+  { label: 'Home', href: '/' },
+  { label: 'GPUs', href: '/gpus' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
 ];
 
-export const authNavigation = [{ label: 'Login / Register', href: '/login' }];
+export const authNavigation = [{ label: 'Get started', href: '/login' }];
 
 export const customerNavigation = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -50,7 +46,7 @@ export const footerNavigation = [
   { label: 'Home', href: '/' },
   { label: 'GPU Marketplace', href: '/gpus' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Login / Register', href: '/login' },
+  { label: 'Get started', href: '/login' },
 ];
 
 export const breadcrumbLabels = {

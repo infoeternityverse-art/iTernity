@@ -14,12 +14,12 @@ export function PageHeader({ eyebrow, title, description, breadcrumbs, action, c
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent-500">{eyebrow}</p>
         )}
         {title && (
-          <h1 className="mt-2 max-w-5xl text-3xl font-black tracking-normal text-white sm:text-4xl lg:text-5xl">
+          <h1 className="mt-2 max-w-5xl text-3xl font-normal tracking-normal text-[#17161D] sm:text-4xl lg:text-5xl">
             {title}
           </h1>
         )}
         {description && (
-          <p className="mt-4 max-w-3xl text-base leading-7 text-[#A6B0CF]">{description}</p>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[#6B7280]">{description}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

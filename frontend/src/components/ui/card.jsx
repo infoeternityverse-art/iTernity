@@ -8,10 +8,10 @@ export function Card({ children, className = '', interactive = false, error = fa
   return (
     <motion.div
       className={cn(
-        'rounded-card border bg-[#080808] text-white shadow-soft backdrop-blur-xl',
-        error ? 'border-red-500/45' : 'border-white/10',
+        'rounded-card border bg-white text-[#17161D] shadow-soft backdrop-blur-xl',
+        error ? 'border-red-500/45' : 'border-[#17161D]/10',
         interactive &&
-          'transition duration-200 ease-premium hover:border-accent-500/35 hover:shadow-glow',
+          'transition duration-200 ease-premium hover:border-[#8969EF]/35 hover:shadow-glow',
         className
       )}
       whileHover={interactive ? { y: -3 } : undefined}
@@ -29,8 +29,8 @@ export function CardHeader({ title, description, action, className = '' }) {
   return (
     <div className={cn('flex items-start justify-between gap-5 px-6 pb-3 pt-6', className)}>
       <div>
-        {title && <h3 className="text-base font-bold tracking-normal text-white">{title}</h3>}
-        {description && <p className="mt-1.5 text-sm leading-6 text-[#A6B0CF]">{description}</p>}
+        {title && <h3 className="text-base font-bold tracking-normal text-[#17161D]">{title}</h3>}
+        {description && <p className="mt-1.5 text-sm leading-6 text-[#6B7280]">{description}</p>}
       </div>
       {action}
     </div>
@@ -48,5 +48,5 @@ export function CardContent({ children, className = '' }) {
  * CardFooter provides consistent footer alignment for card actions.
  */
 export function CardFooter({ children, className = '' }) {
-  return <div className={cn('border-t border-white/10 p-6', className)}>{children}</div>;
+  return <div className={cn('border-t border-[#17161D]/10 p-6', className)}>{children}</div>;
 }

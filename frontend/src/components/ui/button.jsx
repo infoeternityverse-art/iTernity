@@ -5,17 +5,17 @@ import { cn, disabledClasses, focusRing, sizeClasses } from './ui-utils.js';
 
 const variants = {
   primary:
-    'bg-brand-500 text-white shadow-[0_10px_32px_rgba(172,126,231,0.30)] hover:bg-brand-600 hover:shadow-[0_14px_46px_rgba(172,126,231,0.28)]',
+    'border border-[#8969EF]/60 bg-[#8969EF]/18 text-[#17161D] shadow-[0_14px_34px_rgba(137,105,239,0.16)] hover:border-[#8969EF]/80 hover:bg-[#8969EF]/26 hover:text-[#17161D] hover:shadow-[0_18px_44px_rgba(137,105,239,0.22)]',
   secondary:
-    'border border-white/10 bg-white/[0.075] text-white backdrop-blur hover:border-white/20 hover:bg-white/[0.11]',
+    'border border-[#17161D]/10 bg-white text-[#17161D] backdrop-blur hover:border-[#8969EF]/40 hover:text-[#8969EF]',
   outline:
-    'border border-white/15 bg-transparent text-white hover:border-brand-500/60 hover:bg-brand-500/10',
-  ghost: 'text-[#A6B0CF] hover:bg-white/[0.075] hover:text-white',
-  link: 'h-auto px-0 text-brand-500 underline-offset-4 hover:text-white hover:underline',
+    'border border-[#17161D] bg-transparent text-[#17161D] hover:border-[#8969EF] hover:bg-white hover:text-[#8969EF]',
+  ghost: 'text-[#6B7280] hover:bg-white hover:text-[#17161D]',
+  link: 'h-auto px-0 text-[#8969EF] underline-offset-4 hover:text-[#17161D] hover:underline',
   success:
     'bg-emerald-500 text-white shadow-[0_10px_34px_rgba(34,197,94,0.22)] hover:bg-emerald-400',
   danger: 'bg-red-500 text-white shadow-[0_10px_34px_rgba(239,68,68,0.22)] hover:bg-red-400',
-  icon: 'border border-transparent text-[#A6B0CF] hover:border-white/10 hover:bg-white/[0.075] hover:text-white',
+  icon: 'border border-transparent text-[#6B7280] hover:border-[#17161D]/10 hover:bg-white hover:text-[#17161D]',
 };
 
 const iconSizes = {
