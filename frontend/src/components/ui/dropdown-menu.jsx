@@ -42,7 +42,7 @@ export function DropdownMenu({ trigger, items = [], align = 'right', className =
                 setOpen(false);
               }}
               className={cn(
-                'flex w-full items-center gap-2 rounded-button px-3 py-2 text-left text-sm text-[#DDE4FF] transition hover:bg-white/[0.075] hover:text-white disabled:pointer-events-none disabled:opacity-50',
+                'flex w-full items-center gap-2 rounded-button px-3 py-2 text-left text-sm text-[#F5F7F6] transition hover:bg-white/[0.075] hover:text-white disabled:pointer-events-none disabled:opacity-50',
                 focusRing,
                 item.danger && 'text-red-300'
               )}

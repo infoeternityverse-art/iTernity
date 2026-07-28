@@ -51,7 +51,7 @@ export function ForgotPasswordPage() {
           Send reset link
         </Button>
       </form>
-      <p className="text-center text-sm text-[#A6B0CF]">
+      <p className="text-center text-sm text-[#8FA39B]">
         Remembered it?{' '}
         <Link to="/login" className="font-semibold text-brand-400 hover:text-white">
           Login

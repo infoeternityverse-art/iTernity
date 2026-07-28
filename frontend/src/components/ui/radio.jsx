@@ -19,7 +19,7 @@ export function RadioGroup({
         {options.map((option) => (
           <label
             key={option.value}
-            className="flex items-start gap-3 rounded-field border border-white/10 bg-white/[0.035] p-3 text-sm text-[#DDE4FF] transition hover:border-white/15 hover:bg-white/[0.055]"
+            className="flex items-start gap-3 rounded-field border border-white/10 bg-white/[0.035] p-3 text-sm text-[#F5F7F6] transition hover:border-white/15 hover:bg-white/[0.055]"
           >
             <input
               type="radio"
@@ -37,7 +37,7 @@ export function RadioGroup({
             <span>
               <span className="block font-medium">{option.label}</span>
               {option.description && (
-                <span className="block leading-6 text-[#A6B0CF]">{option.description}</span>
+                <span className="block leading-6 text-[#8FA39B]">{option.description}</span>
               )}
             </span>
           </label>

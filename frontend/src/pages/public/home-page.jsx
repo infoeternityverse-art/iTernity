@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, SectionHeader } from '@/components/ui/index.js';
 import { HeroGpuVisual } from '@/components/hero/hero-gpu-visual.jsx';
 
@@ -28,30 +29,53 @@ const steps = [
   'Receive access credentials',
 ];
 
+function ScrollIndicator() {
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsHidden(window.scrollY > window.innerHeight * 0.9);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, []);
+
+  return (
+    <div className={`hero-scroll-indicator ${isHidden ? 'is-hidden' : ''}`} aria-hidden="true">
+      <span />
+      <p>SCROLL TO DISCOVER</p>
+    </div>
+  );
+}
+
 export function HomePage() {
   return (
     <div className="space-y-16">
       <section className="hero-panel relative left-1/2 -ml-[50vw] -mt-12 flex min-h-screen w-screen max-w-[100vw] items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-32">
         <div className="hero-panel-grid pointer-events-none absolute inset-0" />
         <div className="hero-panel-dust pointer-events-none absolute inset-0" />
+        <HeroGpuVisual />
+        <ScrollIndicator />
 
-        <div className="hero-content-grid mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-[0.45fr_0.55fr]">
-          <div className="hero-copy relative z-10 max-w-xl text-center lg:text-left">
-            <div className="space-y-6">
+        <div className="hero-content-grid mx-auto w-full max-w-7xl">
+          <div className="hero-copy relative z-10 text-center">
+            <div className="hero-copy-inner">
+              {/* <p className="hero-eyebrow"><span />GPU CLOUD</p> */}
               <h1 className="hero-heading">
-                Production<br />
-                GPU capacity,<br />
-                Built for<br />
-                  Modern AI.
+                <span className="hero-heading-line hero-heading-line-1" data-text="Enter the">Enter the</span>
+                <span className="hero-heading-line hero-heading-line-2" data-text="GPU universe">GPU universe</span>
+                <span className="hero-heading-line hero-heading-line-3" data-text="for modern AI.">for modern AI.</span>
               </h1>
-              <p className="hero-subheadline mx-auto lg:mx-0">
-                Accelerate AI Innovation with Enterprise GPU Cloud.
-              </p>
+              <p className="hero-typing-line">Rendering intelligence across a living cosmic compute field</p>
+              <div className="hero-action-cluster">
+                {/* <Button asChild className="hero-cta-button pointer-events-auto">
+                  <Link to="/gpus">
+                    Explore GPUs
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <p>live capacity / curated access / cosmic-scale workloads</p> */}
+              </div>
             </div>
-          </div>
-
-          <div className="hero-visual-column relative z-10 min-h-[360px] min-w-0 overflow-hidden sm:min-h-[500px]">
-            <HeroGpuVisual />
           </div>
         </div>
       </section>
@@ -72,7 +96,7 @@ export function HomePage() {
                   action={<Icon className="h-5 w-5 text-brand-600" />}
                 />
                 <CardContent>
-                  <p className="text-sm text-[#A6B0CF]">{feature.description}</p>
+                  <p className="text-sm text-[#8FA39B]">{feature.description}</p>
                 </CardContent>
               </Card>
             );
@@ -102,7 +126,7 @@ export function HomePage() {
             'Manual review for fit',
             'Credential handoff workflow',
           ].map((item) => (
-            <p key={item} className="flex items-center gap-2 text-[#DDE4FF]">
+            <p key={item} className="flex items-center gap-2 text-[#F5F7F6]">
               <CheckCircle className="h-5 w-5 text-brand-500" />
               {item}
             </p>
@@ -112,7 +136,7 @@ export function HomePage() {
           <CardContent className="space-y-4 p-6">
             <MessageSquare className="h-8 w-8 text-brand-600" />
             <h2 className="text-2xl font-semibold">Ready to discuss your workload?</h2>
-            <p className="text-[#A6B0CF]">
+            <p className="text-[#8FA39B]">
               Start with the marketplace and submit an enquiry from the package that best matches
               your requirements.
             </p>

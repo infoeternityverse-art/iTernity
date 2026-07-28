@@ -4,11 +4,11 @@ import { GpuPackageCard } from '@/components/gpu/gpu-package-card.jsx';
 import {
   Alert,
   EmptyState,
-  PageHeader,
   Pagination,
   SectionHeader,
   Skeleton,
 } from '@/components/ui/index.js';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
 import { useGpuPackages } from '@/hooks/index.js';
 
 const parseSort = (sortValue) => {
@@ -46,9 +46,11 @@ export function GpusPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      <PublicPageHero
+        eyebrow="GPU Marketplace"
         title="GPU Marketplace"
         description="Search and compare GPU rental packages by specs, availability, and price."
+        variant="market"
       />
       <GpuMarketplaceControls
         search={searchInput}

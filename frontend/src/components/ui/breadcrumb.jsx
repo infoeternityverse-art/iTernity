@@ -7,7 +7,7 @@ import { cn, focusRing } from './ui-utils.js';
 export function Breadcrumb({ items = [], className = '' }) {
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-1 text-sm text-[#6C7693]">
+      <ol className="flex flex-wrap items-center gap-1 text-sm text-[#8FA39B]">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
 
@@ -16,7 +16,7 @@ export function Breadcrumb({ items = [], className = '' }) {
               {item.href && !isLast ? (
                 <a
                   href={item.href}
-                  className={cn('rounded text-[#A6B0CF] transition hover:text-white', focusRing)}
+                  className={cn('rounded text-[#8FA39B] transition hover:text-white', focusRing)}
                 >
                   {item.label}
                 </a>

@@ -27,26 +27,26 @@ export function CredentialCard({ credential }) {
       <CardContent className="space-y-4">
         <dl className="grid gap-3 text-sm md:grid-cols-2">
           <div>
-            <dt className="text-[#6C7693]">Host</dt>
+            <dt className="text-[#8FA39B]">Host</dt>
             <dd className="font-semibold text-white">{credential.host}</dd>
           </div>
           <div>
-            <dt className="text-[#6C7693]">Port</dt>
+            <dt className="text-[#8FA39B]">Port</dt>
             <dd className="font-semibold text-white">{credential.port}</dd>
           </div>
           <div>
-            <dt className="text-[#6C7693]">Username</dt>
+            <dt className="text-[#8FA39B]">Username</dt>
             <dd className="font-semibold text-white">{credential.username}</dd>
           </div>
           <div>
-            <dt className="text-[#6C7693]">Expiry</dt>
+            <dt className="text-[#8FA39B]">Expiry</dt>
             <dd className="font-semibold text-white">{formatDate(credential.expiresAt)}</dd>
           </div>
         </dl>
         <div className="rounded-button border border-white/10 bg-white/[0.055] p-4">
-          <p className="text-sm font-semibold text-[#6C7693]">Password</p>
+          <p className="text-sm font-semibold text-[#8FA39B]">Password</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <code className="break-all text-sm text-[#DDE4FF]">
+            <code className="break-all text-sm text-[#F5F7F6]">
               {revealed ? password || 'Not available' : maskedPassword}
             </code>
             <Button
@@ -68,9 +68,9 @@ export function CredentialCard({ credential }) {
           </div>
         </div>
         <div className="rounded-button border border-white/10 bg-white/[0.055] p-4">
-          <p className="text-sm font-semibold text-[#6C7693]">SSH Command</p>
+          <p className="text-sm font-semibold text-[#8FA39B]">SSH Command</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <code className="break-all text-sm text-[#DDE4FF]">{credential.sshCommand}</code>
+            <code className="break-all text-sm text-[#F5F7F6]">{credential.sshCommand}</code>
             <Button
               variant="icon"
               size="sm"
@@ -82,7 +82,7 @@ export function CredentialCard({ credential }) {
           </div>
         </div>
         {credential.accessInstructions && (
-          <p className="text-sm leading-6 text-[#A6B0CF]">{credential.accessInstructions}</p>
+          <p className="text-sm leading-6 text-[#8FA39B]">{credential.accessInstructions}</p>
         )}
         <Button
           variant="outline"

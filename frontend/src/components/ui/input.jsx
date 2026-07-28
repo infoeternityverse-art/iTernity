@@ -35,13 +35,13 @@ export const Input = forwardRef(function Input(
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-[#DDE4FF]">
+        <label htmlFor={id} className="text-sm font-semibold text-[#F5F7F6]">
           {label}
         </label>
       )}
       <div className="relative">
         {isSearch && (
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6C7693]" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8FA39B]" />
         )}
         <input
           ref={ref}
@@ -82,7 +82,7 @@ export const Input = forwardRef(function Input(
         </p>
       )}
       {!error && helperText && (
-        <p id={`${id}-helper`} className="text-sm text-[#6C7693]">
+        <p id={`${id}-helper`} className="text-sm text-[#8FA39B]">
           {helperText}
         </p>
       )}

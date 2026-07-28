@@ -6,6 +6,7 @@ import { customerNavigation } from '@/config/navigation.config.js';
 import { Button } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
 import { BrandMark } from '@/components/common/brand-mark.jsx';
+import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
 import { useAuthStore } from '@/store/auth-store.js';
 
 /**
@@ -18,13 +19,14 @@ export function CustomerDashboardLayout() {
 
   return (
     <div className="premium-shell text-white">
+      <ScrollToTop />
       <div className="flex min-h-screen gap-0 lg:p-4">
         <aside className="premium-glass hidden w-64 rounded-card p-5 lg:block">
           <Link to="/" className="mb-8 flex items-center gap-3 text-base font-black">
             <BrandMark className="h-10 w-10" />
             {APP_NAME}
           </Link>
-          <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6C7693]">
+          <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-[#8FA39B]">
             Workspace
           </p>
           <nav aria-label="Customer navigation" className="space-y-1">

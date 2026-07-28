@@ -35,7 +35,7 @@ export function Tabs({
             disabled={disabled || loading || tab.disabled}
             onClick={() => onChange?.(tab.value)}
             className={cn(
-              'rounded-[12px] font-semibold text-[#A6B0CF] transition hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-50',
+              'rounded-[12px] font-semibold text-[#8FA39B] transition hover:bg-white/[0.06] hover:text-white disabled:cursor-not-allowed disabled:opacity-50',
               focusRing,
               sizes[size],
               activeTab?.value === tab.value && 'bg-brand-500 text-white shadow-cyan'

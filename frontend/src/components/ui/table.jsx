@@ -40,7 +40,7 @@ export function Table({
                 <th
                   key={column.key}
                   scope="col"
-                  className="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.08em] text-[#A6B0CF]"
+                  className="px-5 py-4 text-left text-xs font-bold uppercase tracking-[0.08em] text-[#8FA39B]"
                 >
                   {column.sortable ? (
                     <button
@@ -61,7 +61,7 @@ export function Table({
           <tbody className="divide-y divide-white/10">
             {loading && (
               <tr>
-                <td colSpan={columns.length} className="px-5 py-10 text-center text-[#A6B0CF]">
+                <td colSpan={columns.length} className="px-5 py-10 text-center text-[#8FA39B]">
                   <span className="inline-flex items-center gap-2">
                     <Spinner size="sm" /> Loading
                   </span>
@@ -77,7 +77,7 @@ export function Table({
             )}
             {!loading && !error && data.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="px-5 py-10 text-center text-[#A6B0CF]">
+                <td colSpan={columns.length} className="px-5 py-10 text-center text-[#8FA39B]">
                   {emptyMessage}
                 </td>
               </tr>
@@ -90,7 +90,7 @@ export function Table({
                   className="transition duration-150 ease-premium hover:bg-white/[0.045]"
                 >
                   {columns.map((column) => (
-                    <td key={column.key} className="px-5 py-4 text-[#DDE4FF]">
+                    <td key={column.key} className="px-5 py-4 text-[#F5F7F6]">
                       {column.render ? column.render(row) : row[column.key]}
                     </td>
                   ))}

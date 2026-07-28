@@ -24,7 +24,7 @@ export function Popover({ trigger, children, align = 'right', className = '' }) 
         <motion.div
           role="dialog"
           className={cn(
-            'absolute z-40 mt-2 min-w-56 rounded-card border border-white/10 bg-[#080808] p-4 text-[#DDE4FF] shadow-glow backdrop-blur-2xl',
+            'absolute z-40 mt-2 min-w-56 rounded-card border border-white/10 bg-[#080808] p-4 text-[#F5F7F6] shadow-glow backdrop-blur-2xl',
             aligns[align],
             className
           )}

@@ -1,4 +1,5 @@
 import { Check, Clock, Cpu, Network, ShieldCheck, Sparkles, Users, X, Zap } from 'lucide-react';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
 import { Card, CardContent } from '@/components/ui/index.js';
 
 const trustMarks = ['AI labs', 'Render teams', 'Research groups', 'Inference teams'];
@@ -65,26 +66,19 @@ export function AboutPage() {
   return (
     <div className="space-y-24 py-8">
       <section className="mx-auto max-w-5xl space-y-8 text-center">
-        <p className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white">
-          About Us
-        </p>
-        <div className="space-y-4">
-          <h1 className="text-5xl font-black leading-[0.95] tracking-normal text-white md:text-7xl">
-            Helping teams access GPU capacity with confidence
-          </h1>
-          <p className="mx-auto max-w-2xl text-base leading-7 text-[#A6B0CF]">
-            We help AI, rendering, research, and inference teams move from uncertain capacity
-            shopping to a clear, reviewed GPU rental workflow.
-          </p>
-        </div>
-
+        <PublicPageHero
+          eyebrow="About Us"
+          title="Helping teams access GPU capacity with confidence"
+          description="We help AI, rendering, research, and inference teams move from uncertain capacity shopping to a clear, reviewed GPU rental workflow."
+          variant="about"
+        />
         <div className="space-y-5 pt-12">
           <p className="text-sm font-bold text-white">Trusted by practical compute teams</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {trustMarks.map((mark) => (
               <div
                 key={mark}
-                className="rounded-card border border-white/10 bg-white/[0.035] px-5 py-4 text-sm font-bold text-[#A6B0CF]"
+                className="cosmic-hover-card rounded-card border border-[rgba(45,232,196,0.15)] bg-[#0E1310]/88 px-5 py-4 text-sm font-bold text-[#CFE7DF] shadow-[0_18px_50px_rgba(0,0,0,0.24)] backdrop-blur"
               >
                 {mark}
               </div>
@@ -98,7 +92,7 @@ export function AboutPage() {
           Who We Are
         </p>
         <h2 className="text-4xl font-black tracking-normal text-white md:text-5xl">Who We Are</h2>
-        <p className="mx-auto max-w-3xl text-base leading-7 text-[#A6B0CF]">
+        <p className="mx-auto max-w-3xl text-base leading-7 text-[#8FA39B]">
           This marketplace is built for teams that need more than a raw listing. Customers browse
           package details, submit workload requirements, and receive access after administrator
           review.
@@ -118,7 +112,7 @@ export function AboutPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-white">{stat.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#A6B0CF]">{stat.description}</p>
+                  <p className="mt-2 text-sm leading-6 text-[#8FA39B]">{stat.description}</p>
                 </div>
               </CardContent>
             </Card>
@@ -134,7 +128,7 @@ export function AboutPage() {
           <h2 className="text-4xl font-black tracking-normal text-white">
             The values behind the platform
           </h2>
-          <p className="mx-auto max-w-2xl text-sm leading-6 text-[#A6B0CF]">
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-[#8FA39B]">
             We are building the foundation carefully now so provisioning, monitoring, and billing
             can be added later without disturbing the customer journey.
           </p>
@@ -149,7 +143,7 @@ export function AboutPage() {
                   <Icon className="mt-1 h-5 w-5 shrink-0 text-brand-500" />
                   <div>
                     <h3 className="font-bold text-white">{value.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#A6B0CF]">{value.description}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#8FA39B]">{value.description}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -166,7 +160,7 @@ export function AboutPage() {
           <h2 className="text-4xl font-black tracking-normal text-white">
             What makes us stand out in the industry
           </h2>
-          <p className="mx-auto max-w-2xl text-sm leading-6 text-[#A6B0CF]">
+          <p className="mx-auto max-w-2xl text-sm leading-6 text-[#8FA39B]">
             The MVP is intentionally focused: clear packages, reviewed enquiries, and controlled
             credential delivery.
           </p>
@@ -178,7 +172,7 @@ export function AboutPage() {
               <h3 className="font-bold text-white">Manual Work</h3>
               <div className="space-y-3">
                 {manualWork.map((item) => (
-                  <p key={item} className="flex items-center gap-2 text-sm text-[#A6B0CF]">
+                  <p key={item} className="flex items-center gap-2 text-sm text-[#8FA39B]">
                     <X className="h-4 w-4 text-red-400" />
                     {item}
                   </p>
@@ -191,7 +185,7 @@ export function AboutPage() {
               <h3 className="font-bold text-white">GPU Cloud Marketplace</h3>
               <div className="space-y-3">
                 {platformWork.map((item) => (
-                  <p key={item} className="flex items-center gap-2 text-sm text-[#DDE4FF]">
+                  <p key={item} className="flex items-center gap-2 text-sm text-[#F5F7F6]">
                     <Check className="h-4 w-4 text-brand-500" />
                     {item}
                   </p>

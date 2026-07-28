@@ -18,7 +18,7 @@ import {
 
 const DetailItem = ({ label, value, children }) => (
   <div className="rounded-card border border-white/10 bg-white/[0.035] p-4">
-    <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#6C7693]">{label}</p>
+    <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#8FA39B]">{label}</p>
     <div className="mt-2 text-sm font-semibold text-white">{children || value || '-'}</div>
   </div>
 );
@@ -61,7 +61,7 @@ export function WorkspaceDetail({ workspace }) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[#A6B0CF]">No applications selected.</p>
+            <p className="text-sm text-[#8FA39B]">No applications selected.</p>
           )}
         </CardContent>
       </Card>
@@ -77,7 +77,7 @@ export function WorkspaceDetail({ workspace }) {
               >
                 <div>
                   <p className="text-sm font-bold text-white">{formatWorkspaceApp(app)}</p>
-                  <p className="mt-1 break-all text-sm text-[#A6B0CF]">{url}</p>
+                  <p className="mt-1 break-all text-sm text-[#8FA39B]">{url}</p>
                 </div>
                 <Button
                   asChild
@@ -92,7 +92,7 @@ export function WorkspaceDetail({ workspace }) {
               </div>
             ))
           ) : (
-            <p className="text-sm text-[#A6B0CF]">No workspace URLs configured.</p>
+            <p className="text-sm text-[#8FA39B]">No workspace URLs configured.</p>
           )}
         </CardContent>
       </Card>
@@ -135,7 +135,7 @@ export function WorkspaceDetail({ workspace }) {
       <Card>
         <CardHeader title="Notes" />
         <CardContent>
-          <p className="whitespace-pre-wrap text-sm leading-6 text-[#A6B0CF]">
+          <p className="whitespace-pre-wrap text-sm leading-6 text-[#8FA39B]">
             {workspace.notes || 'No notes recorded.'}
           </p>
         </CardContent>

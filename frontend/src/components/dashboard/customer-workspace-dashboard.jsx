@@ -64,7 +64,7 @@ const appMeta = {
 
 const InfoItem = ({ label, value, icon }) => (
   <div className="rounded-card border border-white/10 bg-white/[0.035] p-4">
-    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#6C7693]">
+    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#8FA39B]">
       {icon}
       {label}
     </div>
@@ -77,7 +77,7 @@ const isWorkspaceReady = (status) => ['running', 'provisioning'].includes(String
 const AccessRow = ({ label, value, onCopy, copyLabel = `Copy ${label}` }) => (
   <div className="flex flex-col gap-3 rounded-card border border-white/10 bg-white/[0.035] p-4 sm:flex-row sm:items-center sm:justify-between">
     <div className="min-w-0">
-      <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#6C7693]">{label}</p>
+      <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#8FA39B]">{label}</p>
       <p className="mt-2 break-all text-sm font-semibold text-white">{value || '-'}</p>
     </div>
     {onCopy && (
@@ -112,7 +112,7 @@ function WorkspaceHero({ workspace }) {
               </h1>
               <StatusBadge status={displayStatus} label={displayStatus} size="lg" />
             </div>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-[#A6B0CF]">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-[#8FA39B]">
               Your manually provisioned GPU workspace is managed by the Eternityverse operations
               team.
             </p>
@@ -172,7 +172,7 @@ function ApplicationsSection({ workspace }) {
                     <Icon className="h-5 w-5" />
                   </span>
                   <h3 className="mt-5 text-lg font-black text-white">{formatWorkspaceApp(app)}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-6 text-[#A6B0CF]">
+                  <p className="mt-2 flex-1 text-sm leading-6 text-[#8FA39B]">
                     {appMeta[app]?.description || 'Workspace application configured by admin.'}
                   </p>
                   <Button
@@ -216,8 +216,8 @@ function WorkspaceInformation({ workspace }) {
         <InfoItem label="Created Date" value={formatDate(workspace.createdAt)} />
         <InfoItem label="Expiry Date" value={formatDate(workspace.expiryDate)} />
         <div className="rounded-card border border-white/10 bg-white/[0.035] p-4 md:col-span-2">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#6C7693]">Notes</p>
-          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#A6B0CF]">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#8FA39B]">Notes</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[#8FA39B]">
             {workspace.notes || 'No notes from administrator.'}
           </p>
         </div>
@@ -332,7 +332,7 @@ function AdvancedAccess({ workspace }) {
                 Developer Access
               </p>
               <h2 className="mt-2 text-2xl font-black text-white">Connect to your GPU</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#A6B0CF]">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#8FA39B]">
                 Most customers can use the application cards above. Developers can use this guided
                 SSH walkthrough when deeper workspace access is needed.
               </p>
@@ -366,7 +366,7 @@ function AdvancedAccess({ workspace }) {
                         {ready ? 'Ready' : 'Offline'}
                       </span>
                       {lastUpdatedLabel && (
-                        <span className="text-sm text-[#A6B0CF]">{lastUpdatedLabel}</span>
+                        <span className="text-sm text-[#8FA39B]">{lastUpdatedLabel}</span>
                       )}
                     </div>
                     <div className="grid gap-4 xl:grid-cols-2">
@@ -396,7 +396,7 @@ function AdvancedAccess({ workspace }) {
                     <div className="rounded-card border border-white/10 bg-white/[0.035] p-4">
                       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div className="min-w-0">
-                          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#6C7693]">
+                          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#8FA39B]">
                             <Lock className="h-4 w-4 text-brand-500" />
                             Password
                           </p>
@@ -407,7 +407,7 @@ function AdvancedAccess({ workspace }) {
                             <p className="mt-1 text-xs text-red-200">{passwordError}</p>
                           )}
                           {isPasswordVisible && (
-                            <p className="mt-1 text-xs text-[#A6B0CF]">
+                            <p className="mt-1 text-xs text-[#8FA39B]">
                               Hides automatically in {secondsRemaining || 30} seconds.
                             </p>
                           )}

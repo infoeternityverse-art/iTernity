@@ -1,12 +1,8 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { Spinner } from '@/components/ui/index.js';
+import { SparkLoader } from '@/components/common/spark-loader.jsx';
 import { useAuthStore } from '@/store/auth-store.js';
 
-const RouteLoader = () => (
-  <div className="flex min-h-48 items-center justify-center">
-    <Spinner label="Checking session" />
-  </div>
-);
+const RouteLoader = () => <SparkLoader label="Checking your spark" />;
 
 /**
  * ProtectedRoute requires an authenticated customer session before rendering dashboard routes.

@@ -10,7 +10,7 @@ export const Checkbox = forwardRef(function Checkbox(
 ) {
   return (
     <div className="space-y-1.5">
-      <label className="flex items-start gap-3 text-sm text-[#DDE4FF]">
+      <label className="flex items-start gap-3 text-sm text-[#F5F7F6]">
         <input
           ref={ref}
           id={id}
@@ -28,7 +28,7 @@ export const Checkbox = forwardRef(function Checkbox(
         {label && <span>{label}</span>}
       </label>
       {error && <p className="text-sm text-red-300">{error}</p>}
-      {!error && helperText && <p className="text-sm text-[#6C7693]">{helperText}</p>}
+      {!error && helperText && <p className="text-sm text-[#8FA39B]">{helperText}</p>}
     </div>
   );
 });

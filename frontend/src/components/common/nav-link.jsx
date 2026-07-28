@@ -14,11 +14,11 @@ export function NavLink({ item, compact = false, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         cn(
-          'relative inline-flex items-center gap-2 rounded-button px-3 py-2 text-sm font-semibold transition duration-200 ease-premium after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:origin-center after:rounded-full after:bg-brand-500 after:shadow-[0_0_18px_rgba(172,126,231,0.75)] after:transition after:duration-200 after:ease-premium',
+          'relative inline-flex items-center gap-2 rounded-button px-3 py-2 text-sm font-semibold transition duration-200 ease-premium after:absolute after:bottom-1 after:left-4 after:right-4 after:h-0.5 after:origin-center after:rounded-full after:bg-[#2DE8C4] after:shadow-[0_0_18px_rgba(45,232,196,0.75)] after:transition after:duration-200 after:ease-premium',
           focusRing,
           isActive
-            ? 'text-[#17161D] after:scale-x-100'
-            : 'text-[#17161D]/70 after:scale-x-0 hover:text-[#8969EF] hover:after:scale-x-75',
+            ? 'bg-[#2DE8C4]/10 text-[#F5F7F6] after:scale-x-100'
+            : 'text-[#F5F7F6]/70 after:scale-x-0 hover:bg-white/[0.04] hover:text-[#2DE8C4] hover:after:scale-x-75',
           compact && 'w-full'
         )
       }

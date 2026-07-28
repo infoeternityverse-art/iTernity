@@ -10,7 +10,7 @@ export function StatCard({ label, value, icon, trend, loading = false, error, cl
     <Card className={cn('p-6', className)} error={Boolean(error)} interactive>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-[#A6B0CF]">{label}</p>
+          <p className="text-sm font-semibold text-[#8FA39B]">{label}</p>
           <div className="mt-3 text-3xl font-black tracking-normal text-white">
             {loading ? (
               <Spinner />
@@ -20,7 +20,7 @@ export function StatCard({ label, value, icon, trend, loading = false, error, cl
               value
             )}
           </div>
-          {trend && !loading && !error && <p className="mt-2 text-sm text-[#6C7693]">{trend}</p>}
+          {trend && !loading && !error && <p className="mt-2 text-sm text-[#8FA39B]">{trend}</p>}
         </div>
         {icon && (
           <span className="rounded-button border border-white/10 bg-white/[0.07] p-3 text-accent-500 shadow-cyan">

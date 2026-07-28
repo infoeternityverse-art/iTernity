@@ -18,7 +18,7 @@ export function Divider({ label, orientation = 'horizontal', className = '' }) {
     <div className={cn('flex items-center gap-3', className)}>
       <div className="premium-divider flex-1" />
       {label && (
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#6C7693]">
+        <span className="text-xs font-bold uppercase tracking-[0.16em] text-[#8FA39B]">
           {label}
         </span>
       )}

@@ -5,23 +5,23 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: 'rgba(137, 105, 239, 0.10)',
-          100: 'rgba(137, 105, 239, 0.16)',
-          400: '#8969EF',
-          500: '#8969EF',
-          600: '#8969EF',
-          700: '#17161D',
+          50: 'rgba(45, 232, 196, 0.10)',
+          100: 'rgba(45, 232, 196, 0.16)',
+          400: '#2DE8C4',
+          500: '#2DE8C4',
+          600: '#2DE8C4',
+          700: '#0E1310',
         },
         accent: {
-          500: '#8969EF',
-          600: '#8969EF',
+          500: '#2DE8C4',
+          600: '#2DE8C4',
         },
         surface: {
-          page: '#FBF7F2',
-          DEFAULT: '#FFFFFF',
-          subtle: '#FBF7F2',
-          elevated: '#FFFFFF',
-          dark: '#17161D',
+          page: '#060907',
+          DEFAULT: '#0E1310',
+          subtle: '#060907',
+          elevated: '#121A16',
+          dark: '#060907',
         },
       },
       fontFamily: {
@@ -39,9 +39,9 @@ export default {
         table: '18px',
       },
       boxShadow: {
-        glow: '0 18px 60px rgba(137,105,239,0.18)',
-        cyan: '0 0 34px rgba(137,105,239,0.18)',
-        soft: '0 16px 46px rgba(23,22,29,0.10)',
+        glow: '0 18px 60px rgba(45,232,196,0.18)',
+        cyan: '0 0 34px rgba(45,232,196,0.18)',
+        soft: '0 16px 46px rgba(0,0,0,0.28)',
       },
       transitionTimingFunction: {
         premium: 'cubic-bezier(0.22, 1, 0.36, 1)',

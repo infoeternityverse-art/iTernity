@@ -11,19 +11,13 @@ import { AuthLayout } from '@/layouts/auth-layout.jsx';
 import { CustomerDashboardLayout } from '@/layouts/customer-dashboard-layout.jsx';
 import { ErrorLayout } from '@/layouts/error-layout.jsx';
 import { PublicLayout } from '@/layouts/public-layout.jsx';
-import { Spinner } from '@/components/ui/index.js';
+import { SparkLoader } from '@/components/common/spark-loader.jsx';
 
 const lazyPage = (factory, exportName) =>
   lazy(() => factory().then((module) => ({ default: module[exportName] })));
 
 const withSuspense = (Component) => (
-  <Suspense
-    fallback={
-      <div className="flex min-h-48 items-center justify-center">
-        <Spinner label="Loading page" />
-      </div>
-    }
-  >
+  <Suspense fallback={<SparkLoader />}>
     <Component />
   </Suspense>
 );

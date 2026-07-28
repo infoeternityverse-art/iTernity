@@ -3,8 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Line, Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-const IDLE_COLOR = new THREE.Color('#8969EF');
-const GOLD_COLOR = new THREE.Color('#F0C863');
+const IDLE_COLOR = new THREE.Color('#2DE8C4');
+const GOLD_COLOR = new THREE.Color('#2DE8C4');
 const NODE_COUNT_DESKTOP = 112;
 const NODE_COUNT_MOBILE = 48;
 const MAX_WEB_PULSES = 5;
@@ -118,7 +118,7 @@ function ConnectionWeb({ cloud }) {
 
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#8969EF" transparent opacity={0.2} depthWrite={false} />
+      <lineBasicMaterial color="#2DE8C4" transparent opacity={0.2} depthWrite={false} />
     </lineSegments>
   );
 }
@@ -266,25 +266,25 @@ function CentralChip({ isMobile }) {
     <group position={[0, 0, 0.46]} scale={isMobile ? 0.78 : 0.94}>
       <mesh position={[0, 0, -0.12]}>
         <circleGeometry args={[1.06, 48]} />
-        <meshBasicMaterial color="#8969EF" transparent opacity={0.08} depthWrite={false} />
+        <meshBasicMaterial color="#2DE8C4" transparent opacity={0.08} depthWrite={false} />
       </mesh>
       <mesh>
         <boxGeometry args={[1.18, 1.18, 0.16]} />
         <meshStandardMaterial
-          color="#FBF7F2"
+          color="#060907"
           roughness={0.58}
           metalness={0.02}
-          emissive="#8969EF"
+          emissive="#2DE8C4"
           emissiveIntensity={0.1}
         />
       </mesh>
       <mesh position={[0, 0, 0.086]}>
         <boxGeometry args={[0.92, 0.92, 0.018]} />
-        <meshBasicMaterial color="#8969EF" transparent opacity={0.2} depthWrite={false} />
+        <meshBasicMaterial color="#2DE8C4" transparent opacity={0.2} depthWrite={false} />
       </mesh>
 
-      <Line points={edgePath} color="#8969EF" lineWidth={3.4} transparent opacity={0.86} />
-      <Line points={innerEdgePath} color="#FBF7F2" lineWidth={1.6} transparent opacity={0.8} />
+      <Line points={edgePath} color="#2DE8C4" lineWidth={3.4} transparent opacity={0.86} />
+      <Line points={innerEdgePath} color="#060907" lineWidth={1.6} transparent opacity={0.8} />
 
       {Array.from({ length: 11 }, (_, index) => {
         const offset = -0.48 + index * 0.096;
@@ -292,19 +292,19 @@ function CentralChip({ isMobile }) {
           <group key={index}>
             <mesh position={[offset, 0.66, 0]}>
               <boxGeometry args={[0.035, 0.16, 0.035]} />
-              <meshBasicMaterial color="#8969EF" transparent opacity={0.42} />
+              <meshBasicMaterial color="#2DE8C4" transparent opacity={0.42} />
             </mesh>
             <mesh position={[offset, -0.66, 0]}>
               <boxGeometry args={[0.035, 0.16, 0.035]} />
-              <meshBasicMaterial color="#8969EF" transparent opacity={0.42} />
+              <meshBasicMaterial color="#2DE8C4" transparent opacity={0.42} />
             </mesh>
             <mesh position={[0.66, offset, 0]}>
               <boxGeometry args={[0.16, 0.035, 0.035]} />
-              <meshBasicMaterial color="#8969EF" transparent opacity={0.42} />
+              <meshBasicMaterial color="#2DE8C4" transparent opacity={0.42} />
             </mesh>
             <mesh position={[-0.66, offset, 0]}>
               <boxGeometry args={[0.16, 0.035, 0.035]} />
-              <meshBasicMaterial color="#8969EF" transparent opacity={0.42} />
+              <meshBasicMaterial color="#2DE8C4" transparent opacity={0.42} />
             </mesh>
           </group>
         );
@@ -314,7 +314,7 @@ function CentralChip({ isMobile }) {
         <Line
           key={index}
           points={points.map(([x, y, z]) => new THREE.Vector3(x, y, z))}
-          color="#8969EF"
+          color="#2DE8C4"
           lineWidth={1.7}
           transparent
           opacity={0.7}
@@ -336,11 +336,11 @@ function CentralChip({ isMobile }) {
       <Text
         position={[0, -0.32, 0.19]}
         fontSize={0.17}
-        color="#17161D"
+        color="#F5F7F6"
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.006}
-        outlineColor="#FBF7F2"
+        outlineColor="#060907"
       >
         GPU
       </Text>
@@ -372,10 +372,10 @@ function WebPulse({ start, end, duration }) {
 
   return (
     <group>
-      <Line ref={lineRef} points={[start, end]} color="#8969EF" lineWidth={2} transparent opacity={0} />
+      <Line ref={lineRef} points={[start, end]} color="#2DE8C4" lineWidth={2} transparent opacity={0} />
       <mesh ref={dotRef}>
         <sphereGeometry args={[0.052, 14, 14]} />
-        <meshBasicMaterial color="#8969EF" transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color="#2DE8C4" transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -414,14 +414,14 @@ function SourcePulse({ end, duration }) {
 
   return (
     <group>
-      <Line ref={lineRef} points={[start, destination]} color="#8969EF" lineWidth={2.4} transparent opacity={0} />
+      <Line ref={lineRef} points={[start, destination]} color="#2DE8C4" lineWidth={2.4} transparent opacity={0} />
       <mesh ref={haloRef}>
         <sphereGeometry args={[0.13, 14, 14]} />
-        <meshBasicMaterial color="#8969EF" transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color="#2DE8C4" transparent opacity={0} depthWrite={false} />
       </mesh>
       <mesh ref={dotRef}>
         <sphereGeometry args={[0.072, 16, 16]} />
-        <meshBasicMaterial color="#8969EF" transparent opacity={0} depthWrite={false} />
+        <meshBasicMaterial color="#2DE8C4" transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -546,7 +546,7 @@ export default function HeroConstellationScene({ isMobile }) {
     >
       <FrameLimiter />
       <ambientLight intensity={1.15} />
-      <directionalLight position={[-2.5, 3, 4]} intensity={1.2} color="#FBF7F2" />
+      <directionalLight position={[-2.5, 3, 4]} intensity={1.2} color="#060907" />
       <ComputeConstellation isMobile={isMobile} />
     </Canvas>
   );

@@ -25,7 +25,7 @@ export function StatusTimeline({ status }) {
               'flex items-center gap-2 rounded-button border p-3 text-sm font-semibold transition',
               isActive
                 ? 'border-accent-500/35 bg-accent-500/10 text-cyan-100 shadow-cyan'
-                : 'border-white/10 bg-white/[0.035] text-[#6C7693]'
+                : 'border-white/10 bg-white/[0.035] text-[#8FA39B]'
             )}
           >
             <Icon className="h-4 w-4" />

@@ -6,7 +6,7 @@ export function ProgressBar({ value = 0, max = 100, label, className = '' }) {
 
   return (
     <div className={className}>
-      {label && <div className="mb-2 text-sm font-semibold text-[#DDE4FF]">{label}</div>}
+      {label && <div className="mb-2 text-sm font-semibold text-[#F5F7F6]">{label}</div>}
       <div
         role="progressbar"
         aria-valuenow={value}

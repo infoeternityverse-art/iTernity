@@ -47,7 +47,7 @@ export function FaqPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-16 py-8">
       <section className="space-y-5 text-center">
-        <p className="text-sm font-black uppercase tracking-[0.26em] text-[#A6B0CF]">FAQ</p>
+        <p className="text-sm font-black uppercase tracking-[0.26em] text-[#8FA39B]">FAQ</p>
         <h1 className="mx-auto max-w-3xl text-5xl font-black leading-[0.95] tracking-normal text-white md:text-6xl">
           Questions worth asking before you request access.
         </h1>
@@ -70,10 +70,10 @@ export function FaqPage() {
                 onClick={() => setOpenItem(isOpen ? '' : item.value)}
               >
                 <span>{item.question}</span>
-                <Icon className="h-5 w-5 shrink-0 text-[#A6B0CF]" />
+                <Icon className="h-5 w-5 shrink-0 text-[#8FA39B]" />
               </button>
               {isOpen && (
-                <p className="max-w-3xl pb-8 text-base leading-7 text-[#A6B0CF]">{item.answer}</p>
+                <p className="max-w-3xl pb-8 text-base leading-7 text-[#8FA39B]">{item.answer}</p>
               )}
             </article>
           );

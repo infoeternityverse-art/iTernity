@@ -34,7 +34,7 @@ export function GpuPackageCard({ gpuPackage }) {
         }
       />
       <CardContent className="flex flex-1 flex-col gap-4">
-        <div className="grid grid-cols-2 gap-3 text-sm text-[#A6B0CF]">
+        <div className="grid grid-cols-2 gap-3 text-sm text-[#8FA39B]">
           <span className="inline-flex items-center gap-2">
             <MemoryStick className="h-4 w-4" />
             {gpuPackage.gpuMemoryGb || '-'}GB VRAM
@@ -58,7 +58,7 @@ export function GpuPackageCard({ gpuPackage }) {
         </Badge>
         <div className="mt-auto grid grid-cols-2 gap-3 rounded-button border border-white/10 bg-white/[0.055] p-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6C7693]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8FA39B]">
               Hourly
             </p>
             <p className="mt-1 font-bold text-white">
@@ -66,7 +66,7 @@ export function GpuPackageCard({ gpuPackage }) {
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6C7693]">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8FA39B]">
               Monthly
             </p>
             <p className="mt-1 font-bold text-white">

@@ -6,6 +6,7 @@ import { adminNavigation } from '@/config/navigation.config.js';
 import { Button, ToastViewport } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
 import { BrandMark } from '@/components/common/brand-mark.jsx';
+import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
 import { useAuthStore } from '@/store/auth-store.js';
 
 /**
@@ -18,13 +19,14 @@ export function AdminLayout() {
 
   return (
     <div className="premium-shell text-white">
+      <ScrollToTop />
       <div className="flex min-h-screen gap-0 xl:p-4">
         <aside className="premium-glass hidden w-72 rounded-card p-5 xl:block">
           <Link to="/admin" className="mb-8 flex items-center gap-3 text-base font-black">
             <BrandMark className="h-10 w-10" />
             {APP_NAME} Admin
           </Link>
-          <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-[#6C7693]">
+          <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-[#8FA39B]">
             Console
           </p>
           <nav aria-label="Admin navigation" className="space-y-1">

@@ -21,7 +21,7 @@ export const Textarea = forwardRef(function Textarea(
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-[#DDE4FF]">
+        <label htmlFor={id} className="text-sm font-semibold text-[#F5F7F6]">
           {label}
         </label>
       )}
@@ -48,7 +48,7 @@ export const Textarea = forwardRef(function Textarea(
         </p>
       )}
       {!error && helperText && (
-        <p id={`${id}-helper`} className="text-sm text-[#6C7693]">
+        <p id={`${id}-helper`} className="text-sm text-[#8FA39B]">
           {helperText}
         </p>
       )}

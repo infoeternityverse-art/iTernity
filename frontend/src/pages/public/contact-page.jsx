@@ -14,6 +14,7 @@ import {
   Select,
   Textarea,
 } from '@/components/ui/index.js';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
 import { useCreateEnquiry, useGpuPackages } from '@/hooks/index.js';
 
 const contactSchema = z.object({
@@ -78,18 +79,12 @@ export function ContactPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-8">
-      <div className="space-y-4 text-center">
-        <p className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-white">
-          Contact
-        </p>
-        <h1 className="text-4xl font-black tracking-normal text-white sm:text-5xl">
-          Get in Touch with Us
-        </h1>
-        <p className="mx-auto max-w-2xl text-base leading-7 text-[#A6B0CF]">
-          Tell us about your workload and preferred GPU package. The request is sent directly to the
-          admin enquiry queue for review.
-        </p>
-      </div>
+      <PublicPageHero
+        eyebrow="Contact"
+        title="Get in touch with us"
+        description="Tell us about your workload and preferred GPU package. The request is sent directly to the admin enquiry queue for review."
+        variant="contact"
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
@@ -100,7 +95,7 @@ export function ContactPage() {
             </div>
             <a
               href={`mailto:${env.supportEmail}`}
-              className="text-sm text-[#A6B0CF] hover:text-white"
+              className="text-sm text-[#8FA39B] hover:text-white"
             >
               {env.supportEmail}
             </a>
@@ -112,7 +107,7 @@ export function ContactPage() {
               <Phone className="h-5 w-5 text-white" />
               <h2 className="font-bold text-white">Review flow</h2>
             </div>
-            <p className="text-sm text-[#A6B0CF]">Manual response after admin review</p>
+            <p className="text-sm text-[#8FA39B]">Manual response after admin review</p>
           </CardContent>
         </Card>
       </div>

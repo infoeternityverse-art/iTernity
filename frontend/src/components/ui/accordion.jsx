@@ -56,7 +56,7 @@ export function Accordion({
               <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
             </button>
             {isOpen && (
-              <div className="px-5 pb-5 text-sm leading-6 text-[#A6B0CF]">{item.content}</div>
+              <div className="px-5 pb-5 text-sm leading-6 text-[#8FA39B]">{item.content}</div>
             )}
           </div>
         );

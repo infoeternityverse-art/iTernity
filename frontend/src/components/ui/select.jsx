@@ -23,7 +23,7 @@ export const Select = forwardRef(function Select(
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="text-sm font-semibold text-[#DDE4FF]">
+        <label htmlFor={id} className="text-sm font-semibold text-[#F5F7F6]">
           {label}
         </label>
       )}
@@ -59,10 +59,10 @@ export const Select = forwardRef(function Select(
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6C7693]" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8FA39B]" />
       </div>
       {error && <p className="text-sm text-red-300">{error}</p>}
-      {!error && helperText && <p className="text-sm text-[#6C7693]">{helperText}</p>}
+      {!error && helperText && <p className="text-sm text-[#8FA39B]">{helperText}</p>}
     </div>
   );
 });

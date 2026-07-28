@@ -91,7 +91,7 @@ function TypingTerminal({ lines = [], playing = true, loop = true, speed = 28, c
         <span className="h-3 w-3 rounded-full bg-red-400" />
         <span className="h-3 w-3 rounded-full bg-amber-300" />
         <span className="h-3 w-3 rounded-full bg-emerald-400" />
-        <span className="ml-2 text-xs font-semibold text-[#A6B0CF]">secure shell</span>
+        <span className="ml-2 text-xs font-semibold text-[#8FA39B]">secure shell</span>
       </div>
       <pre
         ref={outputRef}
@@ -123,7 +123,7 @@ function Stepper({ steps, currentStep }) {
                   ? 'border-brand-500 bg-brand-500 text-white shadow-cyan'
                   : isComplete
                     ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-200'
-                    : 'border-white/10 bg-white/[0.04] text-[#A6B0CF]',
+                    : 'border-white/10 bg-white/[0.04] text-[#8FA39B]',
               ].join(' ')}
             >
               {isComplete ? <CheckCircle2 className="h-4 w-4" /> : index + 1}
@@ -157,7 +157,7 @@ function OsStep({ selectedOs, onSelect }) {
           >
             <Icon className="h-7 w-7 text-brand-500" />
             <p className="mt-4 text-lg font-black text-white">{os.name}</p>
-            <p className="mt-2 text-sm leading-6 text-[#A6B0CF]">{os.description}</p>
+            <p className="mt-2 text-sm leading-6 text-[#8FA39B]">{os.description}</p>
           </button>
         );
       })}
@@ -172,18 +172,18 @@ function TerminalOpenStep({ os }) {
     <div className="grid gap-5 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
       <div>
         <p className="text-2xl font-black text-white">Open {selected.terminalName}</p>
-        <p className="mt-3 text-sm leading-6 text-[#A6B0CF]">
+        <p className="mt-3 text-sm leading-6 text-[#8FA39B]">
           Start from your operating system terminal. You will paste one SSH command, accept the
           first-time fingerprint prompt, and enter the workspace password when requested.
         </p>
       </div>
       <div className="rounded-card border border-white/10 bg-white/[0.035] p-5">
         <motion.div
-          className="rounded-card border border-white/10 bg-[#050505] p-5 font-mono text-sm text-[#DDE4FF]"
+          className="rounded-card border border-white/10 bg-[#050505] p-5 font-mono text-sm text-[#F5F7F6]"
           animate={{ y: [0, -4, 0], opacity: [0.86, 1, 0.86] }}
           transition={{ repeat: Infinity, duration: 2.8, ease: 'easeInOut' }}
         >
-          <div className="mb-4 flex items-center gap-2 text-[#A6B0CF]">
+          <div className="mb-4 flex items-center gap-2 text-[#8FA39B]">
             <Terminal className="h-4 w-4" />
             {selected.terminalName}
           </div>
@@ -202,7 +202,7 @@ function CommandCards() {
           <CardContent className="flex items-start justify-between gap-4 p-5">
             <div>
               <code className="text-sm font-bold text-brand-500">{item.command}</code>
-              <p className="mt-2 text-sm leading-6 text-[#A6B0CF]">{item.description}</p>
+              <p className="mt-2 text-sm leading-6 text-[#8FA39B]">{item.description}</p>
             </div>
             <Button
               variant="icon"
@@ -283,17 +283,17 @@ export function ConnectGpuGuideModal({ open, onClose, workspace }) {
           loop
         />
         {step === 2 && (
-          <p className="text-sm leading-6 text-[#A6B0CF]">
+          <p className="text-sm leading-6 text-[#8FA39B]">
             Paste this command into your terminal to start the encrypted SSH session.
           </p>
         )}
         {step === 3 && (
-          <p className="text-sm leading-6 text-[#A6B0CF]">
+          <p className="text-sm leading-6 text-[#8FA39B]">
             This prompt only appears the first time your computer connects to this workspace.
           </p>
         )}
         {step === 4 && (
-          <p className="text-sm leading-6 text-[#A6B0CF]">
+          <p className="text-sm leading-6 text-[#8FA39B]">
             Passwords do not appear while typing. This is normal terminal behavior.
           </p>
         )}

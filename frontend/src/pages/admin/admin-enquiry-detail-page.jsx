@@ -55,27 +55,27 @@ export function AdminEnquiryDetailPage() {
             <SectionHeader title="Request" />
             <dl className="grid gap-4 md:grid-cols-2">
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Name</dt>
+                <dt className="text-sm text-[#8FA39B]">Name</dt>
                 <dd className="font-medium">{record.contactName}</dd>
               </div>
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Email</dt>
+                <dt className="text-sm text-[#8FA39B]">Email</dt>
                 <dd className="font-medium">{record.contactEmail}</dd>
               </div>
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Phone</dt>
+                <dt className="text-sm text-[#8FA39B]">Phone</dt>
                 <dd className="font-medium">{record.contactPhone || '-'}</dd>
               </div>
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Duration</dt>
+                <dt className="text-sm text-[#8FA39B]">Duration</dt>
                 <dd className="font-medium">{record.duration || '-'}</dd>
               </div>
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Budget</dt>
+                <dt className="text-sm text-[#8FA39B]">Budget</dt>
                 <dd className="font-medium">{record.budget ?? '-'}</dd>
               </div>
               <div>
-                <dt className="text-sm text-[#A6B0CF]">Submitted</dt>
+                <dt className="text-sm text-[#8FA39B]">Submitted</dt>
                 <dd className="font-medium">{formatDate(record.createdAt)}</dd>
               </div>
             </dl>
@@ -86,34 +86,34 @@ export function AdminEnquiryDetailPage() {
               />
               <dl className="mt-4 grid gap-4 md:grid-cols-2">
                 <div>
-                  <dt className="text-sm text-[#A6B0CF]">Package</dt>
+                  <dt className="text-sm text-[#8FA39B]">Package</dt>
                   <dd className="font-semibold text-white">{selectedGpuName}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-[#A6B0CF]">GPU Model</dt>
+                  <dt className="text-sm text-[#8FA39B]">GPU Model</dt>
                   <dd className="font-semibold text-white">
                     {selectedGpuPackage?.gpuModel || '-'}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-[#A6B0CF]">VRAM</dt>
+                  <dt className="text-sm text-[#8FA39B]">VRAM</dt>
                   <dd className="font-semibold text-white">
                     {selectedGpuPackage?.gpuMemoryGb ? `${selectedGpuPackage.gpuMemoryGb}GB` : '-'}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-[#A6B0CF]">Region</dt>
+                  <dt className="text-sm text-[#8FA39B]">Region</dt>
                   <dd className="font-semibold text-white">{selectedGpuPackage?.region || '-'}</dd>
                 </div>
               </dl>
             </div>
             <div>
-              <p className="text-sm text-[#A6B0CF]">Project Description</p>
-              <p className="mt-1 leading-7 text-[#DDE4FF]">{record.projectDescription}</p>
+              <p className="text-sm text-[#8FA39B]">Project Description</p>
+              <p className="mt-1 leading-7 text-[#F5F7F6]">{record.projectDescription}</p>
             </div>
             <div>
-              <p className="text-sm text-[#A6B0CF]">Expected Usage</p>
-              <p className="mt-1 leading-7 text-[#DDE4FF]">{record.expectedUsage || '-'}</p>
+              <p className="text-sm text-[#8FA39B]">Expected Usage</p>
+              <p className="mt-1 leading-7 text-[#F5F7F6]">{record.expectedUsage || '-'}</p>
             </div>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ export function AdminEnquiryDetailPage() {
                     status={item.status}
                     label={item.status === 'contacted' ? 'in review' : item.status}
                   />
-                  <p className="mt-1 text-[#A6B0CF]">{formatDate(item.changedAt)}</p>
+                  <p className="mt-1 text-[#8FA39B]">{formatDate(item.changedAt)}</p>
                 </div>
               ))}
             </CardContent>

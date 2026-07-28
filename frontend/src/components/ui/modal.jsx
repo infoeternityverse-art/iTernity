@@ -79,7 +79,7 @@ export function Modal({
               </h2>
             )}
             {description && (
-              <p className="mt-1.5 text-sm leading-6 text-[#A6B0CF]">{description}</p>
+              <p className="mt-1.5 text-sm leading-6 text-[#8FA39B]">{description}</p>
             )}
           </div>
           {onClose && (

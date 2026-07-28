@@ -76,7 +76,7 @@ export function GpuDetailPage() {
                     <CardContent className="flex items-center gap-3 p-5">
                       <Icon className="h-5 w-5 text-brand-600" />
                       <div>
-                        <p className="text-sm text-[#A6B0CF]">{spec.label}</p>
+                        <p className="text-sm text-[#8FA39B]">{spec.label}</p>
                         <p className="font-semibold">{spec.value || '-'}</p>
                       </div>
                     </CardContent>
@@ -91,7 +91,7 @@ export function GpuDetailPage() {
             {gpuPackage.features?.length ? (
               <div className="grid gap-3 md:grid-cols-2">
                 {gpuPackage.features.map((feature) => (
-                  <p key={feature} className="flex items-center gap-2 text-[#DDE4FF]">
+                  <p key={feature} className="flex items-center gap-2 text-[#F5F7F6]">
                     <CheckCircle className="h-4 w-4 text-green-600" />
                     {feature}
                   </p>
@@ -137,20 +137,20 @@ export function GpuDetailPage() {
             />
             <CardContent className="space-y-4">
               <div className="rounded-md border border-white/10 bg-white/[0.045] p-4">
-                <p className="text-sm text-[#A6B0CF]">Hourly</p>
+                <p className="text-sm text-[#8FA39B]">Hourly</p>
                 <p className="text-2xl font-semibold">
                   {formatPrice(gpuPackage.hourlyPrice, gpuPackage.currency)}
                 </p>
               </div>
               <div className="rounded-md border border-white/10 bg-white/[0.045] p-4">
-                <p className="text-sm text-[#A6B0CF]">Monthly</p>
+                <p className="text-sm text-[#8FA39B]">Monthly</p>
                 <p className="text-2xl font-semibold">
                   {formatPrice(gpuPackage.monthlyPrice, gpuPackage.currency)}
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Project suitability</p>
-                <p className="mt-1 text-sm text-[#A6B0CF]">
+                <p className="mt-1 text-sm text-[#8FA39B]">
                   Share your workload, timeline, and budget so the team can confirm fit before
                   credentials are issued.
                 </p>

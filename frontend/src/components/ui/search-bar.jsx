@@ -24,7 +24,7 @@ export function SearchBar({
   return (
     <form onSubmit={handleSubmit} className={cn('w-full', className)} role="search">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#A6B0CF]" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#8FA39B]" />
         <input
           type="search"
           value={value}
