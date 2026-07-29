@@ -63,6 +63,21 @@ export function HeroGpuVisual({ variant = 'home' }) {
     visualRef.current.style.setProperty('--hero-nav-depth', Math.min(1, Math.hypot(x, y)).toFixed(3));
   };
 
+  const updateNavigationFromPoint = (clientX, clientY, rect) => {
+    const x = Math.min(1, Math.max(-1, ((clientX - rect.left) / rect.width) * 2 - 1));
+    const y = Math.min(1, Math.max(-1, -(((clientY - rect.top) / rect.height) * 2 - 1)));
+
+    pointerRef.current.x = x;
+    pointerRef.current.y = y;
+    syncCssCameraVars(x, y);
+  };
+
+  const resetNavigation = () => {
+    pointerRef.current.x = 0;
+    pointerRef.current.y = 0;
+    syncCssCameraVars(0, 0);
+  };
+
   useEffect(() => {
     const updateScroll = () => {
       const hero = getHeroElement();
@@ -97,39 +112,58 @@ export function HeroGpuVisual({ variant = 'home' }) {
         event.clientY <= rect.bottom;
 
       if (!isInside) {
-        pointerRef.current.x = 0;
-        pointerRef.current.y = 0;
-        syncCssCameraVars(0, 0);
+        resetNavigation();
         return;
       }
 
-      pointerRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointerRef.current.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
-      syncCssCameraVars(pointerRef.current.x, pointerRef.current.y);
+      updateNavigationFromPoint(event.clientX, event.clientY, rect);
+    };
+
+    const updateTouch = (event) => {
+      const touch = event.touches[0];
+      const hero = getHeroElement();
+      if (!touch || !hero) return;
+
+      const rect = hero.getBoundingClientRect();
+      const isInside =
+        touch.clientX >= rect.left &&
+        touch.clientX <= rect.right &&
+        touch.clientY >= rect.top &&
+        touch.clientY <= rect.bottom;
+
+      if (isInside) {
+        updateNavigationFromPoint(touch.clientX, touch.clientY, rect);
+      }
     };
 
     window.addEventListener('pointermove', updatePointer, { passive: true });
-    return () => window.removeEventListener('pointermove', updatePointer);
+    window.addEventListener('touchstart', updateTouch, { passive: true });
+    window.addEventListener('touchmove', updateTouch, { passive: true });
+    window.addEventListener('touchend', resetNavigation, { passive: true });
+    window.addEventListener('touchcancel', resetNavigation, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', updatePointer);
+      window.removeEventListener('touchstart', updateTouch);
+      window.removeEventListener('touchmove', updateTouch);
+      window.removeEventListener('touchend', resetNavigation);
+      window.removeEventListener('touchcancel', resetNavigation);
+    };
   }, []);
 
   const handlePointerMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    pointerRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    pointerRef.current.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
-    syncCssCameraVars(pointerRef.current.x, pointerRef.current.y);
+    updateNavigationFromPoint(event.clientX, event.clientY, rect);
   };
 
   const handlePointerLeave = () => {
-    pointerRef.current.x = 0;
-    pointerRef.current.y = 0;
-    syncCssCameraVars(0, 0);
+    resetNavigation();
   };
 
   return (
     <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
       <div className="hero-cosmic-composite">
         <img
-          src="/media/hero_home.jpg"
+          src="/media/hero_home.webp"
           alt=""
           className="hero-bg-photo"
           decoding="async"

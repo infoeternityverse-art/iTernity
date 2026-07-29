@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { EffectComposer, Bloom, ToneMapping, Vignette } from '@react-three/postprocessing';
 import { ToneMappingMode } from 'postprocessing';
 import * as THREE from 'three';
@@ -18,6 +18,7 @@ const DESKTOP_MAX_YAW = THREE.MathUtils.degToRad(40);
 const DESKTOP_MAX_PITCH = THREE.MathUtils.degToRad(23);
 const MOBILE_IDLE_YAW = THREE.MathUtils.degToRad(5);
 const MOBILE_IDLE_PITCH = THREE.MathUtils.degToRad(2.8);
+const PANORAMA_PATH = '/media/hero_home.webp';
 
 const pointVertexShader = `
   attribute float aSize;
@@ -58,6 +59,47 @@ const pointFragmentShader = `
 function seededRandom(seed) {
   const x = Math.sin(seed * 12.9898) * 43758.5453;
   return x - Math.floor(x);
+}
+
+function PanoramaBackdrop({ isMobile, pointerRef, scrollRef }) {
+  const meshRef = useRef(null);
+  const texture = useLoader(THREE.TextureLoader, PANORAMA_PATH);
+
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 8;
+
+  useFrame(({ clock }, delta) => {
+    if (!meshRef.current) return;
+    const pointer = pointerRef.current;
+    const scroll = scrollRef.current || 0;
+    const idle = Math.sin(clock.elapsedTime * 0.055) * 0.018;
+
+    meshRef.current.rotation.y = THREE.MathUtils.damp(
+      meshRef.current.rotation.y,
+      Math.PI + pointer.x * (isMobile ? 0.12 : 0.18) + scroll * 0.08 + idle,
+      1.8,
+      delta,
+    );
+    meshRef.current.rotation.x = THREE.MathUtils.damp(
+      meshRef.current.rotation.x,
+      pointer.y * (isMobile ? 0.045 : 0.06),
+      1.8,
+      delta,
+    );
+  });
+
+  return (
+    <mesh ref={meshRef} scale={[-1, 1, 1]} renderOrder={-10}>
+      <sphereGeometry args={[38, 64, 32]} />
+      <meshBasicMaterial
+        map={texture}
+        side={THREE.BackSide}
+        toneMapped={false}
+        fog={false}
+        depthWrite={false}
+      />
+    </mesh>
+  );
 }
 
 function makeStarTunnel(count) {
@@ -585,8 +627,8 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
     const idlePitch = Math.sin(elapsed * 0.11 + 0.7) * (isMobile ? MOBILE_IDLE_PITCH : THREE.MathUtils.degToRad(2.2));
     const idleStrafe = Math.sin(elapsed * 0.13) * (isMobile ? 0.18 : 0.38);
     const idleLift = Math.sin(elapsed * 0.1 + 1.2) * 0.08;
-    const navScale = isMobile ? 0.82 : 1;
-    const response = isMobile ? 2.45 : 4.2;
+    const navScale = isMobile ? 0.95 : 1;
+    const response = isMobile ? 3.35 : 4.2;
 
     const targetYaw = THREE.MathUtils.clamp(
       idleYaw + pointer.x * DESKTOP_MAX_YAW * navScale,
@@ -616,9 +658,9 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
       8.65,
     );
 
-    camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, isMobile ? 0.8 : 2.75, delta);
-    camera.position.y = THREE.MathUtils.damp(camera.position.y, targetY, isMobile ? 0.8 : 2.45, delta);
-    camera.position.z = THREE.MathUtils.damp(camera.position.z, targetZ, isMobile ? 0.8 : 2.25, delta);
+    camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, isMobile ? 2.15 : 2.75, delta);
+    camera.position.y = THREE.MathUtils.damp(camera.position.y, targetY, isMobile ? 1.95 : 2.45, delta);
+    camera.position.z = THREE.MathUtils.damp(camera.position.z, targetZ, isMobile ? 1.85 : 2.25, delta);
 
     directionRef.current
       .set(
@@ -657,6 +699,7 @@ function HeroScene({ isMobile, pointerRef, scrollRef }) {
   return (
     <>
       <fogExp2 attach="fog" args={[FOG, 0.032]} />
+      <PanoramaBackdrop isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
       <CameraDrift pointerRef={pointerRef} scrollRef={scrollRef} isMobile={isMobile} />
       <StarTunnel isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
       <ShimmerField isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
