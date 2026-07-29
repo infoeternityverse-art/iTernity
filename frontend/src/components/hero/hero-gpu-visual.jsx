@@ -148,14 +148,8 @@ export function HeroGpuVisual({ variant = 'home' }) {
         <div className="hero-depth-comet hero-depth-comet-b" />
         <div className="hero-aurora-curtain hero-aurora-curtain-a" />
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
-        <div className="hero-aurora-reflection" />
-        <div className="hero-aurora-horizon" />
-        <div className="hero-aurora-shore hero-aurora-shore-left" />
-        <div className="hero-aurora-shore hero-aurora-shore-right" />
         <div className="hero-cosmic-lens hero-cosmic-lens-a" />
         <div className="hero-cosmic-lens hero-cosmic-lens-b" />
-        <div className="hero-cosmic-warp" />
-        <div className="hero-cosmic-scan" />
       </div>
       <div className="hero-r3f-shell" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
         {isInView ? (

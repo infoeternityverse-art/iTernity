@@ -3111,11 +3111,11 @@ body::after {
   max-width: none;
   object-fit: cover;
   object-position: center;
-  opacity: 0.78;
+  opacity: 0.92;
   filter:
-    brightness(0.68)
-    contrast(1.12)
-    saturate(1.2)
+    brightness(0.86)
+    contrast(1.06)
+    saturate(1.14)
     hue-rotate(2deg);
   transform:
     translate3d(
@@ -3419,19 +3419,7 @@ body::after {
 }
 
 .hero-cosmic-composite::after {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 48%;
-  opacity: 0.52;
-  background:
-    linear-gradient(180deg, rgba(45, 232, 196, 0.18), rgba(4, 37, 34, 0.18) 34%, transparent 86%),
-    repeating-linear-gradient(178deg, transparent 0 17px, rgba(150, 255, 235, 0.09) 18px, transparent 21px),
-    repeating-linear-gradient(91deg, rgba(45, 232, 196, 0.05) 0 2px, transparent 2px 58px);
-  filter: blur(2px);
-  transform: perspective(620px) rotateX(58deg) translateY(10%);
-  transform-origin: top center;
-  animation: hero-water-shimmer 12s ease-in-out infinite;
+  display: none;
 }
 
 .hero-aurora-curtain,
