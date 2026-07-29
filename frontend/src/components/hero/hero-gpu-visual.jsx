@@ -128,6 +128,13 @@ export function HeroGpuVisual({ variant = 'home' }) {
   return (
     <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
       <div className="hero-cosmic-composite">
+        <img
+          src="/media/hero_home.jpg"
+          alt=""
+          className="hero-bg-photo"
+          decoding="async"
+          draggable="false"
+        />
         <div className="hero-depth-landmark hero-depth-landmark-near" />
         <div className="hero-depth-landmark hero-depth-landmark-mid" />
         <div className="hero-depth-landmark hero-depth-landmark-far" />
