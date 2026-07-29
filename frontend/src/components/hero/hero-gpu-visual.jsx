@@ -2,6 +2,17 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 const HeroWireframeScene = lazy(() => import('./hero-wireframe-scene.jsx'));
 
+const HERO_BACKGROUNDS = {
+  home: { src: '/media/hero_home.webp' },
+  market: { src: '/media/hero_gpu.webp' },
+  detail: { src: '/media/hero_gpu.webp' },
+  enquiry: { src: '/media/hero_gpu.webp' },
+  about: { src: '/media/hero_about.webp' },
+  contact: { src: '/media/hero_contact.webp' },
+  faq: { src: '/media/hero_home.webp' },
+  thanks: { src: '/media/hero_home.webp' },
+};
+
 function useInView() {
   const [node, setNode] = useState(null);
   const [isInView, setIsInView] = useState(false);
@@ -47,6 +58,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const visualRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const scrollRef = useRef(0);
+  const background = HERO_BACKGROUNDS[variant] || HERO_BACKGROUNDS.home;
   const getHeroElement = () =>
     visualRef.current?.closest('.hero-panel, .public-cosmic-hero') ||
     document.querySelector('.hero-panel, .public-cosmic-hero');
@@ -163,15 +175,17 @@ export function HeroGpuVisual({ variant = 'home' }) {
     <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
       <div className="hero-cosmic-composite">
         <img
-          src="/media/hero_home.webp"
+          src={background.src}
           alt=""
           className="hero-bg-photo"
           decoding="async"
           draggable="false"
+          onError={(event) => {
+            if (!background.fallback || event.currentTarget.dataset.fallbackLoaded) return;
+            event.currentTarget.dataset.fallbackLoaded = 'true';
+            event.currentTarget.src = background.fallback;
+          }}
         />
-        <div className="hero-depth-landmark hero-depth-landmark-near" />
-        <div className="hero-depth-landmark hero-depth-landmark-mid" />
-        <div className="hero-depth-landmark hero-depth-landmark-far" />
         <div className="hero-depth-star-cluster hero-depth-star-cluster-a" />
         <div className="hero-depth-star-cluster hero-depth-star-cluster-b" />
         <div className="hero-depth-beacon hero-depth-beacon-a" />
@@ -182,13 +196,16 @@ export function HeroGpuVisual({ variant = 'home' }) {
         <div className="hero-depth-comet hero-depth-comet-b" />
         <div className="hero-aurora-curtain hero-aurora-curtain-a" />
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
-        <div className="hero-cosmic-lens hero-cosmic-lens-a" />
-        <div className="hero-cosmic-lens hero-cosmic-lens-b" />
       </div>
       <div className="hero-r3f-shell" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
         {isInView ? (
           <Suspense fallback={<div className="hero-r3f-fallback" />}>
-            <HeroWireframeScene isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
+            <HeroWireframeScene
+              isMobile={isMobile}
+              pointerRef={pointerRef}
+              scrollRef={scrollRef}
+              panoramaSrc={background.src}
+            />
           </Suspense>
         ) : (
           <div className="hero-r3f-fallback" />

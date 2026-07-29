@@ -4881,6 +4881,19 @@ html.light .text-\[\#8FA39B\] {
   will-change: transform;
 }
 
+.cursor-dot::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(231, 232, 228, 0.08);
+  box-shadow: 0 0 14px rgba(45, 232, 196, 0.045);
+  transform: translate(-50%, -50%);
+}
+
 .cursor-dot.is-visible {
   opacity: 1;
 }
@@ -4888,7 +4901,13 @@ html.light .text-\[\#8FA39B\] {
 .cursor-dot.is-pressed {
   width: 4px;
   height: 4px;
-  background: #F5F7F6;
+  background: #2DE8C4;
+}
+
+.cursor-dot.is-pressed::before {
+  width: 28px;
+  height: 28px;
+  background: rgba(231, 232, 228, 0.06);
 }
 
 body,

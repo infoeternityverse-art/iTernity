@@ -18,7 +18,6 @@ const DESKTOP_MAX_YAW = THREE.MathUtils.degToRad(40);
 const DESKTOP_MAX_PITCH = THREE.MathUtils.degToRad(23);
 const MOBILE_IDLE_YAW = THREE.MathUtils.degToRad(5);
 const MOBILE_IDLE_PITCH = THREE.MathUtils.degToRad(2.8);
-const PANORAMA_PATH = '/media/hero_home.webp';
 
 const pointVertexShader = `
   attribute float aSize;
@@ -61,9 +60,9 @@ function seededRandom(seed) {
   return x - Math.floor(x);
 }
 
-function PanoramaBackdrop({ isMobile, pointerRef, scrollRef }) {
+function PanoramaBackdrop({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
   const meshRef = useRef(null);
-  const texture = useLoader(THREE.TextureLoader, PANORAMA_PATH);
+  const texture = useLoader(THREE.TextureLoader, panoramaSrc);
 
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
@@ -695,11 +694,11 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
   );
 }
 
-function HeroScene({ isMobile, pointerRef, scrollRef }) {
+function HeroScene({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
   return (
     <>
       <fogExp2 attach="fog" args={[FOG, 0.032]} />
-      <PanoramaBackdrop isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
+      <PanoramaBackdrop isMobile={isMobile} panoramaSrc={panoramaSrc} pointerRef={pointerRef} scrollRef={scrollRef} />
       <CameraDrift pointerRef={pointerRef} scrollRef={scrollRef} isMobile={isMobile} />
       <StarTunnel isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
       <ShimmerField isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
@@ -714,7 +713,7 @@ function HeroScene({ isMobile, pointerRef, scrollRef }) {
   );
 }
 
-export default function HeroWireframeScene({ isMobile, pointerRef, scrollRef }) {
+export default function HeroWireframeScene({ isMobile, panoramaSrc = '/media/hero_home.webp', pointerRef, scrollRef }) {
   return (
     <Canvas
       dpr={[1, 1.5]}
@@ -729,7 +728,7 @@ export default function HeroWireframeScene({ isMobile, pointerRef, scrollRef }) 
       <ambientLight intensity={0.34} />
       <directionalLight position={[-4, 5, 5]} intensity={0.76} color="#D8FFF8" />
       <pointLight position={[2.2, 2.4, -6.4]} intensity={1.8} color={TEAL} distance={9} />
-      <HeroScene isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
+      <HeroScene isMobile={isMobile} panoramaSrc={panoramaSrc} pointerRef={pointerRef} scrollRef={scrollRef} />
     </Canvas>
   );
 }
