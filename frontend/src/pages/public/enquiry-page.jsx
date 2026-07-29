@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { EnquiryForm } from '@/components/enquiry/enquiry-form.jsx';
-import { Alert, Card, CardContent, PageHeader, Skeleton } from '@/components/ui/index.js';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Alert, Card, CardContent, Skeleton } from '@/components/ui/index.js';
 import { useCreateEnquiry, useGpuPackage } from '@/hooks/index.js';
 
 export function EnquiryPage() {
@@ -25,9 +26,11 @@ export function EnquiryPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader
+      <PublicPageHero
+        eyebrow="Request Access"
         title="Submit Enquiry"
         description="Tell us about your workload and we will review the request before issuing access."
+        variant="enquiry"
       />
       <Card>
         <CardContent className="p-6">

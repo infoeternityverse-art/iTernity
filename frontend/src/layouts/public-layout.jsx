@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Github, Linkedin, Mail, Menu, Twitter, X, Youtube } from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
@@ -14,6 +14,8 @@ import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
  */
 export function PublicLayout() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [transitionPath, setTransitionPath] = useState('');
+  const hasMountedRef = useRef(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -35,10 +37,43 @@ export function PublicLayout() {
     { label: 'Security', href: '/faq' },
     { label: 'Acceptable Use', href: '/faq' },
   ];
+  const getRouteVariant = (pathname) => {
+    if (pathname === '/') return 'home';
+    if (pathname.startsWith('/gpus/')) return 'detail';
+    if (pathname.startsWith('/gpus')) return 'market';
+    if (pathname.startsWith('/about')) return 'about';
+    if (pathname.startsWith('/contact')) return 'contact';
+    if (pathname.startsWith('/faq')) return 'faq';
+    if (pathname.startsWith('/enquiry')) return 'enquiry';
+    if (pathname.startsWith('/thank-you')) return 'thanks';
+    return 'home';
+  };
+
+  useEffect(() => {
+    closeMobileNav();
+
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return undefined;
+    }
+
+    setTransitionPath(location.pathname);
+    const timer = window.setTimeout(() => setTransitionPath(''), 2000);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname]);
 
   return (
     <div className="premium-shell flex min-h-screen flex-col text-[#F5F7F6]">
       <ScrollToTop />
+      {transitionPath && (
+        <div
+          className={`cosmic-route-burst cosmic-route-burst-${getRouteVariant(transitionPath)}`}
+          aria-hidden="true"
+        >
+          <span className="cosmic-route-burst-core" />
+          <span className="cosmic-route-burst-flare" />
+        </div>
+      )}
       <header
         className={`public-hero-header inset-x-0 top-0 z-40 ${
           isHomePage ? 'absolute' : 'relative public-page-header'

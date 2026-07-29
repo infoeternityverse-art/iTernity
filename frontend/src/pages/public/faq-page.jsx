@@ -1,5 +1,6 @@
 import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
 import { cn, focusRing } from '@/components/ui/ui-utils.js';
 
 const faqItems = [
@@ -46,12 +47,12 @@ export function FaqPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-16 py-8">
-      <section className="space-y-5 text-center">
-        <p className="text-sm font-black uppercase tracking-[0.26em] text-[#8FA39B]">FAQ</p>
-        <h1 className="mx-auto max-w-3xl text-5xl font-black leading-[0.95] tracking-normal text-white md:text-6xl">
-          Questions worth asking before you request access.
-        </h1>
-      </section>
+      <PublicPageHero
+        eyebrow="FAQ"
+        title="Questions worth asking before you request access."
+        description="Clear answers for browsing packages, submitting enquiries, approvals, and credential handoff."
+        variant="faq"
+      />
 
       <section className="mx-auto max-w-4xl divide-y divide-white/10">
         {faqItems.map((item) => {

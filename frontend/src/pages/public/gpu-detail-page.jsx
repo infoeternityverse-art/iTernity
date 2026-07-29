@@ -8,11 +8,11 @@ import {
   CardContent,
   CardHeader,
   EmptyState,
-  PageHeader,
   SectionHeader,
   Skeleton,
   StatusBadge,
 } from '@/components/ui/index.js';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
 import { useGpuPackage } from '@/hooks/index.js';
 
 const formatPrice = (value, currency = 'USD') =>
@@ -53,15 +53,16 @@ export function GpuDetailPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      <PublicPageHero
+        eyebrow="GPU Package"
         title={gpuPackage.name}
         description={gpuPackage.description || 'Detailed GPU package specifications and pricing.'}
-        action={
-          <Button asChild>
-            <Link to={`/enquiry/${gpuPackage.id || gpuPackage._id}`}>Submit Enquiry</Link>
-          </Button>
-        }
-      />
+        variant="detail"
+      >
+        <Button asChild>
+          <Link to={`/enquiry/${gpuPackage.id || gpuPackage._id}`}>Submit Enquiry</Link>
+        </Button>
+      </PublicPageHero>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">

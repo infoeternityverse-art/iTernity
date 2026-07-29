@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
-import { Button, Card, CardContent, PageHeader } from '@/components/ui/index.js';
+import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Button, Card, CardContent } from '@/components/ui/index.js';
 
 export function ThankYouPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <PageHeader title="Thank you" description="Your enquiry has been submitted for review." />
+      <PublicPageHero
+        eyebrow="Submitted"
+        title="Thank you"
+        description="Your enquiry has been submitted for review."
+        variant="thanks"
+      />
       <Card>
         <CardContent className="space-y-4 p-6">
           <CheckCircle className="h-10 w-10 text-green-600" />

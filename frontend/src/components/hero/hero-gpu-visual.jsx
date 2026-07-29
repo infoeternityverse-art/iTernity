@@ -41,15 +41,31 @@ function useIsMobile() {
   return isMobile;
 }
 
-export function HeroGpuVisual() {
+export function HeroGpuVisual({ variant = 'home' }) {
   const [setNode, isInView] = useInView();
   const isMobile = useIsMobile();
+  const visualRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const scrollRef = useRef(0);
+  const getHeroElement = () =>
+    visualRef.current?.closest('.hero-panel, .public-cosmic-hero') ||
+    document.querySelector('.hero-panel, .public-cosmic-hero');
+
+  const setVisualNode = (node) => {
+    visualRef.current = node;
+    setNode(node);
+  };
+
+  const syncCssCameraVars = (x, y) => {
+    if (!visualRef.current) return;
+    visualRef.current.style.setProperty('--hero-nav-x', x.toFixed(3));
+    visualRef.current.style.setProperty('--hero-nav-y', y.toFixed(3));
+    visualRef.current.style.setProperty('--hero-nav-depth', Math.min(1, Math.hypot(x, y)).toFixed(3));
+  };
 
   useEffect(() => {
     const updateScroll = () => {
-      const hero = document.querySelector('.hero-panel');
+      const hero = getHeroElement();
       if (!hero) return;
 
       const rect = hero.getBoundingClientRect();
@@ -70,7 +86,7 @@ export function HeroGpuVisual() {
 
   useEffect(() => {
     const updatePointer = (event) => {
-      const hero = document.querySelector('.hero-panel');
+      const hero = getHeroElement();
       if (!hero) return;
 
       const rect = hero.getBoundingClientRect();
@@ -83,11 +99,13 @@ export function HeroGpuVisual() {
       if (!isInside) {
         pointerRef.current.x = 0;
         pointerRef.current.y = 0;
+        syncCssCameraVars(0, 0);
         return;
       }
 
       pointerRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointerRef.current.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+      syncCssCameraVars(pointerRef.current.x, pointerRef.current.y);
     };
 
     window.addEventListener('pointermove', updatePointer, { passive: true });
@@ -98,16 +116,29 @@ export function HeroGpuVisual() {
     const rect = event.currentTarget.getBoundingClientRect();
     pointerRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     pointerRef.current.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+    syncCssCameraVars(pointerRef.current.x, pointerRef.current.y);
   };
 
   const handlePointerLeave = () => {
     pointerRef.current.x = 0;
     pointerRef.current.y = 0;
+    syncCssCameraVars(0, 0);
   };
 
   return (
-    <div ref={setNode} className="hero-gpu-visual" aria-hidden="true">
+    <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
       <div className="hero-cosmic-composite">
+        <div className="hero-depth-landmark hero-depth-landmark-near" />
+        <div className="hero-depth-landmark hero-depth-landmark-mid" />
+        <div className="hero-depth-landmark hero-depth-landmark-far" />
+        <div className="hero-depth-star-cluster hero-depth-star-cluster-a" />
+        <div className="hero-depth-star-cluster hero-depth-star-cluster-b" />
+        <div className="hero-depth-beacon hero-depth-beacon-a" />
+        <div className="hero-depth-beacon hero-depth-beacon-b" />
+        <div className="hero-depth-light-shard hero-depth-light-shard-a" />
+        <div className="hero-depth-light-shard hero-depth-light-shard-b" />
+        <div className="hero-depth-comet hero-depth-comet-a" />
+        <div className="hero-depth-comet hero-depth-comet-b" />
         <div className="hero-aurora-curtain hero-aurora-curtain-a" />
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
         <div className="hero-aurora-reflection" />

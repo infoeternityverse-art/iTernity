@@ -53,7 +53,7 @@ export function HomePage() {
       <section className="hero-panel relative left-1/2 -ml-[50vw] -mt-12 flex min-h-screen w-screen max-w-[100vw] items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-32">
         <div className="hero-panel-grid pointer-events-none absolute inset-0" />
         <div className="hero-panel-dust pointer-events-none absolute inset-0" />
-        <HeroGpuVisual />
+        <HeroGpuVisual variant="home" />
         <ScrollIndicator />
 
         <div className="hero-content-grid mx-auto w-full max-w-7xl">
