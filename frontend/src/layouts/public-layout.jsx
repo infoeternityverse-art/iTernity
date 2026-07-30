@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Github, Linkedin, Mail, Menu, Twitter, X, Youtube } from 'lucide-react';
+import { Github, Instagram, Linkedin, Mail, Menu, X, Youtube } from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, footerNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { env } from '@/config/env.js';
@@ -12,6 +12,28 @@ import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
 /**
  * PublicLayout provides the public navbar, constrained content container, and footer.
  */
+function XLogoIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 90 92" aria-hidden="true" focusable="false">
+      <path
+        d="M53.564 38.947 87.066 0h-7.941L50.033 33.816 26.801 0H0l35.136 51.137L0 91.977h7.941l30.722-35.712 24.54 35.712H90L53.561 38.947zM42.686 51.588l-3.56-5.093L10.8 5.977h12.194l22.86 32.699 3.56 5.093 29.714 42.503H66.935L42.686 51.591z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function RedditIcon({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 256 256" aria-hidden="true" focusable="false">
+      <path
+        d="M248 128c0 14.4-11.6 26-26 26-2.2 0-4.4-.3-6.5-.8-6.7 44.4-44.9 78.4-87.5 78.4s-80.8-34-87.5-78.4c-2.1.5-4.3.8-6.5.8-14.4 0-26-11.6-26-26s11.6-26 26-26c6.4 0 12.3 2.3 16.8 6.2 16.1-11.5 37.1-18.9 60.2-20.5l11.8-55.4c.8-3.8 4.6-6.3 8.4-5.5l39.2 8.3c4.1-8 12.4-13.5 22-13.5 13.7 0 24.8 11.1 24.8 24.8s-11.1 24.8-24.8 24.8c-12.7 0-23.2-9.6-24.6-22l-32.6-6.9-9.6 45.1c25.1.8 48.1 8.3 65.4 20.7 4.6-3.9 10.4-6.2 16.9-6.2 14.5.1 26.1 11.7 26.1 26.1ZM84.8 132.6c0 10.3 8.3 18.6 18.6 18.6s18.6-8.3 18.6-18.6-8.3-18.6-18.6-18.6-18.6 8.3-18.6 18.6Zm85.5 53.9c2.9-2.9 2.9-7.6 0-10.5s-7.6-2.9-10.5 0c-7.2 7.2-18.7 10.8-31.8 10.8s-24.6-3.6-31.8-10.8c-2.9-2.9-7.6-2.9-10.5 0s-2.9 7.6 0 10.5c10.3 10.3 25.7 15.3 42.3 15.3s32-5 42.3-15.3Zm-17.7-35.3c10.3 0 18.6-8.3 18.6-18.6s-8.3-18.6-18.6-18.6-18.6 8.3-18.6 18.6 8.3 18.6 18.6 18.6Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function PublicLayout() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [transitionPath, setTransitionPath] = useState('');
@@ -20,10 +42,12 @@ export function PublicLayout() {
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
   const socialLinks = [
-    { label: 'GitHub', href: 'https://github.com', icon: Github },
-    { label: 'X', href: 'https://x.com', icon: Twitter },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com', icon: Linkedin },
-    { label: 'YouTube', href: 'https://www.youtube.com', icon: Youtube },
+    { label: 'GitHub', href: 'https://github.com', icon: Github, social: 'github' },
+    { label: 'X', href: 'https://x.com', icon: XLogoIcon, social: 'x' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com', icon: Linkedin, social: 'linkedin' },
+    { label: 'YouTube', href: 'https://www.youtube.com', icon: Youtube, social: 'youtube' },
+    { label: 'Instagram', href: 'https://www.instagram.com', icon: Instagram, social: 'instagram' },
+    { label: 'Reddit', href: 'https://www.reddit.com', icon: RedditIcon, social: 'reddit' },
   ];
   const pageLinks = [
     { label: 'GPU Marketplace', href: '/gpus' },
@@ -212,24 +236,31 @@ export function PublicLayout() {
 
             <div className="space-y-4">
               <h2 className="text-sm font-bold uppercase text-[#F5F7F6]">Social</h2>
-              <div className="flex flex-wrap gap-3" aria-label="Social links">
+              <ul className="footer-social-links" aria-label="Social links">
+                <li className="footer-social-text" aria-hidden="true">
+                  <span>HOVER</span>
+                  <span>FOR</span>
+                  <span>SOCIAL</span>
+                </li>
                 {socialLinks.map((item) => {
                   const Icon = item.icon;
 
                   return (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={item.label}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-button border border-[rgba(45,232,196,0.15)] bg-[#0E1310] text-[#8FA39B] transition hover:border-[#2DE8C4] hover:text-[#2DE8C4]"
-                    >
-                      <Icon className="h-5 w-5" />
-                    </a>
+                    <li key={item.label} className="footer-social-item">
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={item.label}
+                        data-social={item.social}
+                      >
+                        <Icon className="footer-social-icon" />
+                      </a>
+                    </li>
                   );
                 })}
-              </div>
+                <li className="footer-social-back" aria-hidden="true" />
+              </ul>
               <p className="max-w-xs text-sm leading-6 text-[#8FA39B]">
                 Follow platform updates, product progress, and GPU marketplace announcements.
               </p>
