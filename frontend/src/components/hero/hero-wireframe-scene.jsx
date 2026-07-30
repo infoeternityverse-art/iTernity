@@ -16,8 +16,13 @@ const CAMERA_REST = new THREE.Vector3(0, 1.5, 8.3);
 const LOOK_DISTANCE = 21;
 const DESKTOP_MAX_YAW = THREE.MathUtils.degToRad(40);
 const DESKTOP_MAX_PITCH = THREE.MathUtils.degToRad(23);
-const MOBILE_IDLE_YAW = THREE.MathUtils.degToRad(5);
-const MOBILE_IDLE_PITCH = THREE.MathUtils.degToRad(2.8);
+const MOBILE_MAX_YAW = THREE.MathUtils.degToRad(24);
+const MOBILE_MAX_PITCH = THREE.MathUtils.degToRad(14);
+const MOBILE_IDLE_YAW = THREE.MathUtils.degToRad(3.6);
+const MOBILE_IDLE_PITCH = THREE.MathUtils.degToRad(2.2);
+const MOBILE_CAMERA_REST = new THREE.Vector3(0, 1.42, 9.7);
+const DESKTOP_CAMERA = { position: [0, 1.5, 8.3], fov: 45, near: 0.1, far: 42 };
+const MOBILE_CAMERA = { position: [0, 1.42, 9.7], fov: 58, near: 0.1, far: 46 };
 
 const pointVertexShader = `
   attribute float aSize;
@@ -245,7 +250,7 @@ function StarTunnel({ isMobile, pointerRef, scrollRef }) {
 
   return (
     <group ref={groupRef}>
-      <points ref={pointsRef}>
+      <points key={`star-tunnel-${count}`} ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" array={data.positions} count={count} itemSize={3} />
           <bufferAttribute attach="attributes-color" array={data.colors} count={count} itemSize={3} />
@@ -294,7 +299,7 @@ function ShimmerField({ isMobile, pointerRef, scrollRef }) {
 
   return (
     <group ref={groupRef}>
-      <points>
+      <points key={`shimmer-field-${count}`}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" array={data.positions} count={count} itemSize={3} />
           <bufferAttribute attach="attributes-color" array={data.colors} count={count} itemSize={3} />
@@ -343,7 +348,7 @@ function GalaxySpiral({ pointerRef, scrollRef }) {
 
   return (
     <group ref={groupRef}>
-      <points>
+      <points key={`galaxy-spiral-${count}`}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" array={data.positions} count={count} itemSize={3} />
           <bufferAttribute attach="attributes-color" array={data.colors} count={count} itemSize={3} />
@@ -408,7 +413,7 @@ function BladeSparkles({ count }) {
   });
 
   return (
-    <points>
+    <points key={`blade-sparkles-${count}`}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" array={data.positions} count={count} itemSize={3} />
         <bufferAttribute attach="attributes-color" array={data.colors} count={count} itemSize={3} />
@@ -597,7 +602,7 @@ function MeteorStream({ isMobile, pointerRef, scrollRef }) {
   });
 
   return (
-    <group ref={groupRef}>
+    <group key={`meteor-stream-${meteors.length}`} ref={groupRef}>
       {meteors.map((meteor, index) => (
         <line key={index}>
           <bufferGeometry>
@@ -624,37 +629,40 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
     const dolly = (elapsed % 24) / 24;
     const idleYaw = Math.sin(elapsed * 0.16) * (isMobile ? MOBILE_IDLE_YAW : THREE.MathUtils.degToRad(4.5));
     const idlePitch = Math.sin(elapsed * 0.11 + 0.7) * (isMobile ? MOBILE_IDLE_PITCH : THREE.MathUtils.degToRad(2.2));
-    const idleStrafe = Math.sin(elapsed * 0.13) * (isMobile ? 0.18 : 0.38);
-    const idleLift = Math.sin(elapsed * 0.1 + 1.2) * 0.08;
-    const navScale = isMobile ? 0.95 : 1;
+    const cameraRest = isMobile ? MOBILE_CAMERA_REST : CAMERA_REST;
+    const idleStrafe = Math.sin(elapsed * 0.13) * (isMobile ? 0.12 : 0.38);
+    const idleLift = Math.sin(elapsed * 0.1 + 1.2) * (isMobile ? 0.05 : 0.08);
+    const navScale = isMobile ? 0.58 : 1;
     const response = isMobile ? 3.35 : 4.2;
+    const maxYaw = isMobile ? MOBILE_MAX_YAW : DESKTOP_MAX_YAW;
+    const maxPitch = isMobile ? MOBILE_MAX_PITCH : DESKTOP_MAX_PITCH;
 
     const targetYaw = THREE.MathUtils.clamp(
-      idleYaw + pointer.x * DESKTOP_MAX_YAW * navScale,
-      -DESKTOP_MAX_YAW,
-      DESKTOP_MAX_YAW,
+      idleYaw + pointer.x * maxYaw * navScale,
+      -maxYaw,
+      maxYaw,
     );
     const targetPitch = THREE.MathUtils.clamp(
-      idlePitch + pointer.y * DESKTOP_MAX_PITCH * navScale,
-      -DESKTOP_MAX_PITCH,
-      DESKTOP_MAX_PITCH,
+      idlePitch + pointer.y * maxPitch * navScale,
+      -maxPitch,
+      maxPitch,
     );
 
-    const forwardBias = (Math.abs(pointer.x) * 0.78 + Math.max(0, -pointer.y) * 0.24) * navScale;
+    const forwardBias = (Math.abs(pointer.x) * (isMobile ? 0.18 : 0.78) + Math.max(0, -pointer.y) * (isMobile ? 0.08 : 0.24)) * navScale;
     const targetX = THREE.MathUtils.clamp(
-      CAMERA_REST.x + idleStrafe + pointer.x * 2.35 * navScale + Math.sin(scroll * Math.PI * 2) * 0.24,
-      -2.85,
-      2.85,
+      cameraRest.x + idleStrafe + pointer.x * (isMobile ? 1.08 : 2.35) * navScale + Math.sin(scroll * Math.PI * 2) * (isMobile ? 0.12 : 0.24),
+      isMobile ? -1.35 : -2.85,
+      isMobile ? 1.35 : 2.85,
     );
     const targetY = THREE.MathUtils.clamp(
-      CAMERA_REST.y + idleLift + pointer.y * 0.72 * navScale,
-      0.88,
-      2.38,
+      cameraRest.y + idleLift + pointer.y * (isMobile ? 0.34 : 0.72) * navScale,
+      isMobile ? 1.02 : 0.88,
+      isMobile ? 2.02 : 2.38,
     );
     const targetZ = THREE.MathUtils.clamp(
-      CAMERA_REST.z - dolly * 0.72 - scroll * 0.72 + breathing - forwardBias,
-      6.55,
-      8.65,
+      cameraRest.z - dolly * (isMobile ? 0.32 : 0.72) - scroll * (isMobile ? 0.36 : 0.72) + breathing - forwardBias,
+      isMobile ? 8.9 : 6.55,
+      isMobile ? 10.25 : 8.65,
     );
 
     camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, isMobile ? 2.15 : 2.75, delta);
@@ -714,11 +722,13 @@ function HeroScene({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
 }
 
 export default function HeroWireframeScene({ isMobile, panoramaSrc = '/media/hero_home.webp', pointerRef, scrollRef }) {
+  const camera = isMobile ? MOBILE_CAMERA : DESKTOP_CAMERA;
+
   return (
     <Canvas
       dpr={[1, 1.5]}
       frameloop="always"
-      camera={{ position: [0, 1.5, 8.3], fov: 45, near: 0.1, far: 42 }}
+      camera={camera}
       gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0);

@@ -9,6 +9,7 @@ const NODE_COUNT_DESKTOP = 112;
 const NODE_COUNT_MOBILE = 48;
 const MAX_WEB_PULSES = 5;
 const MAX_SOURCE_PULSES = 4;
+const MAX_HIGHLIGHT_POINTS = 6;
 
 const pointVertexShader = `
   attribute float aSize;
@@ -166,14 +167,24 @@ function NodePoints({ cloud }) {
 
 function HighlightPoints({ cloud, activeIndices, heroIndex }) {
   const pointsRef = useRef(null);
-  const positions = useMemo(() => new Float32Array((activeIndices.length + 1) * 3), [activeIndices.length]);
-  const colors = useMemo(() => new Float32Array((activeIndices.length + 1) * 3), [activeIndices.length]);
+  const positions = useMemo(() => new Float32Array(MAX_HIGHLIGHT_POINTS * 3), []);
+  const colors = useMemo(() => new Float32Array(MAX_HIGHLIGHT_POINTS * 3), []);
   const sizes = useMemo(() => {
-    const output = new Float32Array(activeIndices.length + 1);
+    const output = new Float32Array(MAX_HIGHLIGHT_POINTS);
     output.fill(66);
-    output[activeIndices.length] = 98;
     return output;
-  }, [activeIndices.length]);
+  }, []);
+
+  useEffect(() => {
+    const visibleCount = Math.min(activeIndices.length + 1, MAX_HIGHLIGHT_POINTS);
+    sizes.fill(66);
+    sizes[Math.max(0, visibleCount - 1)] = 98;
+
+    const sizeAttribute = pointsRef.current?.geometry.attributes.aSize;
+    if (sizeAttribute) {
+      sizeAttribute.needsUpdate = true;
+    }
+  }, [activeIndices.length, sizes]);
 
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;
@@ -181,7 +192,9 @@ function HighlightPoints({ cloud, activeIndices, heroIndex }) {
     const elapsed = clock.elapsedTime;
     const positionArray = pointsRef.current.geometry.attributes.position.array;
     const colorArray = pointsRef.current.geometry.attributes.color.array;
-    const indices = [...activeIndices, heroIndex];
+    const indices = [...activeIndices, heroIndex].slice(0, MAX_HIGHLIGHT_POINTS);
+
+    pointsRef.current.geometry.setDrawRange(0, indices.length);
 
     indices.forEach((nodeIndex, outputIndex) => {
       const node = cloud.nodes[nodeIndex];
@@ -202,9 +215,9 @@ function HighlightPoints({ cloud, activeIndices, heroIndex }) {
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" array={positions} count={activeIndices.length + 1} itemSize={3} />
-        <bufferAttribute attach="attributes-color" array={colors} count={activeIndices.length + 1} itemSize={3} />
-        <bufferAttribute attach="attributes-aSize" array={sizes} count={activeIndices.length + 1} itemSize={1} />
+        <bufferAttribute attach="attributes-position" array={positions} count={MAX_HIGHLIGHT_POINTS} itemSize={3} />
+        <bufferAttribute attach="attributes-color" array={colors} count={MAX_HIGHLIGHT_POINTS} itemSize={3} />
+        <bufferAttribute attach="attributes-aSize" array={sizes} count={MAX_HIGHLIGHT_POINTS} itemSize={1} />
       </bufferGeometry>
       <shaderMaterial
         vertexShader={pointVertexShader}

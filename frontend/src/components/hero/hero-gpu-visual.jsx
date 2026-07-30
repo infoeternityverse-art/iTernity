@@ -38,7 +38,9 @@ function useInView() {
 }
 
 function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
+  const getIsMobile = () =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+  const [isMobile, setIsMobile] = useState(getIsMobile);
 
   useEffect(() => {
     const query = window.matchMedia('(max-width: 768px), (pointer: coarse)');
@@ -201,6 +203,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
         {isInView ? (
           <Suspense fallback={<div className="hero-r3f-fallback" />}>
             <HeroWireframeScene
+              key={isMobile ? 'hero-wireframe-mobile' : 'hero-wireframe-desktop'}
               isMobile={isMobile}
               pointerRef={pointerRef}
               scrollRef={scrollRef}

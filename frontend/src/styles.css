@@ -8,6 +8,11 @@
   --color-accent: #2DE8C4;
   --color-muted: #8FA39B;
   --color-glow-end: #2DE8C4;
+  --site-bg-gradient:
+    radial-gradient(circle at 12% 8%, rgba(32, 178, 170, 0.22), transparent 30%),
+    radial-gradient(circle at 82% 0%, rgba(45, 232, 196, 0.12), transparent 28%),
+    radial-gradient(ellipse 70% 42% at 50% 115%, rgba(9, 88, 78, 0.34), transparent 66%),
+    linear-gradient(180deg, #020504 0%, #06130f 42%, #020806 100%);
   font-family: "ABC Diatype", Arial, sans-serif;
   font-size: 16px;
   font-style: normal;
@@ -24,7 +29,8 @@ html.light {
 
 html.light,
 html.light body {
-  background: #060907;
+  background: var(--site-bg-gradient);
+  background-attachment: fixed;
   color: #F5F7F6;
 }
 
@@ -34,10 +40,7 @@ html.light body::after {
 }
 
 html.light .premium-shell {
-  background:
-    radial-gradient(circle at 12% 0%, rgba(45, 232, 196, 0.12), transparent 32%),
-    radial-gradient(circle at 88% 12%, rgba(232, 121, 249, 0.1), transparent 30%),
-    #060907;
+  background: var(--site-bg-gradient);
   color: #F5F7F6;
 }
 
@@ -4548,16 +4551,15 @@ body::after {
 
 .premium-shell,
 html.light .premium-shell {
-  background:
-    radial-gradient(circle at 18% 0%, rgba(45, 232, 196, 0.08), transparent 28%),
-    radial-gradient(circle at 82% 10%, rgba(45, 232, 196, 0.05), transparent 24%),
-    #060907 !important;
+  background: var(--site-bg-gradient) !important;
+  background-attachment: fixed !important;
   color: #F5F7F6 !important;
 }
 
 body,
 html.light body {
-  background: #060907 !important;
+  background: var(--site-bg-gradient) !important;
+  background-attachment: fixed !important;
   color: #F5F7F6 !important;
 }
 
@@ -4611,9 +4613,9 @@ html.light .public-hero-header .public-header-cta:focus-visible {
 
 .public-page-main::before {
   background:
-    radial-gradient(circle at 80% 10%, rgba(45, 232, 196, 0.08), transparent 28%),
-    radial-gradient(circle at 12% 18%, rgba(45, 232, 196, 0.05), transparent 24%),
-    #060907 !important;
+    radial-gradient(circle at 78% 10%, rgba(32, 178, 170, 0.16), transparent 28%),
+    radial-gradient(circle at 14% 22%, rgba(45, 232, 196, 0.1), transparent 26%),
+    linear-gradient(180deg, rgba(2, 5, 4, 0.32), rgba(6, 19, 15, 0.72)) !important;
 }
 
 .premium-shell .public-page-main {
@@ -4671,7 +4673,10 @@ html.light .public-hero-header .public-header-cta:focus-visible {
 
 footer,
 html.light footer {
-  background: #060907 !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(32, 178, 170, 0.16), transparent 34%),
+    radial-gradient(circle at 82% 100%, rgba(45, 232, 196, 0.1), transparent 30%),
+    linear-gradient(180deg, #020806 0%, #06130f 58%, #020504 100%) !important;
   color: #8FA39B !important;
 }
 
@@ -4727,7 +4732,10 @@ html.light .page-header-surface p {
 
 .premium-shell footer,
 html.light .premium-shell footer {
-  background: #060907 !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(32, 178, 170, 0.16), transparent 34%),
+    radial-gradient(circle at 82% 100%, rgba(45, 232, 196, 0.1), transparent 30%),
+    linear-gradient(180deg, #020806 0%, #06130f 58%, #020504 100%) !important;
   border-color: rgba(45, 232, 196, 0.15) !important;
 }
 
@@ -4915,7 +4923,8 @@ body,
 .public-page-main,
 html.light body,
 html.light .premium-shell {
-  background-color: #060907 !important;
+  background: var(--site-bg-gradient) !important;
+  background-attachment: fixed !important;
   color: #F5F7F6 !important;
 }
 
