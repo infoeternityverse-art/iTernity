@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Github, Instagram, Linkedin, Mail, Menu, X, Youtube } from 'lucide-react';
+import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
-import { authNavigation, footerNavigation, publicNavigation } from '@/config/navigation.config.js';
+import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { env } from '@/config/env.js';
 import { Button } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
@@ -34,10 +34,28 @@ function RedditIcon({ className }) {
   );
 }
 
+function FooterShapeVisual({ type }) {
+  return (
+    <svg
+      className={`footer-ocean-shape-svg footer-ocean-shape-${type}`}
+      viewBox="0 0 180 104"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path className="footer-ocean-shape-fill" d="M21 31 48 10h84l27 21-69 62L21 31Z" />
+      <path className="footer-ocean-facet footer-ocean-facet-light" d="M48 10 63 31H21L48 10Zm84 0-15 21h42l-27-21ZM63 31h54L90 93 63 31Z" />
+      <path className="footer-ocean-facet footer-ocean-facet-dark" d="M48 10h84l-15 21H63L48 10ZM21 31h42l27 62-69-62Zm96 0h42L90 93l27-62Z" />
+      <path className="footer-ocean-shape-line" d="M21 31h138M48 10l15 21 27 62 27-62 15-21M63 31h54" />
+    </svg>
+  );
+}
+
 export function PublicLayout() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [transitionPath, setTransitionPath] = useState('');
+  const [isFooterVisible, setIsFooterVisible] = useState(false);
   const hasMountedRef = useRef(false);
+  const footerRef = useRef(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -49,18 +67,23 @@ export function PublicLayout() {
     { label: 'Instagram', href: 'https://www.instagram.com', icon: Instagram, social: 'instagram' },
     { label: 'Reddit', href: 'https://www.reddit.com', icon: RedditIcon, social: 'reddit' },
   ];
-  const pageLinks = [
-    { label: 'GPU Marketplace', href: '/gpus' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-    { label: 'FAQ', href: '/faq' },
-  ];
   const legalLinks = [
     { label: 'Privacy Policy', href: '/faq' },
     { label: 'Terms of Access', href: '/faq' },
     { label: 'Security', href: '/faq' },
     { label: 'Acceptable Use', href: '/faq' },
   ];
+  const footerOceanLinks = [
+    { label: 'Home', href: '/', gem: 'teal' },
+    { label: 'GPU Marketplace', href: '/gpus', gem: 'violet' },
+    { label: 'About Us', href: '/about', gem: 'blue' },
+    { label: 'Contact', href: '/contact', gem: 'gold' },
+    { label: 'Get Started', href: '/login', gem: 'teal' },
+  ].map((item, index) => ({
+    ...item,
+    type: 'gem',
+    className: `footer-ocean-item-primary footer-ocean-item-${index + 1} footer-gem-${item.gem}`,
+  }));
   const getRouteVariant = (pathname) => {
     if (pathname === '/') return 'home';
     if (pathname.startsWith('/gpus/')) return 'detail';
@@ -85,6 +108,21 @@ export function PublicLayout() {
     const timer = window.setTimeout(() => setTransitionPath(''), 2000);
     return () => window.clearTimeout(timer);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFooterVisible(entry.isIntersecting);
+      },
+      { threshold: 0.08 },
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="premium-shell flex min-h-screen flex-col text-[#F5F7F6]">
@@ -122,9 +160,15 @@ export function PublicLayout() {
               <Button
                 asChild
                 variant="outline"
-                className="public-header-cta h-auto justify-self-end rounded-button border-[#2DE8C4] bg-transparent px-5 py-1.5 text-base font-normal text-[#F5F7F6] shadow-[0_0_26px_rgba(45,232,196,0.14)] hover:border-[#8CFFF1] hover:bg-transparent hover:text-[#F5F7F6]"
+                className="public-header-cta public-get-started-button h-auto justify-self-end"
               >
-                <Link to={authNavigation[0].href}>{authNavigation[0].label}</Link>
+                <Link to={authNavigation[0].href}>
+                  <span className="public-get-started-border" aria-hidden="true" />
+                  <span className="public-get-started-inner">
+                    <span>Let's get started</span>
+                    <ArrowRight className="public-get-started-icon" />
+                  </span>
+                </Link>
               </Button>
             </div>
 
@@ -163,7 +207,10 @@ export function PublicLayout() {
         </div>
       </header>
 
-      <nav className="floating-bottom-nav" aria-label="Primary navigation">
+      <nav
+        className={`floating-bottom-nav ${isFooterVisible ? 'floating-bottom-nav-hidden' : ''}`}
+        aria-label="Primary navigation"
+      >
         {publicNavigation.map((item) => (
           <NavLink key={item.href} item={item} />
         ))}
@@ -177,7 +224,10 @@ export function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24">
+      <footer
+        ref={footerRef}
+        className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
+      >
         <video
           className="footer-biolume-video"
           autoPlay
@@ -193,7 +243,7 @@ export function PublicLayout() {
         <div className="footer-seagreen-reflection" aria-hidden="true" />
         <div className="premium-divider" />
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr_0.7fr_0.7fr_0.9fr]">
+          <div className="footer-content-grid">
             <div className="max-w-md space-y-5">
               <Link
                 to="/"
@@ -201,89 +251,80 @@ export function PublicLayout() {
               >
                 <BrandMark className="h-11 w-48" />
               </Link>
-              <p className="text-sm leading-6 text-[#8FA39B]">
+              {/* <p className="text-sm leading-6 text-[#8FA39B]">
                 A professional GPU cloud marketplace for browsing packages, submitting reviewed
                 enquiries, and receiving credentials through a controlled admin workflow.
-              </p>
+              </p> */}
+            </div>
+
+            <div className="footer-ocean-nav-panel">
+              <nav className="footer-ocean-nav" aria-label="Footer navigation">
+                {footerOceanLinks.map((item) => (
+                  <Link
+                    key={`${item.type}-${item.label}`}
+                    to={item.href}
+                    className={`footer-ocean-link footer-ocean-link-${item.type} ${item.className}`}
+                  >
+                    <span className="footer-link-stars" aria-hidden="true" />
+                    <span className="footer-link-glow" aria-hidden="true">
+                      <span />
+                      <span />
+                    </span>
+                    <span className="footer-ocean-label">{item.label}</span>
+                    {item.label === 'Get Started' && <ArrowRight className="footer-ocean-arrow" aria-hidden="true" />}
+                  </Link>
+                ))}
+              </nav>
               <a
                 href={`mailto:${env.supportEmail}`}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[#F5F7F6] transition hover:text-[#2DE8C4]"
+                className="footer-mail-card"
               >
-                <Mail className="h-4 w-4" />
-                {env.supportEmail}
+                <span className="footer-mail-letter">
+                  <span className="footer-mail-title">Mail us</span>
+                  <span className="footer-mail-address">{env.supportEmail}</span>
+                </span>
+                <span className="footer-mail-seal">IV</span>
+                <span className="footer-mail-fold footer-mail-fold-top" />
+                <span className="footer-mail-fold footer-mail-fold-left" />
+                <span className="footer-mail-fold footer-mail-fold-right" />
+                <span className="footer-mail-fold footer-mail-fold-bottom" />
               </a>
-            </div>
 
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase text-[#F5F7F6]">Explore</h2>
-              <nav aria-label="Footer navigation" className="grid gap-3 text-sm text-[#8FA39B]">
-                {footerNavigation.map((item) => (
-                  <Link key={item.href} to={item.href} className="transition hover:text-[#2DE8C4]">
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase text-[#F5F7F6]">Pages</h2>
-              <nav aria-label="Footer pages" className="grid gap-3 text-sm text-[#8FA39B]">
-                {pageLinks.map((item) => (
-                  <Link key={item.href} to={item.href} className="transition hover:text-[#2DE8C4]">
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase text-[#F5F7F6]">Legal</h2>
-              <nav aria-label="Footer legal" className="grid gap-3 text-sm text-[#8FA39B]">
-                {legalLinks.map((item) => (
-                  <Link key={item.label} to={item.href} className="transition hover:text-[#2DE8C4]">
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold uppercase text-[#F5F7F6]">Social</h2>
-              <ul className="footer-social-links" aria-label="Social links">
-                <li className="footer-social-text" aria-hidden="true">
-                  <span>HOVER</span>
-                  <span>FOR</span>
-                  <span>SOCIAL</span>
-                </li>
-                {socialLinks.map((item) => {
+              <ul className="footer-ocean-social" aria-label="Social links">
+                {socialLinks.map((item, index) => {
                   const Icon = item.icon;
 
                   return (
-                    <li key={item.label} className="footer-social-item">
+                    <li key={item.label} className={`footer-ocean-social-item footer-ocean-social-${index + 1}`}>
                       <a
                         href={item.href}
                         target="_blank"
                         rel="noreferrer"
                         aria-label={item.label}
                         data-social={item.social}
+                        className="footer-ocean-social-link footer-gem-teal"
                       >
-                        <Icon className="footer-social-icon" />
+                        <FooterShapeVisual type="gem" />
+                        <Icon className="footer-ocean-social-icon" />
                       </a>
                     </li>
                   );
                 })}
-                <li className="footer-social-back" aria-hidden="true" />
               </ul>
-              <p className="max-w-xs text-sm leading-6 text-[#8FA39B]">
-                Follow platform updates, product progress, and GPU marketplace announcements.
-              </p>
             </div>
           </div>
 
-          <div className="mt-12 border-t border-[#F5F7F6]/10 pt-6 text-sm text-[#8FA39B]">
+          <div className="footer-legal-row">
             <p>
               © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
             </p>
+            <nav className="footer-legal-links" aria-label="Footer legal">
+              {legalLinks.map((item) => (
+                <Link key={item.label} to={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
       </footer>
