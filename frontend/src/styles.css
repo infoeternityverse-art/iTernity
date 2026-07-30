@@ -4670,7 +4670,10 @@ html.light .public-hero-header .public-header-cta:focus-visible {
   z-index: 20 !important;
   display: block !important;
   flex: 0 0 auto !important;
-  width: 100% !important;
+  left: 50% !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: -50vw !important;
   margin-top: 4rem !important;
   padding-bottom: 6rem !important;
   visibility: visible !important;
@@ -4713,14 +4716,83 @@ html.light .public-hero-header .public-header-cta:focus-visible {
 footer,
 html.light footer {
   background:
-    radial-gradient(circle at 18% 0%, rgba(32, 178, 170, 0.16), transparent 34%),
-    radial-gradient(circle at 82% 100%, rgba(45, 232, 196, 0.1), transparent 30%),
-    linear-gradient(180deg, #020806 0%, #06130f 58%, #020504 100%) !important;
+    linear-gradient(180deg, rgba(1, 8, 7, 0.18), rgba(1, 8, 7, 0.62)),
+    url('/media/footer_bg.jpeg') center / cover no-repeat,
+    linear-gradient(180deg, #010807 0%, #031411 46%, #020504 100%) !important;
   color: #8FA39B !important;
 }
 
 footer a:hover {
   color: #2DE8C4 !important;
+}
+
+.footer-biolume-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 43%;
+  opacity: 0.28;
+  filter:
+    brightness(0.68)
+    contrast(1.18)
+    saturate(1.58)
+    hue-rotate(10deg)
+    blur(0.2px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.footer-biolume-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 46% 34% at 18% 12%, rgba(45, 232, 196, 0.18), transparent 68%),
+    radial-gradient(ellipse 54% 38% at 82% 82%, rgba(45, 232, 196, 0.12), transparent 70%),
+    linear-gradient(180deg, rgba(1, 8, 8, 0.42) 0%, rgba(1, 9, 8, 0.62) 48%, rgba(1, 5, 4, 0.88) 100%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.footer-seagreen-reflection {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: 46%;
+  opacity: 0.7;
+  background:
+    radial-gradient(ellipse 52% 22% at 52% 42%, rgba(45, 232, 196, 0.26), transparent 70%),
+    linear-gradient(98deg, transparent 0 12%, rgba(45, 232, 196, 0.08) 22%, transparent 34% 100%),
+    linear-gradient(84deg, transparent 0 28%, rgba(140, 255, 241, 0.07) 42%, transparent 58% 100%),
+    repeating-linear-gradient(
+      177deg,
+      transparent 0 24px,
+      rgba(45, 232, 196, 0.07) 26px 27px,
+      transparent 30px 58px
+    );
+  filter: blur(0.6px);
+  mix-blend-mode: screen;
+  mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 76%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 22%, black 76%, transparent 100%);
+  pointer-events: none;
+}
+
+.premium-shell .public-footer .premium-divider {
+  position: relative;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-biolume-video {
+    display: none;
+  }
+
+  .footer-seagreen-reflection {
+    opacity: 0.46;
+  }
 }
 
 .premium-shell .premium-glass,
@@ -4772,9 +4844,9 @@ html.light .page-header-surface p {
 .premium-shell footer,
 html.light .premium-shell footer {
   background:
-    radial-gradient(circle at 18% 0%, rgba(32, 178, 170, 0.16), transparent 34%),
-    radial-gradient(circle at 82% 100%, rgba(45, 232, 196, 0.1), transparent 30%),
-    linear-gradient(180deg, #020806 0%, #06130f 58%, #020504 100%) !important;
+    linear-gradient(180deg, rgba(1, 8, 7, 0.18), rgba(1, 8, 7, 0.62)),
+    url('/media/footer_bg.jpeg') center / cover no-repeat,
+    linear-gradient(180deg, #010807 0%, #031411 46%, #020504 100%) !important;
   border-color: rgba(45, 232, 196, 0.15) !important;
 }
 

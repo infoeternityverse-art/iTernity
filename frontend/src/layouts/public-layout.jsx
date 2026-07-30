@@ -177,9 +177,22 @@ export function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="public-footer relative z-20 mt-16 flex-none border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24">
+      <footer className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24">
+        <video
+          className="footer-biolume-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        >
+          <source src="/media/footer.mp4" type="video/mp4" />
+        </video>
+        <div className="footer-biolume-overlay" aria-hidden="true" />
+        <div className="footer-seagreen-reflection" aria-hidden="true" />
         <div className="premium-divider" />
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr_0.7fr_0.7fr_0.9fr]">
             <div className="max-w-md space-y-5">
               <Link
