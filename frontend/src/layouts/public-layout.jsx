@@ -251,10 +251,9 @@ export function PublicLayout() {
               >
                 <BrandMark className="h-11 w-48" />
               </Link>
-              {/* <p className="text-sm leading-6 text-[#8FA39B]">
-                A professional GPU cloud marketplace for browsing packages, submitting reviewed
-                enquiries, and receiving credentials through a controlled admin workflow.
-              </p> */}
+              <p className="text-sm leading-6 text-[#8FA39B]">
+                Beyond Infinite Intelligence
+              </p>
             </div>
 
             <div className="footer-ocean-nav-panel">
