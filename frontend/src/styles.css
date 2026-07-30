@@ -312,7 +312,9 @@ select {
   display: grid;
   min-height: min(420px, 100svh);
   place-items: center;
-  background: #001f1f;
+  background:
+    radial-gradient(circle at 50% 54%, rgba(45, 232, 196, 0.08), transparent 24%),
+    #001f1f;
   color: #F5F7F6;
 }
 
@@ -324,24 +326,49 @@ select {
 }
 
 .spark-loader-inner {
-  display: inline-flex;
+  display: grid;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.3rem, 3vw, 2.4rem);
+  justify-items: center;
+  gap: 1.15rem;
   transform: translateY(1vh);
 }
 
-.spark-loader-dot {
+.spark-loader-steps {
+  position: relative;
   display: block;
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
+  width: 130px;
+  height: 120px;
+  margin: 0 auto;
+}
+
+.spark-loader-steps::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 88px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: #2DE8C4;
   box-shadow:
-    0 0 18px rgba(45, 232, 196, 0.9),
-    0 0 44px rgba(45, 232, 196, 0.42),
-    0 0 72px rgba(45, 232, 196, 0.2);
-  animation: spark-loader-bounce 1.05s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    0 0 14px rgba(45, 232, 196, 0.76),
+    0 0 34px rgba(45, 232, 196, 0.3);
+  animation: spark-loader-bounce 1.15s ease-in-out infinite;
+}
+
+.spark-loader-steps::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 45px;
+  height: 7px;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 #F5F7F6,
+    -35px 40px 0 #F5F7F6,
+    -70px 80px 0 #F5F7F6;
 }
 
 .spark-loader-text {
@@ -354,21 +381,32 @@ select {
 }
 
 @keyframes spark-loader-bounce {
-  0%,
+  0% {
+    transform: translate3d(0, 0, 0) scale(1, 0.74);
+  }
+
+  12% {
+    transform: translate3d(0, -16px, 0) scale(0.9, 1.08);
+  }
+
+  28% {
+    transform: translate3d(-35px, 40px, 0) scale(1, 0.76);
+  }
+
+  44% {
+    transform: translate3d(-35px, 24px, 0) scale(0.9, 1.08);
+  }
+
+  60% {
+    transform: translate3d(-70px, 80px, 0) scale(1, 0.76);
+  }
+
+  76% {
+    transform: translate3d(-70px, 64px, 0) scale(0.9, 1.08);
+  }
+
   100% {
-    transform: translateY(0) scale(1);
-  }
-
-  35% {
-    transform: translateY(-18px) scale(0.96);
-  }
-
-  58% {
-    transform: translateY(4px) scale(0.88);
-  }
-
-  72% {
-    transform: translateY(-6px) scale(1.08);
+    transform: translate3d(0, 0, 0) scale(1, 0.74);
   }
 }
 
@@ -378,9 +416,9 @@ select {
     padding-inline: 1.5rem;
   }
 
-  .spark-loader-dot {
-    width: 10px;
-    height: 10px;
+  .spark-loader-steps {
+    transform: scale(0.78);
+    transform-origin: center;
   }
 
   .spark-loader-text {
@@ -389,7 +427,8 @@ select {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spark-loader-dot {
+  .spark-loader-steps::before,
+  .spark-loader-steps::after {
     animation: none;
   }
 }
@@ -5079,6 +5118,142 @@ html.light .rounded-card:hover::after {
 html.light .rounded-card > * {
   position: relative;
   z-index: 1;
+}
+
+.gpu-market-card {
+  isolation: isolate;
+  overflow: hidden !important;
+  display: grid !important;
+  min-height: 365px;
+  border-color: rgba(45, 232, 196, 0.24) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(45, 232, 196, 0.1), transparent 34%),
+    linear-gradient(180deg, #07110E 0%, #030806 58%, #020504 100%) !important;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(245, 247, 246, 0.07),
+    inset 0 0 0 1px rgba(45, 232, 196, 0.08) !important;
+}
+
+.gpu-market-card-summary,
+.gpu-market-card-details {
+  grid-area: 1 / 1;
+}
+
+.gpu-market-card-summary {
+  display: grid;
+  min-height: 365px;
+  place-items: center;
+  padding: 2rem;
+  color: #F5F7F6;
+  text-align: center;
+  transition:
+    opacity 0.42s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gpu-market-card-summary p {
+  max-width: 11ch;
+  margin: 0;
+  color: #F5F7F6;
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+  font-weight: 800;
+  line-height: 1;
+  text-shadow:
+    0 0 24px rgba(45, 232, 196, 0.3),
+    0 0 54px rgba(32, 178, 170, 0.18);
+}
+
+.gpu-market-card-details {
+  display: flex;
+  min-height: 365px;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+  transition:
+    opacity 0.36s ease,
+    transform 0.46s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.gpu-market-card:hover .gpu-market-card-summary,
+.gpu-market-card:focus-within .gpu-market-card-summary {
+  opacity: 0;
+  transform: translateY(-18px) scale(0.96);
+}
+
+.gpu-market-card:hover .gpu-market-card-details,
+.gpu-market-card:focus-within .gpu-market-card-details {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.gpu-market-card::before {
+  inset: 0 !important;
+  z-index: 0 !important;
+  border: 2px solid rgba(45, 232, 196, 0.78);
+  border-radius: 8px;
+  opacity: 0 !important;
+  background: transparent !important;
+  filter: none !important;
+  transform: rotate(10deg);
+  transition:
+    inset 0.5s ease-in-out,
+    transform 0.5s ease-in-out,
+    opacity 0.28s ease !important;
+}
+
+.gpu-market-card::after {
+  content: none !important;
+}
+
+.gpu-market-card:hover,
+.gpu-market-card:focus-within {
+  border-radius: 8px;
+  box-shadow:
+    0 28px 84px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(45, 232, 196, 0.16),
+    inset 0 1px 0 rgba(245, 247, 246, 0.08),
+    inset 0 0 0 1px rgba(45, 232, 196, 0.1) !important;
+  transition:
+    border-radius 0.5s ease-in-out,
+    box-shadow 0.28s ease !important;
+}
+
+.gpu-market-card:hover::before,
+.gpu-market-card:focus-within::before {
+  inset: 15px !important;
+  opacity: 0.76 !important;
+  transform: rotate(0);
+}
+
+.gpu-market-card-pricing {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(45, 232, 196, 0.08), transparent 36%),
+    rgba(1, 8, 6, 0.9) !important;
+  border-color: rgba(45, 232, 196, 0.14) !important;
+}
+
+.gpu-market-card h3,
+.gpu-market-card .text-white {
+  color: #F5F7F6 !important;
+}
+
+.gpu-market-card .text-\[\#8FA39B\] {
+  color: #9FB5AD !important;
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .gpu-market-card-summary {
+    display: none;
+  }
+
+  .gpu-market-card-details {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
 }
 
 .premium-shell input,
