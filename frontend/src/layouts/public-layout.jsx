@@ -69,6 +69,7 @@ export function PublicLayout() {
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const hasMountedRef = useRef(false);
   const footerRef = useRef(null);
+  const footerVideoRef = useRef(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -134,6 +135,79 @@ export function PublicLayout() {
 
     observer.observe(footer);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const video = footerVideoRef.current;
+    if (!video) return undefined;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let animationFrame = 0;
+    let lastFrameTime = 0;
+    let isReversing = false;
+
+    const playForward = () => {
+      isReversing = false;
+      lastFrameTime = 0;
+      video.playbackRate = 1;
+
+      if (video.currentTime <= 0.08) {
+        video.currentTime = 0.08;
+      }
+
+      const playPromise = video.play();
+      if (playPromise) {
+        playPromise.catch(() => {});
+      }
+    };
+
+    const reverseStep = (timestamp) => {
+      if (!isReversing) return;
+
+      if (!lastFrameTime) {
+        lastFrameTime = timestamp;
+      }
+
+      const elapsedSeconds = (timestamp - lastFrameTime) / 1000;
+      lastFrameTime = timestamp;
+      video.currentTime = Math.max(0.08, video.currentTime - elapsedSeconds);
+
+      if (video.currentTime <= 0.08) {
+        playForward();
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(reverseStep);
+    };
+
+    const playBackward = () => {
+      if (reducedMotionQuery.matches) {
+        video.currentTime = 0.08;
+        playForward();
+        return;
+      }
+
+      video.pause();
+      isReversing = true;
+      lastFrameTime = 0;
+      animationFrame = window.requestAnimationFrame(reverseStep);
+    };
+
+    video.loop = false;
+    video.addEventListener('ended', playBackward);
+
+    if (video.readyState >= 1) {
+      playForward();
+    } else {
+      video.addEventListener('loadedmetadata', playForward, { once: true });
+    }
+
+    return () => {
+      isReversing = false;
+      window.cancelAnimationFrame(animationFrame);
+      video.removeEventListener('ended', playBackward);
+      video.removeEventListener('loadedmetadata', playForward);
+    };
   }, []);
 
   return (
@@ -241,10 +315,10 @@ export function PublicLayout() {
         className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
       >
         <video
+          ref={footerVideoRef}
           className="footer-biolume-video"
           autoPlay
           muted
-          loop
           playsInline
           preload="metadata"
           aria-hidden="true"
