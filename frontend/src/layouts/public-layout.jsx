@@ -69,7 +69,6 @@ export function PublicLayout() {
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const hasMountedRef = useRef(false);
   const footerRef = useRef(null);
-  const footerVideoRef = useRef(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -137,79 +136,6 @@ export function PublicLayout() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const video = footerVideoRef.current;
-    if (!video) return undefined;
-
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let animationFrame = 0;
-    let lastFrameTime = 0;
-    let isReversing = false;
-
-    const playForward = () => {
-      isReversing = false;
-      lastFrameTime = 0;
-      video.playbackRate = 1;
-
-      if (video.currentTime <= 0.08) {
-        video.currentTime = 0.08;
-      }
-
-      const playPromise = video.play();
-      if (playPromise) {
-        playPromise.catch(() => {});
-      }
-    };
-
-    const reverseStep = (timestamp) => {
-      if (!isReversing) return;
-
-      if (!lastFrameTime) {
-        lastFrameTime = timestamp;
-      }
-
-      const elapsedSeconds = (timestamp - lastFrameTime) / 1000;
-      lastFrameTime = timestamp;
-      video.currentTime = Math.max(0.08, video.currentTime - elapsedSeconds);
-
-      if (video.currentTime <= 0.08) {
-        playForward();
-        return;
-      }
-
-      animationFrame = window.requestAnimationFrame(reverseStep);
-    };
-
-    const playBackward = () => {
-      if (reducedMotionQuery.matches) {
-        video.currentTime = 0.08;
-        playForward();
-        return;
-      }
-
-      video.pause();
-      isReversing = true;
-      lastFrameTime = 0;
-      animationFrame = window.requestAnimationFrame(reverseStep);
-    };
-
-    video.loop = false;
-    video.addEventListener('ended', playBackward);
-
-    if (video.readyState >= 1) {
-      playForward();
-    } else {
-      video.addEventListener('loadedmetadata', playForward, { once: true });
-    }
-
-    return () => {
-      isReversing = false;
-      window.cancelAnimationFrame(animationFrame);
-      video.removeEventListener('ended', playBackward);
-      video.removeEventListener('loadedmetadata', playForward);
-    };
-  }, []);
-
   return (
     <div className="premium-shell flex min-h-screen flex-col text-[#F5F7F6]">
       <ScrollToTop />
@@ -234,7 +160,7 @@ export function PublicLayout() {
               onClick={closeMobileNav}
               className="flex items-center text-base font-normal tracking-normal text-[#F5F7F6]"
             >
-              <BrandMark className="h-10 w-44" />
+              <BrandMark className="h-16 w-20" />
             </Link>
 
             <div className="hidden contents lg:contents">
@@ -315,12 +241,13 @@ export function PublicLayout() {
         className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
       >
         <video
-          ref={footerVideoRef}
           className="footer-biolume-video"
           autoPlay
+          loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
+          poster="/media/footer_bg.jpeg"
           aria-hidden="true"
         >
           <source src="/media/footer.mp4" type="video/mp4" />
@@ -335,7 +262,7 @@ export function PublicLayout() {
                 to="/"
                 className="inline-flex items-center text-lg font-black tracking-normal text-[#F5F7F6]"
               >
-                <BrandMark className="h-11 w-48" />
+                <BrandMark className="h-20 w-28" />
               </Link>
               <p className="text-sm leading-6 text-[#8FA39B]">
                 Beyond Infinite Intelligence
