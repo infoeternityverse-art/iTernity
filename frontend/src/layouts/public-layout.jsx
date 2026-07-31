@@ -1,6 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
+import {
+  ArrowRight,
+  Cpu,
+  Github,
+  Home,
+  Info,
+  Instagram,
+  Linkedin,
+  Mail,
+  Menu,
+  Rocket,
+  X,
+  Youtube,
+} from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { env } from '@/config/env.js';
@@ -74,15 +87,14 @@ export function PublicLayout() {
     { label: 'Acceptable Use', href: '/faq' },
   ];
   const footerOceanLinks = [
-    { label: 'Home', href: '/', gem: 'teal' },
-    { label: 'GPU Marketplace', href: '/gpus', gem: 'violet' },
-    { label: 'About Us', href: '/about', gem: 'blue' },
-    { label: 'Contact', href: '/contact', gem: 'gold' },
-    { label: 'Get Started', href: '/login', gem: 'teal' },
+    { label: 'Home', href: '/', gem: 'orange', icon: Home },
+    { label: 'GPU Marketplace', href: '/gpus', gem: 'violet', icon: Cpu },
+    { label: 'About', href: '/about', gem: 'rose', icon: Info },
+    { label: 'Contact', href: '/contact', gem: 'gold', icon: Mail },
+    { label: 'Get Started', href: '/login', gem: 'green', icon: Rocket },
   ].map((item, index) => ({
     ...item,
-    type: 'gem',
-    className: `footer-ocean-item-primary footer-ocean-item-${index + 1} footer-gem-${item.gem}`,
+    className: `footer-hanging-item footer-hanging-item-${index + 1} footer-bubble-${item.gem}`,
   }));
   const getRouteVariant = (pathname) => {
     if (pathname === '/') return 'home';
@@ -258,21 +270,28 @@ export function PublicLayout() {
 
             <div className="footer-ocean-nav-panel">
               <nav className="footer-ocean-nav" aria-label="Footer navigation">
-                {footerOceanLinks.map((item) => (
-                  <Link
-                    key={`${item.type}-${item.label}`}
-                    to={item.href}
-                    className={`footer-ocean-link footer-ocean-link-${item.type} ${item.className}`}
-                  >
-                    <span className="footer-link-stars" aria-hidden="true" />
-                    <span className="footer-link-glow" aria-hidden="true">
-                      <span />
-                      <span />
-                    </span>
-                    <span className="footer-ocean-label">{item.label}</span>
-                    {item.label === 'Get Started' && <ArrowRight className="footer-ocean-arrow" aria-hidden="true" />}
-                  </Link>
-                ))}
+                {footerOceanLinks.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <Link
+                      key={item.label}
+                      to={item.href}
+                      aria-label={item.label}
+                      className={`footer-ocean-link footer-hanging-bubble ${item.className}`}
+                    >
+                      <span className="footer-bubble-string" aria-hidden="true" />
+                      <span className="footer-bubble-ring" aria-hidden="true" />
+                      <span className="footer-bubble-liquid" aria-hidden="true" />
+                      <span className="footer-bubble-sparkles" aria-hidden="true" />
+                      <span className="footer-bubble-shine" aria-hidden="true" />
+                      <Icon className="footer-bubble-icon" aria-hidden="true" />
+                      <span className="footer-bubble-tooltip" role="tooltip">
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
               </nav>
               <a
                 href={`mailto:${env.supportEmail}`}
@@ -290,6 +309,11 @@ export function PublicLayout() {
               </a>
 
               <ul className="footer-ocean-social" aria-label="Social links">
+                <li className="footer-social-prompt" aria-hidden="true">
+                  <span>Hover</span>
+                  <span>For</span>
+                  <span>Social</span>
+                </li>
                 {socialLinks.map((item, index) => {
                   const Icon = item.icon;
 
