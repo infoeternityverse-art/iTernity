@@ -721,7 +721,13 @@ function HeroScene({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
   );
 }
 
-export default function HeroWireframeScene({ isMobile, panoramaSrc = '/media/hero_home.webp', pointerRef, scrollRef }) {
+export default function HeroWireframeScene({
+  isMobile,
+  panoramaSrc = '/media/hero_home.webp',
+  pointerRef,
+  scrollRef,
+  onReady,
+}) {
   const camera = isMobile ? MOBILE_CAMERA : DESKTOP_CAMERA;
 
   return (
@@ -733,6 +739,7 @@ export default function HeroWireframeScene({ isMobile, panoramaSrc = '/media/her
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0);
         gl.outputColorSpace = THREE.SRGBColorSpace;
+        onReady?.();
       }}
     >
       <ambientLight intensity={0.34} />

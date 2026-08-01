@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { SparkLoader } from '@/components/common/spark-loader.jsx';
 
-const HeroWireframeScene = lazy(() => import('./hero-wireframe-scene.jsx'));
+const loadHeroWireframeScene = () => import('./hero-wireframe-scene.jsx');
+const HeroWireframeScene = lazy(loadHeroWireframeScene);
 
 const HERO_BACKGROUNDS = {
   home: { src: '/media/hero_home.webp' },
@@ -19,6 +21,11 @@ function useInView() {
 
   useEffect(() => {
     if (!node) return undefined;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsInView(true);
+      return undefined;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -57,6 +64,7 @@ function useIsMobile() {
 export function HeroGpuVisual({ variant = 'home' }) {
   const [setNode, isInView] = useInView();
   const isMobile = useIsMobile();
+  const [isSceneReady, setIsSceneReady] = useState(false);
   const visualRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const scrollRef = useRef(0);
@@ -69,6 +77,10 @@ export function HeroGpuVisual({ variant = 'home' }) {
     visualRef.current = node;
     setNode(node);
   };
+
+  useEffect(() => {
+    loadHeroWireframeScene();
+  }, []);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
@@ -201,19 +213,29 @@ export function HeroGpuVisual({ variant = 'home' }) {
       </div>
       <div className="hero-r3f-shell" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
         {isInView ? (
-          <Suspense fallback={<div className="hero-r3f-fallback" />}>
+          <Suspense fallback={<HeroSceneLoader />}>
             <HeroWireframeScene
               key={isMobile ? 'hero-wireframe-mobile' : 'hero-wireframe-desktop'}
               isMobile={isMobile}
               pointerRef={pointerRef}
               scrollRef={scrollRef}
               panoramaSrc={background.src}
+              onReady={() => setIsSceneReady(true)}
             />
           </Suspense>
         ) : (
-          <div className="hero-r3f-fallback" />
+          <HeroSceneLoader />
         )}
+        {!isSceneReady && <HeroSceneLoader overlay />}
       </div>
+    </div>
+  );
+}
+
+function HeroSceneLoader({ overlay = false }) {
+  return (
+    <div className={`hero-r3f-loader ${overlay ? 'hero-r3f-loader-overlay' : ''}`}>
+      <SparkLoader label="Loading GPU universe" fullScreen={false} />
     </div>
   );
 }

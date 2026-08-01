@@ -3830,6 +3830,43 @@ body::after {
     #060907;
 }
 
+.hero-r3f-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(45, 232, 196, 0.16), transparent 28rem),
+    rgba(1, 8, 7, 0.58);
+  backdrop-filter: blur(10px);
+}
+
+.hero-r3f-loader-overlay {
+  pointer-events: none;
+}
+
+.hero-r3f-loader .spark-loader {
+  min-height: 0;
+  width: min(100%, 24rem);
+  background: transparent;
+}
+
+.hero-r3f-loader .spark-loader-inner {
+  transform: none;
+}
+
+.hero-r3f-loader .spark-loader-steps {
+  transform: scale(0.72);
+  transform-origin: center;
+}
+
+.hero-r3f-loader .spark-loader-text {
+  font-size: clamp(0.9rem, 1vw, 1.05rem);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .hero-scroll-indicator {
   position: fixed;
   right: 22px;
