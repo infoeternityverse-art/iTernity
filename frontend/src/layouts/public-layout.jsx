@@ -70,12 +70,12 @@ export function PublicLayout() {
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
   const socialLinks = [
-    { label: 'GitHub', href: 'https://github.com', icon: Github, social: 'github' },
     { label: 'X', href: 'https://x.com', icon: XLogoIcon, social: 'x' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com', icon: Linkedin, social: 'linkedin' },
-    { label: 'YouTube', href: 'https://www.youtube.com', icon: Youtube, social: 'youtube' },
-    { label: 'Instagram', href: 'https://www.instagram.com', icon: Instagram, social: 'instagram' },
     { label: 'Reddit', href: 'https://www.reddit.com', icon: RedditIcon, social: 'reddit' },
+    { label: 'GitHub', href: 'https://github.com', icon: Github, social: 'github' },
+    { label: 'YouTube', href: 'https://www.youtube.com', icon: Youtube, social: 'youtube' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com', icon: Linkedin, social: 'linkedin' },
+    { label: 'Instagram', href: 'https://www.instagram.com', icon: Instagram, social: 'instagram' },
   ];
   const legalLinks = [
     { label: 'Privacy Policy', href: '/faq' },
