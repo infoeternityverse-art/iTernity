@@ -650,9 +650,9 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
 
     const forwardBias = (Math.abs(pointer.x) * 0.78 + Math.max(0, -pointer.y) * 0.24) * navScale;
     const targetX = THREE.MathUtils.clamp(
-      cameraRest.x + idleStrafe + pointer.x * (isMobile ? 2.2 : 2.35) * navScale + Math.sin(scroll * Math.PI * 2) * (isMobile ? 0.2 : 0.24),
-      isMobile ? -2.65 : -2.85,
-      isMobile ? 2.65 : 2.85,
+      cameraRest.x + idleStrafe + pointer.x * (isMobile ? 2.2 : 2.7) * navScale + Math.sin(scroll * Math.PI * 2) * (isMobile ? 0.2 : 0.24),
+      isMobile ? -2.65 : -3.05,
+      isMobile ? 2.65 : 3.05,
     );
     const targetY = THREE.MathUtils.clamp(
       cameraRest.y + idleLift + pointer.y * (isMobile ? 0.68 : 0.72) * navScale,
@@ -679,7 +679,7 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
     targetLookRef.current
       .copy(camera.position)
       .addScaledVector(directionRef.current, LOOK_DISTANCE);
-    targetLookRef.current.x += 0.35;
+    targetLookRef.current.x += isMobile ? 0.35 : 0;
     targetLookRef.current.y += -0.05 - scroll * 0.8;
 
     lookTargetRef.current.lerp(targetLookRef.current, 1 - Math.exp(-response * delta));

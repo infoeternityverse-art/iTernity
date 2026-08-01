@@ -3813,6 +3813,7 @@ body::after {
   min-height: 100%;
   overflow: hidden;
   background: transparent;
+  touch-action: pan-y;
 }
 
 .hero-r3f-shell canvas {

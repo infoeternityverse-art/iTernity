@@ -15,6 +15,10 @@ const HERO_BACKGROUNDS = {
   thanks: { src: '/media/hero_home.webp' },
 };
 
+const clampNavigation = (value) => Math.min(1, Math.max(-1, value));
+const TOUCH_DRAG_SENSITIVITY_X = 3.8;
+const TOUCH_DRAG_SENSITIVITY_Y = 2.4;
+
 function useInView() {
   const [node, setNode] = useState(null);
   const [isInView, setIsInView] = useState(false);
@@ -67,6 +71,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const [isSceneReady, setIsSceneReady] = useState(false);
   const visualRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
+  const touchGestureRef = useRef(null);
   const scrollRef = useRef(0);
   const background = HERO_BACKGROUNDS[variant] || HERO_BACKGROUNDS.home;
   const getHeroElement = () =>
@@ -89,19 +94,25 @@ export function HeroGpuVisual({ variant = 'home' }) {
     visualRef.current.style.setProperty('--hero-nav-depth', Math.min(1, Math.hypot(x, y)).toFixed(3));
   };
 
-  const updateNavigationFromPoint = (clientX, clientY, rect) => {
-    const x = Math.min(1, Math.max(-1, ((clientX - rect.left) / rect.width) * 2 - 1));
-    const y = Math.min(1, Math.max(-1, -(((clientY - rect.top) / rect.height) * 2 - 1)));
+  const setNavigation = (x, y) => {
+    const nextX = clampNavigation(x);
+    const nextY = clampNavigation(y);
 
-    pointerRef.current.x = x;
-    pointerRef.current.y = y;
-    syncCssCameraVars(x, y);
+    pointerRef.current.x = nextX;
+    pointerRef.current.y = nextY;
+    syncCssCameraVars(nextX, nextY);
+  };
+
+  const updateNavigationFromPoint = (clientX, clientY, rect) => {
+    const x = clampNavigation(((clientX - rect.left) / rect.width) * 2 - 1);
+    const y = clampNavigation(-(((clientY - rect.top) / rect.height) * 2 - 1));
+
+    setNavigation(x, y);
   };
 
   const resetNavigation = () => {
-    pointerRef.current.x = 0;
-    pointerRef.current.y = 0;
-    syncCssCameraVars(0, 0);
+    touchGestureRef.current = null;
+    setNavigation(0, 0);
   };
 
   useEffect(() => {
@@ -127,6 +138,8 @@ export function HeroGpuVisual({ variant = 'home' }) {
 
   useEffect(() => {
     const updatePointer = (event) => {
+      if (event.pointerType === 'touch') return;
+
       const hero = getHeroElement();
       if (!hero) return;
 
@@ -145,7 +158,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
       updateNavigationFromPoint(event.clientX, event.clientY, rect);
     };
 
-    const updateTouch = (event) => {
+    const beginTouch = (event) => {
       const touch = event.touches[0];
       const hero = getHeroElement();
       if (!touch || !hero) return;
@@ -158,25 +171,57 @@ export function HeroGpuVisual({ variant = 'home' }) {
         touch.clientY <= rect.bottom;
 
       if (isInside) {
-        updateNavigationFromPoint(touch.clientX, touch.clientY, rect);
+        touchGestureRef.current = {
+          startX: touch.clientX,
+          startY: touch.clientY,
+          baseX: pointerRef.current.x,
+          baseY: pointerRef.current.y,
+          width: Math.max(1, rect.width),
+          height: Math.max(1, rect.height),
+        };
+      }
+    };
+
+    const updateTouch = (event) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      if (!touchGestureRef.current) {
+        beginTouch(event);
+      }
+
+      const gesture = touchGestureRef.current;
+      if (!gesture) return;
+
+      const dragX = ((touch.clientX - gesture.startX) / gesture.width) * TOUCH_DRAG_SENSITIVITY_X;
+      const dragY = -((touch.clientY - gesture.startY) / gesture.height) * TOUCH_DRAG_SENSITIVITY_Y;
+
+      setNavigation(gesture.baseX + dragX, gesture.baseY + dragY);
+    };
+
+    const endTouch = () => {
+      if (touchGestureRef.current) {
+        resetNavigation();
       }
     };
 
     window.addEventListener('pointermove', updatePointer, { passive: true });
-    window.addEventListener('touchstart', updateTouch, { passive: true });
+    window.addEventListener('touchstart', beginTouch, { passive: true });
     window.addEventListener('touchmove', updateTouch, { passive: true });
-    window.addEventListener('touchend', resetNavigation, { passive: true });
-    window.addEventListener('touchcancel', resetNavigation, { passive: true });
+    window.addEventListener('touchend', endTouch, { passive: true });
+    window.addEventListener('touchcancel', endTouch, { passive: true });
     return () => {
       window.removeEventListener('pointermove', updatePointer);
-      window.removeEventListener('touchstart', updateTouch);
+      window.removeEventListener('touchstart', beginTouch);
       window.removeEventListener('touchmove', updateTouch);
-      window.removeEventListener('touchend', resetNavigation);
-      window.removeEventListener('touchcancel', resetNavigation);
+      window.removeEventListener('touchend', endTouch);
+      window.removeEventListener('touchcancel', endTouch);
     };
   }, []);
 
   const handlePointerMove = (event) => {
+    if (event.pointerType === 'touch') return;
+
     const rect = event.currentTarget.getBoundingClientRect();
     updateNavigationFromPoint(event.clientX, event.clientY, rect);
   };
