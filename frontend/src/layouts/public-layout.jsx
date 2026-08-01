@@ -167,8 +167,8 @@ export function PublicLayout() {
 
     const initVanta = async () => {
       try {
-        const THREE = await import('three');
-        window.THREE = THREE;
+        const previousThree = window.THREE;
+        await loadScript('three-r134', 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
         await loadScript('vanta-birds', 'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js');
 
         if (isCancelled || !window.VANTA?.BIRDS || !footerVantaRef.current) return;
@@ -191,6 +191,10 @@ export function PublicLayout() {
           cohesion: 64.0,
           backgroundAlpha: 0.0,
         });
+
+        if (previousThree) {
+          window.THREE = previousThree;
+        }
       } catch {
         // Keep the footer usable if the decorative background script cannot load.
       }
