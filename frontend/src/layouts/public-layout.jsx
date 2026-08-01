@@ -2,15 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import {
   ArrowRight,
-  Cpu,
   Github,
-  Home,
-  Info,
   Instagram,
   Linkedin,
-  Mail,
   Menu,
-  Rocket,
   X,
   Youtube,
 } from 'lucide-react';
@@ -69,6 +64,8 @@ export function PublicLayout() {
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const hasMountedRef = useRef(false);
   const footerRef = useRef(null);
+  const footerVantaRef = useRef(null);
+  const footerVantaEffectRef = useRef(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -87,15 +84,12 @@ export function PublicLayout() {
     { label: 'Acceptable Use', href: '/faq' },
   ];
   const footerOceanLinks = [
-    { label: 'Home', href: '/', gem: 'orange', icon: Home },
-    { label: 'GPU Marketplace', href: '/gpus', gem: 'violet', icon: Cpu },
-    { label: 'About', href: '/about', gem: 'rose', icon: Info },
-    { label: 'Contact', href: '/contact', gem: 'gold', icon: Mail },
-    { label: 'Get Started', href: '/login', gem: 'green', icon: Rocket },
-  ].map((item, index) => ({
-    ...item,
-    className: `footer-hanging-item footer-hanging-item-${index + 1} footer-bubble-${item.gem}`,
-  }));
+    { label: 'Home', href: '/' },
+    { label: 'GPU Marketplace', href: '/gpus' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Get Started', href: '/login' },
+  ];
   const getRouteVariant = (pathname) => {
     if (pathname === '/') return 'home';
     if (pathname.startsWith('/gpus/')) return 'detail';
@@ -134,6 +128,80 @@ export function PublicLayout() {
 
     observer.observe(footer);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const vantaTarget = footerVantaRef.current;
+    if (!vantaTarget) return undefined;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotionQuery.matches) return undefined;
+
+    let isCancelled = false;
+
+    const loadScript = (id, src) =>
+      new Promise((resolve, reject) => {
+        const existingScript = document.getElementById(id);
+        if (existingScript) {
+          if (existingScript.dataset.loaded === 'true') {
+            resolve();
+            return;
+          }
+
+          existingScript.addEventListener('load', resolve, { once: true });
+          existingScript.addEventListener('error', reject, { once: true });
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.id = id;
+        script.src = src;
+        script.async = true;
+        script.onload = () => {
+          script.dataset.loaded = 'true';
+          resolve();
+        };
+        script.onerror = reject;
+        document.body.appendChild(script);
+      });
+
+    const initVanta = async () => {
+      try {
+        await loadScript('three-r134', 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
+        await loadScript('vanta-birds', 'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js');
+
+        if (isCancelled || !window.VANTA?.BIRDS || !footerVantaRef.current) return;
+
+        footerVantaEffectRef.current = window.VANTA.BIRDS({
+          el: footerVantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          backgroundColor: 0x183b18,
+          color1: 0x0,
+          color2: 0x398913,
+          birdSize: 0.5,
+          wingSpan: 10.0,
+          alignment: 54.0,
+          cohesion: 64.0,
+          backgroundAlpha: 0.0,
+        });
+      } catch {
+        // Keep the footer usable if the decorative background script cannot load.
+      }
+    };
+
+    initVanta();
+
+    return () => {
+      isCancelled = true;
+      footerVantaEffectRef.current?.destroy();
+      footerVantaEffectRef.current = null;
+    };
   }, []);
 
   return (
@@ -240,24 +308,10 @@ export function PublicLayout() {
         ref={footerRef}
         className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
       >
-        <video
-          className="footer-biolume-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster="/media/footer_bg.jpeg"
-          aria-hidden="true"
-        >
-          <source src="/media/footer.mp4" type="video/mp4" />
-        </video>
-        <div className="footer-biolume-overlay" aria-hidden="true" />
-        <div className="footer-seagreen-reflection" aria-hidden="true" />
-        <div className="premium-divider" />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div ref={footerVantaRef} className="footer-vanta-bg" aria-hidden="true" />
+        <div className="footer-inner relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="footer-content-grid">
-            <div className="max-w-md space-y-5">
+            <div className="footer-brand-block max-w-md">
               <Link
                 to="/"
                 className="inline-flex items-center text-lg font-black tracking-normal text-[#F5F7F6]"
@@ -267,48 +321,22 @@ export function PublicLayout() {
               <p className="text-sm leading-6 text-[#8FA39B]">
                 Beyond Infinite Intelligence
               </p>
+              <h3 className="footer-minimal-heading">QUICK LINKS</h3>
+              <nav className="footer-minimal-links" aria-label="Footer quick links">
+                {footerOceanLinks.map((item) => (
+                  <Link key={item.label} to={item.href}>
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+
+              <a href={`mailto:${env.supportEmail}`} className="footer-minimal-mail">
+                <span>Mail us</span>
+                <span>{env.supportEmail}</span>
+              </a>
             </div>
 
             <div className="footer-ocean-nav-panel">
-              <nav className="footer-ocean-nav" aria-label="Footer navigation">
-                {footerOceanLinks.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      aria-label={item.label}
-                      className={`footer-ocean-link footer-hanging-bubble ${item.className}`}
-                    >
-                      <span className="footer-bubble-string" aria-hidden="true" />
-                      <span className="footer-bubble-ring" aria-hidden="true" />
-                      <span className="footer-bubble-liquid" aria-hidden="true" />
-                      <span className="footer-bubble-sparkles" aria-hidden="true" />
-                      <span className="footer-bubble-shine" aria-hidden="true" />
-                      <Icon className="footer-bubble-icon" aria-hidden="true" />
-                      <span className="footer-bubble-tooltip" role="tooltip">
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </nav>
-              <a
-                href={`mailto:${env.supportEmail}`}
-                className="footer-mail-card"
-              >
-                <span className="footer-mail-letter">
-                  <span className="footer-mail-title">Mail us</span>
-                  <span className="footer-mail-address">{env.supportEmail}</span>
-                </span>
-                <span className="footer-mail-seal">IV</span>
-                <span className="footer-mail-fold footer-mail-fold-top" />
-                <span className="footer-mail-fold footer-mail-fold-left" />
-                <span className="footer-mail-fold footer-mail-fold-right" />
-                <span className="footer-mail-fold footer-mail-fold-bottom" />
-              </a>
-
               <ul className="footer-ocean-social" aria-label="Social links">
                 <li className="footer-social-prompt" aria-hidden="true">
                   <span>Hover</span>
@@ -339,9 +367,6 @@ export function PublicLayout() {
           </div>
 
           <div className="footer-legal-row">
-            <p>
-              © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
-            </p>
             <nav className="footer-legal-links" aria-label="Footer legal">
               {legalLinks.map((item) => (
                 <Link key={item.label} to={item.href}>
@@ -349,6 +374,9 @@ export function PublicLayout() {
                 </Link>
               ))}
             </nav>
+            <p>
+              © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

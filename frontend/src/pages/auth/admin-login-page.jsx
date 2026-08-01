@@ -12,8 +12,12 @@ export function AdminLoginPage() {
   const from = location.state?.from?.pathname || '/admin';
 
   const handleSubmit = async (values) => {
-    await adminLogin(values);
-    navigate(from, { replace: true });
+    try {
+      await adminLogin(values);
+      navigate(from, { replace: true });
+    } catch {
+      // The auth store already exposes the message for the form alert.
+    }
   };
 
   return (

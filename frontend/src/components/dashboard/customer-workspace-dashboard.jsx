@@ -113,7 +113,7 @@ function WorkspaceHero({ workspace }) {
               <StatusBadge status={displayStatus} label={displayStatus} size="lg" />
             </div>
             <p className="mt-5 max-w-2xl text-base leading-7 text-[#8FA39B]">
-              Your manually provisioned GPU workspace is managed by the Eternityverse operations
+              Your manually provisioned GPU workspace is managed by the iTernityverse operations
               team.
             </p>
           </div>

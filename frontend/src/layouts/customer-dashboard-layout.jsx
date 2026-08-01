@@ -18,7 +18,7 @@ export function CustomerDashboardLayout() {
   const closeMobileNav = () => setIsMobileNavOpen(false);
 
   return (
-    <div className="premium-shell text-white">
+    <div className="dashboard-shell premium-shell text-white">
       <ScrollToTop />
       <div className="flex min-h-screen gap-0 lg:p-4">
         <aside className="premium-glass hidden w-64 rounded-card p-5 lg:block">
@@ -36,7 +36,7 @@ export function CustomerDashboardLayout() {
           </nav>
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-white/10 bg-[#070B14]/72 px-4 py-4 backdrop-blur-2xl sm:px-6 lg:px-8 lg:mx-4 lg:mt-0 lg:rounded-card lg:border">
+          <header className="dashboard-header border-b border-white/10 bg-[#070B14]/72 px-4 py-4 backdrop-blur-2xl sm:px-6 lg:px-8 lg:mx-4 lg:mt-0 lg:rounded-card lg:border">
             <div className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
                 <Button
@@ -49,11 +49,11 @@ export function CustomerDashboardLayout() {
                   {isMobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 text-sm font-semibold text-accent-500">
+                  <p className="dashboard-header-kicker flex items-center gap-2 text-sm font-semibold text-accent-500">
                     <Sparkles className="h-4 w-4" />
-                    EternityVerse Dashboard
+                    iTernityverse Dashboard
                   </p>
-                  <p className="text-base font-bold text-white">Workspace</p>
+                  <p className="dashboard-header-title text-base font-bold text-white">Workspace</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

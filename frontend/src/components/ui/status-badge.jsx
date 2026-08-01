@@ -17,6 +17,10 @@ const statusVariantMap = {
   failed: 'danger',
   error: 'danger',
   running: 'success',
+  published: 'success',
+  draft: 'neutral',
+  scheduled: 'warning',
+  archived: 'neutral',
 };
 
 /**

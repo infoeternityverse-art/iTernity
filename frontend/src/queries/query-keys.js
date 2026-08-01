@@ -17,6 +17,17 @@ export const queryKeys = {
     adminDetails: () => [...queryKeys.gpuPackages.all, 'admin', 'detail'],
     adminDetail: (id) => [...queryKeys.gpuPackages.adminDetails(), id],
   },
+  blogPosts: {
+    all: ['blog-posts'],
+    lists: () => [...queryKeys.blogPosts.all, 'list'],
+    list: (params = {}) => [...queryKeys.blogPosts.lists(), params],
+    details: () => [...queryKeys.blogPosts.all, 'detail'],
+    detail: (slug) => [...queryKeys.blogPosts.details(), slug],
+    adminLists: () => [...queryKeys.blogPosts.all, 'admin', 'list'],
+    adminList: (params = {}) => [...queryKeys.blogPosts.adminLists(), params],
+    adminDetails: () => [...queryKeys.blogPosts.all, 'admin', 'detail'],
+    adminDetail: (slug) => [...queryKeys.blogPosts.adminDetails(), slug],
+  },
   enquiries: {
     all: ['enquiries'],
     lists: () => [...queryKeys.enquiries.all, 'list'],

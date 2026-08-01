@@ -1,4 +1,10 @@
 export { useAuditLogs } from './audit-log.queries.js';
+export {
+  useAdminBlogPost,
+  useAdminBlogPosts,
+  useBlogPost,
+  useBlogPosts,
+} from './blog-post.queries.js';
 export { useAdminCredentials, useCustomerCredentials } from './credential.queries.js';
 export { useAdminEnquiries, useCustomerEnquiries, useEnquiry } from './enquiry.queries.js';
 export {

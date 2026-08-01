@@ -10,7 +10,7 @@ if (!recipient) {
 
 await notificationService.sendCriticalSystemError({
   to: recipient,
-  summary: 'Development SMTP test from the EternityVerse notification system.',
+  summary: 'Development SMTP test from the iTernityverse notification system.',
 });
 
 console.info(`Email test helper completed for ${recipient}.`);

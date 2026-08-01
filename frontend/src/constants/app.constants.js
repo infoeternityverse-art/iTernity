@@ -1,4 +1,4 @@
-export const APP_NAME = 'EternityVerse';
+export const APP_NAME = 'iTernityverse';
 
 export const ROUTE_PATHS = {
   home: '/',

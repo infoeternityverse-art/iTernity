@@ -18,7 +18,7 @@ export function AdminLayout() {
   const closeMobileNav = () => setIsMobileNavOpen(false);
 
   return (
-    <div className="premium-shell text-white">
+    <div className="admin-shell premium-shell text-white">
       <ScrollToTop />
       <div className="flex min-h-screen gap-0 xl:p-4">
         <aside className="premium-glass hidden w-72 rounded-card p-5 xl:block">
@@ -36,7 +36,7 @@ export function AdminLayout() {
           </nav>
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-white/10 bg-[#070B14]/72 px-4 py-4 backdrop-blur-2xl sm:px-6 lg:px-8 xl:mx-4 xl:mt-0 xl:rounded-card xl:border">
+          <header className="admin-header border-b border-white/10 bg-[#070B14]/72 px-4 py-4 backdrop-blur-2xl sm:px-6 lg:px-8 xl:mx-4 xl:mt-0 xl:rounded-card xl:border">
             <div className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
                 <Button
@@ -49,11 +49,11 @@ export function AdminLayout() {
                   {isMobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 text-sm font-semibold text-accent-500">
+                  <p className="admin-header-kicker flex items-center gap-2 text-sm font-semibold text-accent-500">
                     <Sparkles className="h-4 w-4" />
-                    EternityVerse Admin
+                    iTernityverse Admin
                   </p>
-                  <p className="text-base font-bold text-white">Operations</p>
+                  <p className="admin-header-title text-base font-bold text-white">Operations</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">

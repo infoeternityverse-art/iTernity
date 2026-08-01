@@ -56,9 +56,9 @@ class NotificationService {
       this.sendEmail({
         type: 'welcome',
         to: user.email,
-        subject: 'Welcome to EternityVerse',
+        subject: 'Welcome to iTernityverse',
         html: welcomeEmailTemplate({ user }),
-        text: `Welcome to EternityVerse, ${user.name}. Your dashboard is ready.`,
+        text: `Welcome to iTernityverse, ${user.name}. Your dashboard is ready.`,
       })
     );
   }
@@ -104,7 +104,7 @@ class NotificationService {
       this.sendEmail({
         type: 'password.reset',
         to: user.email,
-        subject: 'Reset your EternityVerse password',
+        subject: 'Reset your iTernityverse password',
         html: passwordResetEmailTemplate({ resetUrl, expiresIn }),
         text: `Reset your password using this secure link: ${resetUrl}`,
       })
@@ -116,7 +116,7 @@ class NotificationService {
       this.sendEmail({
         type: 'password.changed',
         to: user.email,
-        subject: 'Your EternityVerse password was changed',
+        subject: 'Your iTernityverse password was changed',
         html: passwordChangedEmailTemplate(),
         text: 'Your password was changed successfully. Contact support if this was not you.',
       })
@@ -128,7 +128,7 @@ class NotificationService {
       this.sendEmail({
         type: 'profile.updated',
         to: user.email,
-        subject: 'Your EternityVerse profile was updated',
+        subject: 'Your iTernityverse profile was updated',
         html: profileUpdatedEmailTemplate({ user }),
         text: 'Your profile information was updated successfully.',
       })

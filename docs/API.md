@@ -48,6 +48,8 @@ Error:
 
 - `GET /gpu-packages`
 - `GET /gpu-packages/:id`
+- `GET /blog-posts`
+- `GET /blog-posts/:slug`
 - `POST /enquiries`
 
 ## Customer
@@ -66,6 +68,12 @@ Error:
 - `GET /admin/gpu-packages/:id`
 - `PATCH /admin/gpu-packages/:id`
 - `DELETE /admin/gpu-packages/:id`
+- `GET /admin/blog-posts`
+- `POST /admin/blog-posts`
+- `POST /admin/blog-posts/image-uploads`
+- `GET /admin/blog-posts/:slug`
+- `PATCH /admin/blog-posts/:slug`
+- `DELETE /admin/blog-posts/:slug`
 - `GET /admin/enquiries`
 - `PATCH /admin/enquiries/:id`
 - `GET /admin/credentials`

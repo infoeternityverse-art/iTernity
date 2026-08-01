@@ -1,6 +1,7 @@
 export { apiClient } from './api-client.js';
 export { auditLogService } from './audit-log-service.js';
 export { authService } from './auth-service.js';
+export { blogPostService } from './blog-post-service.js';
 export { credentialService } from './credential-service.js';
 export { enquiryService } from './enquiry-service.js';
 export { gpuPackageService } from './gpu-package-service.js';

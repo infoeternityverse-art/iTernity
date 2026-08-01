@@ -31,7 +31,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize());
 
@@ -42,7 +42,7 @@ if (config.nodeEnv !== 'test') {
 app.get('/', (_req, res) =>
   res.status(200).json({
     success: true,
-    message: 'EternityVerse backend running successfully.',
+    message: 'iTernityverse backend running successfully.',
     data: {
       service: 'eternityverse-api',
       environment: config.nodeEnv,

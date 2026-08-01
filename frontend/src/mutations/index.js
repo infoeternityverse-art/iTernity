@@ -1,4 +1,9 @@
 export { useCreateCredential, useUpdateCredential } from './credential.mutations.js';
+export {
+  useCreateBlogPost,
+  useDeleteBlogPost,
+  useUpdateBlogPost,
+} from './blog-post.mutations.js';
 export { useCreateEnquiry, useUpdateAdminEnquiry } from './enquiry.mutations.js';
 export {
   useCreateGpuPackage,

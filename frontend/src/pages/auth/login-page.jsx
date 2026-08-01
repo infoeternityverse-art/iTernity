@@ -12,8 +12,12 @@ export function LoginPage() {
   const from = location.state?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (values) => {
-    await login(values);
-    navigate(from, { replace: true });
+    try {
+      await login(values);
+      navigate(from, { replace: true });
+    } catch {
+      // The auth store already exposes the message for the form alert.
+    }
   };
 
   return (

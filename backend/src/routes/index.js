@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { API_VERSION } from '../constants/app.constants.js';
 import { auditLogRouter } from './audit-log.routes.js';
 import { authRouter } from './auth.routes.js';
+import { adminBlogPostRouter, blogPostRouter } from './blog-post.routes.js';
 import { customerCredentialRouter, adminCredentialRouter } from './credential.routes.js';
 import { customerEnquiryRouter, adminEnquiryRouter, enquiryRouter } from './enquiry.routes.js';
 import { adminGpuPackageRouter, gpuPackageRouter } from './gpu-package.routes.js';
@@ -12,6 +13,8 @@ export const apiRouter = Router();
 
 apiRouter.use(`/api/${API_VERSION}/auth`, authRouter);
 apiRouter.use(`/api/${API_VERSION}/users`, userRouter);
+apiRouter.use(`/api/${API_VERSION}/blog-posts`, blogPostRouter);
+apiRouter.use(`/api/${API_VERSION}/admin/blog-posts`, adminBlogPostRouter);
 apiRouter.use(`/api/${API_VERSION}/gpu-packages`, gpuPackageRouter);
 apiRouter.use(`/api/${API_VERSION}/admin/gpu-packages`, adminGpuPackageRouter);
 apiRouter.use(`/api/${API_VERSION}/enquiries`, enquiryRouter);

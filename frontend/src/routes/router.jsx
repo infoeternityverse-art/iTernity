@@ -12,6 +12,7 @@ import { CustomerDashboardLayout } from '@/layouts/customer-dashboard-layout.jsx
 import { ErrorLayout } from '@/layouts/error-layout.jsx';
 import { PublicLayout } from '@/layouts/public-layout.jsx';
 import { SparkLoader } from '@/components/common/spark-loader.jsx';
+import { RouteErrorPage } from '@/pages/public/route-error-page.jsx';
 
 const lazyPage = (factory, exportName) =>
   lazy(() => factory().then((module) => ({ default: module[exportName] })));
@@ -39,6 +40,18 @@ const AdminEnquiryDetailPage = lazyPage(
   'AdminEnquiryDetailPage'
 );
 const AuditLogsPage = lazyPage(() => import('@/pages/admin/audit-logs-page.jsx'), 'AuditLogsPage');
+const BlogManagementPage = lazyPage(
+  () => import('@/pages/admin/blog-management-page.jsx'),
+  'BlogManagementPage'
+);
+const NewBlogPostPage = lazyPage(
+  () => import('@/pages/admin/new-blog-post-page.jsx'),
+  'NewBlogPostPage'
+);
+const EditBlogPostPage = lazyPage(
+  () => import('@/pages/admin/edit-blog-post-page.jsx'),
+  'EditBlogPostPage'
+);
 const WorkspacesPage = lazyPage(
   () => import('@/pages/admin/workspaces-page.jsx'),
   'WorkspacesPage'
@@ -98,6 +111,7 @@ const DashboardPage = lazyPage(
   () => import('@/pages/customer/dashboard-page.jsx'),
   'DashboardPage'
 );
+const BlogHubPage = lazyPage(() => import('@/pages/customer/blog-hub-page.jsx'), 'BlogHubPage');
 const EnquiriesPage = lazyPage(
   () => import('@/pages/customer/enquiries-page.jsx'),
   'EnquiriesPage'
@@ -108,6 +122,11 @@ const EnquiryDetailPage = lazyPage(
 );
 const ProfilePage = lazyPage(() => import('@/pages/customer/profile-page.jsx'), 'ProfilePage');
 const AboutPage = lazyPage(() => import('@/pages/public/about-page.jsx'), 'AboutPage');
+const BlogPage = lazyPage(() => import('@/pages/public/blog-page.jsx'), 'BlogPage');
+const BlogDetailPage = lazyPage(
+  () => import('@/pages/public/blog-detail-page.jsx'),
+  'BlogDetailPage'
+);
 const ContactPage = lazyPage(() => import('@/pages/public/contact-page.jsx'), 'ContactPage');
 const FaqPage = lazyPage(() => import('@/pages/public/faq-page.jsx'), 'FaqPage');
 const ForbiddenPage = lazyPage(() => import('@/pages/public/forbidden-page.jsx'), 'ForbiddenPage');
@@ -126,6 +145,7 @@ export const router = createBrowserRouter(
   [
     {
       path: '/',
+      errorElement: <RouteErrorPage />,
       element: (
         <PublicRoute>
           <PublicLayout />
@@ -137,12 +157,15 @@ export const router = createBrowserRouter(
         { path: 'gpus/:id', element: withSuspense(GpuDetailPage) },
         { path: 'enquiry/:gpuPackageId', element: withSuspense(EnquiryPage) },
         { path: 'thank-you', element: withSuspense(ThankYouPage) },
+        { path: 'blog', element: withSuspense(BlogPage) },
+        { path: 'blog/:slug', element: withSuspense(BlogDetailPage) },
         { path: 'contact', element: withSuspense(ContactPage) },
         { path: 'about', element: withSuspense(AboutPage) },
         { path: 'faq', element: withSuspense(FaqPage) },
       ],
     },
     {
+      errorElement: <RouteErrorPage />,
       element: (
         <GuestRoute>
           <AuthLayout />
@@ -158,6 +181,7 @@ export const router = createBrowserRouter(
     },
     {
       path: '/dashboard',
+      errorElement: <RouteErrorPage />,
       element: (
         <ProtectedRoute>
           <CustomerDashboardLayout />
@@ -165,6 +189,7 @@ export const router = createBrowserRouter(
       ),
       children: [
         { index: true, element: withSuspense(DashboardPage) },
+        { path: 'blog', element: withSuspense(BlogHubPage) },
         { path: 'enquiries', element: withSuspense(EnquiriesPage) },
         { path: 'enquiries/:id', element: withSuspense(EnquiryDetailPage) },
         { path: 'workspace', element: withSuspense(WorkspacePage) },
@@ -174,6 +199,7 @@ export const router = createBrowserRouter(
     },
     {
       path: '/admin',
+      errorElement: <RouteErrorPage />,
       element: (
         <AdminRoute>
           <AdminLayout />
@@ -181,6 +207,9 @@ export const router = createBrowserRouter(
       ),
       children: [
         { index: true, element: withSuspense(AdminDashboardPage) },
+        { path: 'blog', element: withSuspense(BlogManagementPage) },
+        { path: 'blog/new', element: withSuspense(NewBlogPostPage) },
+        { path: 'blog/:slug/edit', element: withSuspense(EditBlogPostPage) },
         { path: 'gpu-packages', element: withSuspense(AdminGpuPackagesPage) },
         { path: 'gpu-packages/new', element: withSuspense(NewGpuPackagePage) },
         { path: 'gpu-packages/:id/edit', element: withSuspense(EditGpuPackagePage) },
@@ -197,6 +226,7 @@ export const router = createBrowserRouter(
       ],
     },
     {
+      errorElement: <RouteErrorPage />,
       element: <ErrorLayout />,
       children: [
         { path: '/403', element: withSuspense(ForbiddenPage) },
@@ -208,6 +238,7 @@ export const router = createBrowserRouter(
   {
     future: {
       v7_startTransition: true,
+      v7_relativeSplatPath: true,
     },
   }
 );

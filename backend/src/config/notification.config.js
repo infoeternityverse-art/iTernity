@@ -19,7 +19,7 @@ const smtpSecure =
 
 export const notificationConfig = {
   enabled: loadEnv('NOTIFICATIONS_ENABLED', 'true') === 'true',
-  brandName: loadEnv('NOTIFICATION_BRAND_NAME', 'EternityVerse'),
+  brandName: loadEnv('NOTIFICATION_BRAND_NAME', 'iTernityverse'),
   supportEmail: loadEnv('SUPPORT_EMAIL', loadEnv('SMTP_FROM_EMAIL', 'support@example.com')),
   dashboardUrl: loadEnv('APP_DASHBOARD_URL', `${config.corsOrigin}/dashboard`),
   adminDashboardUrl: loadEnv('APP_ADMIN_URL', `${config.corsOrigin}/admin`),
@@ -30,7 +30,7 @@ export const notificationConfig = {
     port: smtpPort,
     user: loadEnv('SMTP_USER'),
     password: loadEnv('SMTP_PASSWORD'),
-    fromName: loadEnv('SMTP_FROM_NAME', loadEnv('NOTIFICATION_BRAND_NAME', 'EternityVerse')),
+    fromName: loadEnv('SMTP_FROM_NAME', loadEnv('NOTIFICATION_BRAND_NAME', 'iTernityverse')),
     fromEmail: loadEnv('SMTP_FROM_EMAIL'),
     secure: smtpSecure,
     connectionTimeoutMs: Number(loadEnv('SMTP_CONNECTION_TIMEOUT_MS', 30000)),
