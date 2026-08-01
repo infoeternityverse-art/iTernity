@@ -16,8 +16,8 @@ const CAMERA_REST = new THREE.Vector3(0, 1.5, 8.3);
 const LOOK_DISTANCE = 21;
 const DESKTOP_MAX_YAW = THREE.MathUtils.degToRad(40);
 const DESKTOP_MAX_PITCH = THREE.MathUtils.degToRad(23);
-const MOBILE_MAX_YAW = THREE.MathUtils.degToRad(24);
-const MOBILE_MAX_PITCH = THREE.MathUtils.degToRad(14);
+const MOBILE_MAX_YAW = DESKTOP_MAX_YAW;
+const MOBILE_MAX_PITCH = DESKTOP_MAX_PITCH;
 const MOBILE_IDLE_YAW = THREE.MathUtils.degToRad(3.6);
 const MOBILE_IDLE_PITCH = THREE.MathUtils.degToRad(2.2);
 const MOBILE_CAMERA_REST = new THREE.Vector3(0, 1.42, 9.7);
@@ -80,13 +80,13 @@ function PanoramaBackdrop({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
 
     meshRef.current.rotation.y = THREE.MathUtils.damp(
       meshRef.current.rotation.y,
-      Math.PI + pointer.x * (isMobile ? 0.12 : 0.18) + scroll * 0.08 + idle,
+      Math.PI + pointer.x * 0.18 + scroll * 0.08 + idle,
       1.8,
       delta,
     );
     meshRef.current.rotation.x = THREE.MathUtils.damp(
       meshRef.current.rotation.x,
-      pointer.y * (isMobile ? 0.045 : 0.06),
+      pointer.y * 0.06,
       1.8,
       delta,
     );
@@ -451,8 +451,8 @@ function WireframeBlade({ isMobile, pointerRef, scrollRef }) {
     const scroll = scrollRef.current || 0;
 
     idleRotationRef.current += delta * 0.09 + scroll * delta * 0.08;
-    const targetX = -0.08 + (isMobile ? 0 : pointer.y * MAX_TILT_X);
-    const targetY = idleRotationRef.current + (isMobile ? 0 : pointer.x * MAX_TILT_Y);
+    const targetX = -0.08 + pointer.y * MAX_TILT_X;
+    const targetY = idleRotationRef.current + pointer.x * MAX_TILT_Y;
 
     groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetX, 4, delta);
     groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetY, 4, delta);
@@ -630,10 +630,10 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
     const idleYaw = Math.sin(elapsed * 0.16) * (isMobile ? MOBILE_IDLE_YAW : THREE.MathUtils.degToRad(4.5));
     const idlePitch = Math.sin(elapsed * 0.11 + 0.7) * (isMobile ? MOBILE_IDLE_PITCH : THREE.MathUtils.degToRad(2.2));
     const cameraRest = isMobile ? MOBILE_CAMERA_REST : CAMERA_REST;
-    const idleStrafe = Math.sin(elapsed * 0.13) * (isMobile ? 0.12 : 0.38);
-    const idleLift = Math.sin(elapsed * 0.1 + 1.2) * (isMobile ? 0.05 : 0.08);
-    const navScale = isMobile ? 0.58 : 1;
-    const response = isMobile ? 3.35 : 4.2;
+    const idleStrafe = Math.sin(elapsed * 0.13) * (isMobile ? 0.22 : 0.38);
+    const idleLift = Math.sin(elapsed * 0.1 + 1.2) * (isMobile ? 0.07 : 0.08);
+    const navScale = 1;
+    const response = 4.2;
     const maxYaw = isMobile ? MOBILE_MAX_YAW : DESKTOP_MAX_YAW;
     const maxPitch = isMobile ? MOBILE_MAX_PITCH : DESKTOP_MAX_PITCH;
 
@@ -648,26 +648,26 @@ function CameraDrift({ pointerRef, scrollRef, isMobile }) {
       maxPitch,
     );
 
-    const forwardBias = (Math.abs(pointer.x) * (isMobile ? 0.18 : 0.78) + Math.max(0, -pointer.y) * (isMobile ? 0.08 : 0.24)) * navScale;
+    const forwardBias = (Math.abs(pointer.x) * 0.78 + Math.max(0, -pointer.y) * 0.24) * navScale;
     const targetX = THREE.MathUtils.clamp(
-      cameraRest.x + idleStrafe + pointer.x * (isMobile ? 1.08 : 2.35) * navScale + Math.sin(scroll * Math.PI * 2) * (isMobile ? 0.12 : 0.24),
-      isMobile ? -1.35 : -2.85,
-      isMobile ? 1.35 : 2.85,
+      cameraRest.x + idleStrafe + pointer.x * (isMobile ? 2.2 : 2.35) * navScale + Math.sin(scroll * Math.PI * 2) * (isMobile ? 0.2 : 0.24),
+      isMobile ? -2.65 : -2.85,
+      isMobile ? 2.65 : 2.85,
     );
     const targetY = THREE.MathUtils.clamp(
-      cameraRest.y + idleLift + pointer.y * (isMobile ? 0.34 : 0.72) * navScale,
-      isMobile ? 1.02 : 0.88,
-      isMobile ? 2.02 : 2.38,
+      cameraRest.y + idleLift + pointer.y * (isMobile ? 0.68 : 0.72) * navScale,
+      isMobile ? 0.88 : 0.88,
+      isMobile ? 2.35 : 2.38,
     );
     const targetZ = THREE.MathUtils.clamp(
-      cameraRest.z - dolly * (isMobile ? 0.32 : 0.72) - scroll * (isMobile ? 0.36 : 0.72) + breathing - forwardBias,
-      isMobile ? 8.9 : 6.55,
+      cameraRest.z - dolly * (isMobile ? 0.62 : 0.72) - scroll * (isMobile ? 0.62 : 0.72) + breathing - forwardBias,
+      isMobile ? 8.15 : 6.55,
       isMobile ? 10.25 : 8.65,
     );
 
-    camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, isMobile ? 2.15 : 2.75, delta);
-    camera.position.y = THREE.MathUtils.damp(camera.position.y, targetY, isMobile ? 1.95 : 2.45, delta);
-    camera.position.z = THREE.MathUtils.damp(camera.position.z, targetZ, isMobile ? 1.85 : 2.25, delta);
+    camera.position.x = THREE.MathUtils.damp(camera.position.x, targetX, isMobile ? 2.65 : 2.75, delta);
+    camera.position.y = THREE.MathUtils.damp(camera.position.y, targetY, isMobile ? 2.35 : 2.45, delta);
+    camera.position.z = THREE.MathUtils.damp(camera.position.z, targetZ, isMobile ? 2.15 : 2.25, delta);
 
     directionRef.current
       .set(
