@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, Check, Copy, Facebook, Linkedin, Share2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Check, Copy, Facebook, Linkedin, MessageCircle, Share2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BlogCard } from '@/components/blog/blog-card.jsx';
@@ -126,6 +126,14 @@ export function BlogDetailPage() {
             >
               <Facebook aria-hidden="true" />
               Facebook
+            </a>
+            <a
+              href={`https://wa.me/?text=${encodedShareTitle}%20${encodedShareUrl}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MessageCircle aria-hidden="true" />
+              WhatsApp
             </a>
             <button type="button" onClick={copyShareUrl}>
               {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}

@@ -32,14 +32,6 @@ export function BlogCard({ post, to = `/blog/${post.slug}`, compact = false }) {
         <h2>{post.title}</h2>
         <p>{post.excerpt}</p>
 
-        {!compact && (post.tags || []).length > 0 && (
-          <div className="blog-card-tags">
-            {(post.tags || []).map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
-          </div>
-        )}
-
         <div className="blog-card-meta">
           <span>
             <CalendarDays aria-hidden="true" />

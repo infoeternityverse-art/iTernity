@@ -342,6 +342,7 @@ export function PublicLayout() {
             </div>
 
             <div className="footer-ocean-nav-panel">
+              <h3 className="footer-minimal-heading footer-social-heading">SOCIAL LINKS</h3>
               <ul className="footer-ocean-social" aria-label="Social links">
                 <li className="footer-social-prompt" aria-hidden="true">
                   <span>Hover</span>
@@ -363,6 +364,7 @@ export function PublicLayout() {
                       >
                         <FooterShapeVisual type="gem" />
                         <Icon className="footer-ocean-social-icon" />
+                        <span className="footer-social-name">{item.label}</span>
                       </a>
                     </li>
                   );
