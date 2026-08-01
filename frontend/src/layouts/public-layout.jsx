@@ -167,7 +167,8 @@ export function PublicLayout() {
 
     const initVanta = async () => {
       try {
-        await loadScript('three-r134', 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
+        const THREE = await import('three');
+        window.THREE = THREE;
         await loadScript('vanta-birds', 'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js');
 
         if (isCancelled || !window.VANTA?.BIRDS || !footerVantaRef.current) return;
