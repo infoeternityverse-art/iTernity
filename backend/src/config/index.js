@@ -22,6 +22,13 @@ export const config = {
     passwordResetExpiresIn: loadEnv('PASSWORD_RESET_EXPIRES_IN', '30m'),
   },
   bcryptSaltRounds: Number(loadEnv('BCRYPT_SALT_ROUNDS', 12)),
+  cloudinary: {
+    cloudName: loadEnv('CLOUDINARY_CLOUD_NAME', ''),
+    apiKey: loadEnv('CLOUDINARY_API_KEY', ''),
+    apiSecret: loadEnv('CLOUDINARY_API_SECRET', ''),
+    uploadFolder: loadEnv('CLOUDINARY_UPLOAD_FOLDER', 'gpu-cloud-marketplace'),
+    assetFolder: loadEnv('CLOUDINARY_ASSET_FOLDER', loadEnv('CLOUDINARY_UPLOAD_FOLDER', 'gpu-cloud-marketplace')),
+  },
   credentialEncryptionKey: loadEnv(
     'CREDENTIAL_ENCRYPTION_KEY',
     loadEnv('NODE_ENV', 'development') === 'production'

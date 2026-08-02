@@ -1,7 +1,5 @@
 import { useMemo, useRef } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { EffectComposer, Bloom, ToneMapping, Vignette } from '@react-three/postprocessing';
-import { ToneMappingMode } from 'postprocessing';
 import * as THREE from 'three';
 
 const TEAL = '#28F5D0';
@@ -712,11 +710,6 @@ function HeroScene({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
       <ShimmerField isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
       {!isMobile && <GalaxySpiral pointerRef={pointerRef} scrollRef={scrollRef} />}
       <MeteorStream isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
-      <EffectComposer multisampling={0}>
-        {!isMobile && <Bloom intensity={0.72} luminanceThreshold={0.18} luminanceSmoothing={0.34} mipmapBlur />}
-        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-        <Vignette eskil={false} offset={0.2} darkness={0.58} />
-      </EffectComposer>
     </>
   );
 }

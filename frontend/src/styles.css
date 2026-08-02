@@ -8,6 +8,7 @@
   --color-accent: #2DE8C4;
   --color-muted: #8FA39B;
   --color-glow-end: #2DE8C4;
+  --footer-bg-image: none;
   --site-bg-gradient:
     radial-gradient(circle at 12% 8%, rgba(32, 178, 170, 0.22), transparent 30%),
     radial-gradient(circle at 82% 0%, rgba(45, 232, 196, 0.12), transparent 28%),
@@ -4761,7 +4762,7 @@ footer,
 html.light footer {
   background:
     linear-gradient(180deg, rgba(1, 8, 7, 0.18), rgba(1, 8, 7, 0.62)),
-    url('/media/footer_bg.jpg') center / cover no-repeat,
+    var(--footer-bg-image) center / cover no-repeat,
     linear-gradient(180deg, #010807 0%, #031411 46%, #020504 100%) !important;
   color: #8FA39B !important;
 }
@@ -7410,7 +7411,7 @@ html.light .page-header-surface p {
 html.light .premium-shell footer {
   background:
     linear-gradient(180deg, rgba(1, 8, 7, 0.18), rgba(1, 8, 7, 0.62)),
-    url('/media/footer_bg.jpg') center / cover no-repeat,
+    var(--footer-bg-image) center / cover no-repeat,
     linear-gradient(180deg, #010807 0%, #031411 46%, #020504 100%) !important;
   border-color: rgba(45, 232, 196, 0.15) !important;
 }
@@ -10449,7 +10450,7 @@ footer a:hover {
   min-height: 28rem !important;
   background:
     #060907
-    url('/media/footer_bg.jpg')
+    var(--footer-bg-image)
     center bottom / cover
     no-repeat !important;
 }

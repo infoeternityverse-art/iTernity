@@ -1,5 +1,6 @@
 import { ArrowUpRight, CalendarDays } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { mediaUrl } from '@/utils/media-url.js';
 
 const formatBlogDate = (value) => {
   if (!value) {
@@ -19,7 +20,7 @@ export function BlogCard({ post, to = `/blog/${post.slug}`, compact = false }) {
       {post.imageUrl ? (
         <img
           className="blog-card-image"
-          src={post.imageUrl}
+          src={mediaUrl(post.imageUrl, { width: compact ? 640 : 960 })}
           alt={post.imageAlt || post.title}
           loading="lazy"
         />

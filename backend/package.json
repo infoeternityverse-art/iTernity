@@ -8,11 +8,13 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed:admin": "node src/scripts/seed-admin.js",
+    "media:sync-cloudinary": "node src/scripts/sync-cloudinary-media.js",
     "email:test": "node src/scripts/send-test-email.js",
     "lint": "eslint ."
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

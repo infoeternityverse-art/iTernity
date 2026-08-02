@@ -15,6 +15,7 @@
     "build": "npm run build --workspace frontend",
     "start": "npm run start --workspace backend",
     "seed:admin": "npm run seed:admin --workspace backend",
+    "media:sync-cloudinary": "npm run media:sync-cloudinary --workspace backend",
     "email:test": "npm run email:test --workspace backend",
     "lint": "eslint frontend backend",
     "format": "prettier . --write",

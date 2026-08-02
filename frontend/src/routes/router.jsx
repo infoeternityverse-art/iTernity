@@ -13,6 +13,7 @@ import { ErrorLayout } from '@/layouts/error-layout.jsx';
 import { PublicLayout } from '@/layouts/public-layout.jsx';
 import { SparkLoader } from '@/components/common/spark-loader.jsx';
 import { RouteErrorPage } from '@/pages/public/route-error-page.jsx';
+import { HomePage } from '@/pages/public/home-page.jsx';
 
 const lazyPage = (factory, exportName) =>
   lazy(() => factory().then((module) => ({ default: module[exportName] })));
@@ -132,7 +133,6 @@ const FaqPage = lazyPage(() => import('@/pages/public/faq-page.jsx'), 'FaqPage')
 const ForbiddenPage = lazyPage(() => import('@/pages/public/forbidden-page.jsx'), 'ForbiddenPage');
 const GpuDetailPage = lazyPage(() => import('@/pages/public/gpu-detail-page.jsx'), 'GpuDetailPage');
 const GpusPage = lazyPage(() => import('@/pages/public/gpus-page.jsx'), 'GpusPage');
-const HomePage = lazyPage(() => import('@/pages/public/home-page.jsx'), 'HomePage');
 const EnquiryPage = lazyPage(() => import('@/pages/public/enquiry-page.jsx'), 'EnquiryPage');
 const NotFoundPage = lazyPage(() => import('@/pages/public/not-found-page.jsx'), 'NotFoundPage');
 const ServerErrorPage = lazyPage(
@@ -152,7 +152,7 @@ export const router = createBrowserRouter(
         </PublicRoute>
       ),
       children: [
-        { index: true, element: withSuspense(HomePage) },
+        { index: true, element: <HomePage /> },
         { path: 'gpus', element: withSuspense(GpusPage) },
         { path: 'gpus/:id', element: withSuspense(GpuDetailPage) },
         { path: 'enquiry/:gpuPackageId', element: withSuspense(EnquiryPage) },

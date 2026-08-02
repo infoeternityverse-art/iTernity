@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { auditLogService, blogPostService } from '../services/index.js';
+import { auditLogService, blogPostService, cloudinaryService } from '../services/index.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { sendSuccess } from '../utils/api-response.js';
 import { sendServiceResponse } from '../utils/controller-response.js';
@@ -138,12 +138,23 @@ export const uploadBlogImage = asyncHandler(async (req, res) => {
   }
 
   const extension = mimeExtensionMap[mimeType.toLowerCase()];
-  const fileName = `${safeFileStem(req.validated.body.fileName)}-${crypto
+  const fileStem = `${safeFileStem(req.validated.body.fileName)}-${crypto
     .randomBytes(8)
-    .toString('hex')}.${extension}`;
+    .toString('hex')}`;
+  const fileName = `${fileStem}.${extension}`;
 
-  await fs.mkdir(blogImageUploadDirectory, { recursive: true });
-  await fs.writeFile(path.join(blogImageUploadDirectory, fileName), imageBuffer, { flag: 'wx' });
+  const cloudinaryUpload = await cloudinaryService.uploadImage({
+    buffer: imageBuffer,
+    mimeType,
+    publicId: fileStem,
+    folder: 'blog',
+    tags: ['blog', 'admin-upload'],
+  });
+
+  if (!cloudinaryUpload) {
+    await fs.mkdir(blogImageUploadDirectory, { recursive: true });
+    await fs.writeFile(path.join(blogImageUploadDirectory, fileName), imageBuffer, { flag: 'wx' });
+  }
 
   await auditLogService.record({
     actor: req.user._id,
@@ -152,9 +163,11 @@ export const uploadBlogImage = asyncHandler(async (req, res) => {
     ipAddress: req.ip,
     userAgent: req.get('user-agent'),
     metadata: {
-      fileName,
+      fileName: cloudinaryUpload?.publicId || fileName,
       bytes: imageBuffer.length,
+      deliveredBytes: cloudinaryUpload?.bytes,
       mimeType,
+      provider: cloudinaryUpload ? 'cloudinary' : 'local',
     },
   });
 
@@ -162,7 +175,11 @@ export const uploadBlogImage = asyncHandler(async (req, res) => {
     statusCode: 201,
     message: 'Blog image uploaded successfully.',
     data: {
-      imageUrl: `/media/blog/${fileName}`,
+      imageUrl: cloudinaryUpload?.imageUrl || `/media/blog/${fileName}`,
+      provider: cloudinaryUpload ? 'cloudinary' : 'local',
+      publicId: cloudinaryUpload?.publicId,
+      width: cloudinaryUpload?.width,
+      height: cloudinaryUpload?.height,
     },
   });
 });

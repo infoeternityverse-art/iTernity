@@ -1,9 +1,10 @@
 import { ArrowLeft, CalendarDays, Check, Copy, Facebook, Linkedin, MessageCircle, Share2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BlogCard } from '@/components/blog/blog-card.jsx';
 import { Alert, Badge, EmptyState, Skeleton } from '@/components/ui/index.js';
 import { useBlogPost, useBlogPosts } from '@/hooks/index.js';
+import { mediaUrl } from '@/utils/media-url.js';
 
 const formatDate = (value) => {
   if (!value) {
@@ -22,13 +23,7 @@ export function BlogDetailPage() {
   const [copied, setCopied] = useState(false);
   const { data: post, isLoading, error } = useBlogPost(slug);
   const related = useBlogPosts({ limit: 3, sort: 'publishedAt', order: 'desc' });
-  const shareUrl = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-
-    return window.location.href;
-  }, [slug]);
+  const shareUrl = typeof window === 'undefined' ? '' : window.location.href;
 
   if (isLoading) {
     return <Skeleton className="h-96" />;
@@ -97,7 +92,7 @@ export function BlogDetailPage() {
         </div>
         {post.imageUrl && (
           <figure className="blog-article-media">
-            <img src={post.imageUrl} alt={post.imageAlt || post.title} />
+            <img src={mediaUrl(post.imageUrl, { width: 1400 })} alt={post.imageAlt || post.title} />
           </figure>
         )}
         <aside className="blog-article-share" aria-label="Share this article">

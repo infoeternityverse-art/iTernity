@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BlogImageCropModal } from '@/components/blog/blog-image-crop-modal.jsx';
 import { blogCategories } from '@/data/blog-content.js';
+import { mediaUrl } from '@/utils/media-url.js';
 import {
   Button,
   Card,
@@ -262,7 +263,10 @@ export function BlogEditorForm({ post }) {
             />
             <div className="blog-image-uploader">
               {form.imageUrl ? (
-                <img src={form.imageUrl} alt={form.imageAlt || form.title || 'Blog preview'} />
+                <img
+                  src={mediaUrl(form.imageUrl, { width: 640 })}
+                  alt={form.imageAlt || form.title || 'Blog preview'}
+                />
               ) : (
                 <div className="blog-image-uploader-empty">
                   <ImageUp aria-hidden="true" />

@@ -1,5 +1,36 @@
 # GPU Cloud Marketplace
 
+## Cloudinary media setup
+
+Use Cloudinary for optimized image delivery while keeping secrets on the backend.
+
+Backend env:
+
+```env
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_UPLOAD_FOLDER=gpu-cloud-marketplace
+CLOUDINARY_ASSET_FOLDER=gpu-cloud-marketplace
+```
+
+Frontend env:
+
+```env
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+VITE_CLOUDINARY_ASSET_FOLDER=gpu-cloud-marketplace
+```
+
+Sync existing files from `frontend/public/media`:
+
+```bash
+npm run media:sync-cloudinary
+```
+
+Use `npm run media:sync-cloudinary -- --overwrite` only when you intentionally want to replace existing Cloudinary assets with the local files.
+
+New blog images uploaded from the admin UI go to Cloudinary automatically when backend Cloudinary env vars are present. If Cloudinary is not configured, the backend falls back to the existing local `/media/blog` storage for development.
+
 Phase 1 MVP for a professional GPU cloud marketplace. Customers can browse GPU rental packages, submit enquiries, and view manually issued credentials from a protected dashboard. Admins can manage packages, review enquiries, issue credentials, manage customers, and inspect audit logs.
 
 ## Tech Stack

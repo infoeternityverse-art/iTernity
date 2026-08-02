@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { mediaUrl } from '@/utils/media-url.js';
 
 const loadHeroWireframeScene = () => import('./hero-wireframe-scene.jsx');
 const HeroWireframeScene = lazy(loadHeroWireframeScene);
@@ -53,16 +54,37 @@ function useDelayedWebglStart(isInView) {
   useEffect(() => {
     if (!isInView || canStart) return undefined;
 
-    const start = () => setCanStart(true);
-    const requestIdle = window.requestIdleCallback;
+    let idleId;
+    let settleTimer;
+    let cancelled = false;
 
-    if (requestIdle) {
-      const idleId = requestIdle(start, { timeout: 1800 });
-      return () => window.cancelIdleCallback?.(idleId);
+    const start = () => {
+      if (!cancelled) setCanStart(true);
+    };
+
+    const scheduleAfterPaint = () => {
+      settleTimer = window.setTimeout(() => {
+        if (window.requestIdleCallback) {
+          idleId = window.requestIdleCallback(start, { timeout: 3200 });
+          return;
+        }
+
+        start();
+      }, 1800);
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleAfterPaint();
+    } else {
+      window.addEventListener('load', scheduleAfterPaint, { once: true });
     }
 
-    const timer = window.setTimeout(start, 900);
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('load', scheduleAfterPaint);
+      window.clearTimeout(settleTimer);
+      if (idleId) window.cancelIdleCallback?.(idleId);
+    };
   }, [canStart, isInView]);
 
   return canStart;
@@ -95,6 +117,9 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const touchGestureRef = useRef(null);
   const scrollRef = useRef(0);
   const background = HERO_BACKGROUNDS[variant] || HERO_BACKGROUNDS.home;
+  const backgroundSrc = mediaUrl(background.src, { width: isMobile ? 900 : 1920 });
+  const [displaySrc, setDisplaySrc] = useState(backgroundSrc);
+  const [panoramaSrc, setPanoramaSrc] = useState(background.src);
   const getHeroElement = () =>
     visualRef.current?.closest('.hero-panel, .public-cosmic-hero') ||
     document.querySelector('.hero-panel, .public-cosmic-hero');
@@ -108,6 +133,12 @@ export function HeroGpuVisual({ variant = 'home' }) {
     if (!canStartWebgl) return;
     loadHeroWireframeScene();
   }, [canStartWebgl]);
+
+  useEffect(() => {
+    setDisplaySrc(backgroundSrc);
+    setPanoramaSrc(background.src);
+    setIsSceneReady(false);
+  }, [background.src, backgroundSrc]);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
@@ -256,16 +287,23 @@ export function HeroGpuVisual({ variant = 'home' }) {
     <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
       <div className="hero-cosmic-composite">
         <img
-          src={background.src}
+          src={displaySrc}
           alt=""
           className="hero-bg-photo"
           decoding="async"
           fetchPriority={variant === 'home' ? 'high' : 'auto'}
           draggable="false"
+          onLoad={() => {
+            if (displaySrc !== background.src) {
+              setPanoramaSrc(displaySrc);
+            }
+          }}
           onError={(event) => {
-            if (!background.fallback || event.currentTarget.dataset.fallbackLoaded) return;
+            if (event.currentTarget.dataset.fallbackLoaded) return;
             event.currentTarget.dataset.fallbackLoaded = 'true';
-            event.currentTarget.src = background.fallback;
+            const fallbackSrc = background.fallback || background.src;
+            setDisplaySrc(fallbackSrc);
+            setPanoramaSrc(fallbackSrc);
           }}
         />
         <div className="hero-depth-star-cluster hero-depth-star-cluster-a" />
@@ -287,7 +325,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
               isMobile={isMobile}
               pointerRef={pointerRef}
               scrollRef={scrollRef}
-              panoramaSrc={background.src}
+              panoramaSrc={panoramaSrc}
               onReady={() => setIsSceneReady(true)}
             />
           </Suspense>
