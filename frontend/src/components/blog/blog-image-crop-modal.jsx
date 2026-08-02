@@ -8,6 +8,9 @@ const OUTPUT_HEIGHT = 900;
 const readImageSize = (src) =>
   new Promise((resolve, reject) => {
     const image = new Image();
+    if (src?.startsWith('https://')) {
+      image.crossOrigin = 'anonymous';
+    }
     image.onload = () => resolve(image);
     image.onerror = reject;
     image.src = src;
@@ -20,18 +23,26 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
   const [imageSize, setImageSize] = useState({ width: 1, height: 1 });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!imageSrc) return undefined;
 
     let active = true;
-    readImageSize(imageSrc).then((image) => {
-      if (!active) return;
-      imageRef.current = image;
-      setImageSize({ width: image.naturalWidth, height: image.naturalHeight });
-      setOffset({ x: 0, y: 0 });
-      setZoom(1);
-    });
+    setError('');
+    readImageSize(imageSrc)
+      .then((image) => {
+        if (!active) return;
+        imageRef.current = image;
+        setImageSize({ width: image.naturalWidth, height: image.naturalHeight });
+        setOffset({ x: 0, y: 0 });
+        setZoom(1);
+      })
+      .catch(() => {
+        if (!active) return;
+        imageRef.current = null;
+        setError('This image could not be loaded for cropping. Try a local upload or a Cloudinary image URL.');
+      });
 
     return () => {
       active = false;
@@ -84,6 +95,7 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
   };
 
   const handleApply = async () => {
+    setError('');
     const rendered = getRenderedImage();
     const sourceImage = imageRef.current;
 
@@ -106,11 +118,17 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
     const drawX = (rendered.frame.width / 2 + offset.x - rendered.width / 2) * outputScaleX;
     const drawY = (rendered.frame.height / 2 + offset.y - rendered.height / 2) * outputScaleY;
 
-    context.drawImage(sourceImage, drawX, drawY, drawWidth, drawHeight);
-    await onApply({
-      image: canvas.toDataURL('image/webp', 0.86),
-      fileName,
-    });
+    try {
+      context.drawImage(sourceImage, drawX, drawY, drawWidth, drawHeight);
+      await onApply({
+        image: canvas.toDataURL('image/webp', 0.86),
+        fileName,
+      });
+    } catch {
+      setError(
+        'This remote image blocks browser cropping. Upload the file locally, or use an image hosted on Cloudinary.'
+      );
+    }
   };
 
   const rendered = getRenderedImage();
@@ -119,7 +137,7 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
     <Modal
       open={open}
       title="Crop Blog Image"
-      description="Drag to position the image. Zoom below 1x to pull the image back inside the frame."
+      description="Drag the image inside the 16:9 frame, adjust zoom, then apply the crop."
       onClose={loading ? undefined : onClose}
       size="xl"
       className="blog-crop-modal"
@@ -129,7 +147,7 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
             Cancel
           </Button>
           <Button loading={loading} leftIcon={<ImageUp className="h-4 w-4" />} onClick={handleApply}>
-            Use Image
+            Apply Crop
           </Button>
         </>
       }
@@ -148,6 +166,7 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
             <img
               src={imageSrc}
               alt=""
+              crossOrigin={imageSrc?.startsWith('https://') ? 'anonymous' : undefined}
               draggable="false"
               style={{
                 width: `${rendered.width}px`,
@@ -172,6 +191,10 @@ export function BlogImageCropModal({ open, imageSrc, fileName, onClose, onApply,
           />
           <strong>{Math.round(zoom * 100)}%</strong>
         </label>
+        <p className="blog-cropper-hint">
+          Crop area is the visible 16:9 frame. Drag to choose the area, then apply the crop.
+        </p>
+        {error && <p className="blog-cropper-error">{error}</p>}
       </div>
     </Modal>
   );

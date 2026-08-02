@@ -56,6 +56,47 @@ const parseBody = (value) => {
   ];
 };
 
+const truncateText = (value, maxLength) => {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, maxLength - 3).trim()}...`;
+};
+
+const getBodyText = (value) =>
+  parseBody(value)
+    .map((section) => `${section.heading}. ${section.copy}`)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const buildTags = ({ title, category, body }) => {
+  const source = `${title} ${category} ${body}`.toLowerCase();
+  const candidates = [
+    'gpu',
+    'ai',
+    'cloud',
+    'inference',
+    'rendering',
+    'research',
+    'compute',
+    'workload',
+    'rental',
+    'marketplace',
+  ];
+
+  return candidates.filter((tag) => source.includes(tag)).slice(0, 6);
+};
+
+const revokeObjectUrl = (url) => {
+  if (url?.startsWith('blob:')) {
+    URL.revokeObjectURL(url);
+  }
+};
+
 export function BlogEditorForm({ post }) {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -88,9 +129,7 @@ export function BlogEditorForm({ post }) {
 
   useEffect(
     () => () => {
-      if (cropSource?.url) {
-        URL.revokeObjectURL(cropSource.url);
-      }
+      revokeObjectUrl(cropSource?.url);
     },
     [cropSource]
   );
@@ -148,9 +187,7 @@ export function BlogEditorForm({ post }) {
       return;
     }
 
-    if (cropSource?.url) {
-      URL.revokeObjectURL(cropSource.url);
-    }
+    revokeObjectUrl(cropSource?.url);
 
     setUploadError('');
     setCropSource({
@@ -176,6 +213,46 @@ export function BlogEditorForm({ post }) {
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  const cropCurrentImageUrl = () => {
+    const imageUrl = form.imageUrl.trim();
+
+    if (!imageUrl) {
+      setUploadError('Add an image URL before cropping.');
+      return;
+    }
+
+    if (!imageUrl.startsWith('/') && !imageUrl.startsWith('https://')) {
+      setUploadError('Use an HTTPS image URL or a same-origin path before cropping.');
+      return;
+    }
+
+    revokeObjectUrl(cropSource?.url);
+    setUploadError('');
+    setCropSource({
+      url: imageUrl,
+      fileName: `${form.slug || slugify(form.title) || 'blog-image'}.webp`,
+    });
+  };
+
+  const generateMetadata = () => {
+    const title = form.title.trim();
+    const bodyText = getBodyText(form.body);
+    const excerpt = form.excerpt.trim() || truncateText(bodyText, 155);
+    const seoTitle = truncateText(title || excerpt || 'GPU cloud marketplace update', 60);
+    const seoDescription = truncateText(excerpt || bodyText || title, 155);
+    const nextTags = buildTags({ title, category: form.category, body: bodyText });
+
+    setForm((current) => ({
+      ...current,
+      slug: current.slug || slugify(title),
+      excerpt: current.excerpt || excerpt,
+      seoTitle: current.seoTitle || seoTitle,
+      seoDescription: current.seoDescription || seoDescription,
+      imageAlt: current.imageAlt || title || seoTitle,
+      tags: current.tags || nextTags.join(', '),
+    }));
   };
 
   const submit = (status) => (event) => {
@@ -284,17 +361,27 @@ export function BlogEditorForm({ post }) {
                   Upload & Crop
                 </Button>
                 {form.imageUrl && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    leftIcon={<X className="h-4 w-4" />}
-                    onClick={() =>
-                      setForm((current) => ({ ...current, imageUrl: '', imageAlt: '' }))
-                    }
-                  >
-                    Remove
-                  </Button>
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={cropCurrentImageUrl}
+                    >
+                      Crop URL
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      leftIcon={<X className="h-4 w-4" />}
+                      onClick={() =>
+                        setForm((current) => ({ ...current, imageUrl: '', imageAlt: '' }))
+                      }
+                    >
+                      Remove
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
@@ -312,21 +399,35 @@ export function BlogEditorForm({ post }) {
               onChange={updateField('tags')}
               helperText="Comma-separated tags."
             />
+            <Input
+              id="blog-seo-title"
+              label="SEO title"
+              value={form.seoTitle}
+              onChange={updateField('seoTitle')}
+            />
+            <Textarea
+              id="blog-seo-description"
+              label="SEO description"
+              rows={3}
+              value={form.seoDescription}
+              onChange={updateField('seoDescription')}
+            />
             {mutationError && <p className="text-sm text-red-300">{mutationError.message}</p>}
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader title="AI Assist" />
+          <CardHeader title="Metadata Assist" />
           <CardContent className="space-y-3">
             <p className="text-sm leading-6 text-[#8FA39B]">
-              Generate summaries, title variants, and SEO metadata from the final article draft.
+              Generate slug, excerpt, tags, image alt text, and SEO fields from the current draft.
             </p>
             <Button
               type="button"
               variant="outline"
               className="w-full"
               leftIcon={<Sparkles className="h-4 w-4" />}
+              onClick={generateMetadata}
             >
               Generate Metadata
             </Button>

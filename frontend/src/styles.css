@@ -12137,6 +12137,21 @@ footer a:hover {
   text-align: right;
 }
 
+.blog-cropper-hint,
+.blog-cropper-error {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.blog-cropper-hint {
+  color: #8FA39B;
+}
+
+.blog-cropper-error {
+  color: #FCA5A5;
+}
+
 @media (max-width: 900px) {
   .blog-featured,
   .blog-article-hero,
