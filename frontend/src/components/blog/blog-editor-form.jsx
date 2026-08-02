@@ -124,6 +124,8 @@ export function BlogEditorForm({ post }) {
   const [cropSource, setCropSource] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [generatingMetadata, setGeneratingMetadata] = useState(false);
+  const [metadataMessage, setMetadataMessage] = useState('');
   const isSaving = createPost.isPending || updatePost.isPending;
   const mutationError = createPost.error || updatePost.error;
 
@@ -236,7 +238,21 @@ export function BlogEditorForm({ post }) {
     });
   };
 
-  const generateMetadata = () => {
+  const applyGeneratedMetadata = (metadata) => {
+    const tagText = Array.isArray(metadata.tags) ? metadata.tags.join(', ') : metadata.tags;
+
+    setForm((current) => ({
+      ...current,
+      slug: current.slug || slugify(current.title),
+      excerpt: metadata.excerpt || current.excerpt,
+      seoTitle: metadata.seoTitle || current.seoTitle,
+      seoDescription: metadata.seoDescription || current.seoDescription,
+      imageAlt: metadata.imageAlt || current.imageAlt,
+      tags: tagText || current.tags,
+    }));
+  };
+
+  const generateLocalMetadata = () => {
     const title = form.title.trim();
     const bodyText = getBodyText(form.body);
     const excerpt = form.excerpt.trim() || truncateText(bodyText, 155);
@@ -244,15 +260,40 @@ export function BlogEditorForm({ post }) {
     const seoDescription = truncateText(excerpt || bodyText || title, 155);
     const nextTags = buildTags({ title, category: form.category, body: bodyText });
 
-    setForm((current) => ({
-      ...current,
-      slug: current.slug || slugify(title),
-      excerpt: current.excerpt || excerpt,
-      seoTitle: current.seoTitle || seoTitle,
-      seoDescription: current.seoDescription || seoDescription,
-      imageAlt: current.imageAlt || title || seoTitle,
-      tags: current.tags || nextTags.join(', '),
-    }));
+    return {
+      excerpt,
+      seoTitle,
+      seoDescription,
+      imageAlt: title || seoTitle,
+      tags: nextTags,
+    };
+  };
+
+  const generateMetadata = async () => {
+    setGeneratingMetadata(true);
+    setMetadataMessage('');
+
+    try {
+      const metadata = await blogPostService.generateMetadata({
+        title: payload.title,
+        category: payload.category,
+        excerpt: payload.excerpt,
+        imageUrl: payload.imageUrl,
+        body: payload.body,
+      });
+
+      applyGeneratedMetadata(metadata);
+      setMetadataMessage(
+        metadata.provider === 'local-fallback'
+          ? 'Generated with local fallback. Add a backend AI key for stronger suggestions.'
+          : `Generated with ${metadata.provider}.`
+      );
+    } catch (error) {
+      applyGeneratedMetadata(generateLocalMetadata());
+      setMetadataMessage(error.message || 'Generated locally because AI metadata was unavailable.');
+    } finally {
+      setGeneratingMetadata(false);
+    }
   };
 
   const submit = (status) => (event) => {
@@ -426,11 +467,13 @@ export function BlogEditorForm({ post }) {
               type="button"
               variant="outline"
               className="w-full"
+              loading={generatingMetadata}
               leftIcon={<Sparkles className="h-4 w-4" />}
               onClick={generateMetadata}
             >
               Generate Metadata
             </Button>
+            {metadataMessage && <p className="text-xs leading-5 text-[#8FA39B]">{metadataMessage}</p>}
             <Button
               type="submit"
               className="w-full"

@@ -11,6 +11,8 @@ export const blogPostService = {
   getAdminBySlug: async (slug, params) =>
     normalizeApiData(await apiClient.get(`/admin/blog-posts/${slug}`, buildRequestConfig(params))),
   create: async (payload) => normalizeApiData(await apiClient.post('/admin/blog-posts', payload)),
+  generateMetadata: async (payload) =>
+    normalizeApiData(await apiClient.post('/admin/ai/blog-metadata', payload)),
   uploadImage: async (payload) =>
     normalizeApiData(await apiClient.post('/admin/blog-posts/image-uploads', payload)),
   update: async (slug, payload) =>

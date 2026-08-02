@@ -31,6 +31,23 @@ Use `npm run media:sync-cloudinary -- --overwrite` only when you intentionally w
 
 New blog images uploaded from the admin UI go to Cloudinary automatically when backend Cloudinary env vars are present. If Cloudinary is not configured, the backend falls back to the existing local `/media/blog` storage for development.
 
+## Backend AI setup
+
+AI features run only on the backend so provider API keys never ship to the browser. The admin blog editor uses this for metadata generation and falls back to local rule-based suggestions when no AI key is configured.
+
+Backend env:
+
+```env
+AI_PROVIDER=groq
+GROQ_API_KEY=your_groq_api_key
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+GROQ_MODEL=llama-3.1-8b-instant
+AI_TIMEOUT_MS=12000
+AI_MAX_OUTPUT_TOKENS=900
+```
+
+Do not add `GROQ_API_KEY` or any AI secret to `frontend/.env`. Admin AI requests are authenticated, admin-only, validated, rate-limited by the API server, and audited.
+
 Phase 1 MVP for a professional GPU cloud marketplace. Customers can browse GPU rental packages, submit enquiries, and view manually issued credentials from a protected dashboard. Admins can manage packages, review enquiries, issue credentials, manage customers, and inspect audit logs.
 
 ## Tech Stack

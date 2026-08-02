@@ -1,4 +1,5 @@
 export { auditLogService } from './audit-log.service.js';
+export { aiService } from './ai.service.js';
 export { BaseService } from './base.service.js';
 export { blogPostService } from './blog-post.service.js';
 export { cloudinaryService } from './cloudinary.service.js';

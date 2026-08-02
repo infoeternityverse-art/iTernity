@@ -29,6 +29,14 @@ export const config = {
     uploadFolder: loadEnv('CLOUDINARY_UPLOAD_FOLDER', 'gpu-cloud-marketplace'),
     assetFolder: loadEnv('CLOUDINARY_ASSET_FOLDER', loadEnv('CLOUDINARY_UPLOAD_FOLDER', 'gpu-cloud-marketplace')),
   },
+  ai: {
+    provider: loadEnv('AI_PROVIDER', 'groq'),
+    apiKey: loadEnv('GROQ_API_KEY', ''),
+    baseUrl: loadEnv('GROQ_BASE_URL', 'https://api.groq.com/openai/v1'),
+    model: loadEnv('GROQ_MODEL', 'llama-3.1-8b-instant'),
+    timeoutMs: Number(loadEnv('AI_TIMEOUT_MS', 12000)),
+    maxOutputTokens: Number(loadEnv('AI_MAX_OUTPUT_TOKENS', 900)),
+  },
   credentialEncryptionKey: loadEnv(
     'CREDENTIAL_ENCRYPTION_KEY',
     loadEnv('NODE_ENV', 'development') === 'production'
