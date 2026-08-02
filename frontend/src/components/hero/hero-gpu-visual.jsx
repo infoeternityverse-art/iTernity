@@ -1,5 +1,4 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { SparkLoader } from '@/components/common/spark-loader.jsx';
 
 const loadHeroWireframeScene = () => import('./hero-wireframe-scene.jsx');
 const HeroWireframeScene = lazy(loadHeroWireframeScene);
@@ -48,6 +47,27 @@ function useInView() {
   return [setNode, isInView];
 }
 
+function useDelayedWebglStart(isInView) {
+  const [canStart, setCanStart] = useState(false);
+
+  useEffect(() => {
+    if (!isInView || canStart) return undefined;
+
+    const start = () => setCanStart(true);
+    const requestIdle = window.requestIdleCallback;
+
+    if (requestIdle) {
+      const idleId = requestIdle(start, { timeout: 1800 });
+      return () => window.cancelIdleCallback?.(idleId);
+    }
+
+    const timer = window.setTimeout(start, 900);
+    return () => window.clearTimeout(timer);
+  }, [canStart, isInView]);
+
+  return canStart;
+}
+
 function useIsMobile() {
   const getIsMobile = () =>
     typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
@@ -67,6 +87,7 @@ function useIsMobile() {
 
 export function HeroGpuVisual({ variant = 'home' }) {
   const [setNode, isInView] = useInView();
+  const canStartWebgl = useDelayedWebglStart(isInView);
   const isMobile = useIsMobile();
   const [isSceneReady, setIsSceneReady] = useState(false);
   const visualRef = useRef(null);
@@ -84,8 +105,9 @@ export function HeroGpuVisual({ variant = 'home' }) {
   };
 
   useEffect(() => {
+    if (!canStartWebgl) return;
     loadHeroWireframeScene();
-  }, []);
+  }, [canStartWebgl]);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
@@ -238,6 +260,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
           alt=""
           className="hero-bg-photo"
           decoding="async"
+          fetchPriority={variant === 'home' ? 'high' : 'auto'}
           draggable="false"
           onError={(event) => {
             if (!background.fallback || event.currentTarget.dataset.fallbackLoaded) return;
@@ -257,7 +280,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
       </div>
       <div className="hero-r3f-shell" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
-        {isInView ? (
+        {canStartWebgl ? (
           <Suspense fallback={<HeroSceneLoader />}>
             <HeroWireframeScene
               key={isMobile ? 'hero-wireframe-mobile' : 'hero-wireframe-desktop'}
@@ -271,16 +294,12 @@ export function HeroGpuVisual({ variant = 'home' }) {
         ) : (
           <HeroSceneLoader />
         )}
-        {!isSceneReady && <HeroSceneLoader overlay />}
+        {canStartWebgl && !isSceneReady && <HeroSceneLoader overlay />}
       </div>
     </div>
   );
 }
 
 function HeroSceneLoader({ overlay = false }) {
-  return (
-    <div className={`hero-r3f-loader ${overlay ? 'hero-r3f-loader-overlay' : ''}`}>
-      <SparkLoader label="Loading GPU universe" fullScreen={false} />
-    </div>
-  );
+  return <div className={`hero-r3f-loader ${overlay ? 'hero-r3f-loader-overlay' : ''}`} />;
 }

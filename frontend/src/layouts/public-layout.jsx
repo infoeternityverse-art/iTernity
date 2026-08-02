@@ -132,7 +132,7 @@ export function PublicLayout() {
 
   useEffect(() => {
     const vantaTarget = footerVantaRef.current;
-    if (!vantaTarget) return undefined;
+    if (!vantaTarget || !isFooterVisible) return undefined;
 
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (reducedMotionQuery.matches) return undefined;
@@ -207,7 +207,7 @@ export function PublicLayout() {
       footerVantaEffectRef.current?.destroy();
       footerVantaEffectRef.current = null;
     };
-  }, []);
+  }, [isFooterVisible]);
 
   return (
     <div className="premium-shell flex min-h-screen flex-col text-[#F5F7F6]">
