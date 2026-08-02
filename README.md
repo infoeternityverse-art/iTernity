@@ -33,7 +33,7 @@ New blog images uploaded from the admin UI go to Cloudinary automatically when b
 
 ## Backend AI setup
 
-AI features run only on the backend so provider API keys never ship to the browser. The admin blog editor uses this for metadata generation and falls back to local rule-based suggestions when no AI key is configured.
+AI features run only on the backend so provider API keys never ship to the browser. Admin AI tools use validated, admin-only endpoints and fall back to local rule-based suggestions when no AI key is configured.
 
 Backend env:
 
@@ -47,6 +47,12 @@ AI_MAX_OUTPUT_TOKENS=900
 ```
 
 Do not add `GROQ_API_KEY` or any AI secret to `frontend/.env`. Admin AI requests are authenticated, admin-only, validated, rate-limited by the API server, and audited.
+
+Current admin AI tools:
+
+- Blog metadata: excerpt, SEO title, SEO description, tags, alt text, and FAQ suggestions.
+- Enquiry analysis: workload summary, priority, fit score, risks, clarification questions, and note drafts.
+- GPU package copy: editable package description, features, and use cases from package specs.
 
 Phase 1 MVP for a professional GPU cloud marketplace. Customers can browse GPU rental packages, submit enquiries, and view manually issued credentials from a protected dashboard. Admins can manage packages, review enquiries, issue credentials, manage customers, and inspect audit logs.
 

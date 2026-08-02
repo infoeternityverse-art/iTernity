@@ -148,6 +148,88 @@ class AiService {
       model: config.ai.model,
     };
   }
+
+  async analyzeEnquiry({ projectDescription, expectedUsage, duration, budget, gpuPackage }) {
+    const result = await this.completeJson({
+      system:
+        'You are an operations assistant for a GPU rental marketplace. Return only compact JSON with: summary, workloadType, fitRationale, suggestedPackage, risks, clarificationQuestions, adminNotesDraft, customerReplyDraft. Do not include private contact info. Keep tone professional and conservative. Do not provide numeric scores or status decisions.',
+      user: JSON.stringify({
+        enquiry: {
+          projectDescription,
+          expectedUsage,
+          duration,
+          budget,
+        },
+        selectedGpuPackage: gpuPackage,
+        constraints: {
+          risks: 'up to 5 short strings',
+          clarificationQuestions: 'up to 5 short strings',
+          adminNotesDraft: 'under 900 characters',
+          customerReplyDraft: 'under 1200 characters',
+        },
+      }),
+      temperature: 0,
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      summary: clamp(result.summary, 700),
+      workloadType: clamp(result.workloadType, 80),
+      fitRationale: clamp(result.fitRationale, 900),
+      suggestedPackage: clamp(result.suggestedPackage, 220),
+      risks: (Array.isArray(result.risks) ? result.risks : []).map((item) => clamp(item, 160)).filter(Boolean).slice(0, 5),
+      clarificationQuestions: (Array.isArray(result.clarificationQuestions) ? result.clarificationQuestions : [])
+        .map((item) => clamp(item, 180))
+        .filter(Boolean)
+        .slice(0, 5),
+      adminNotesDraft: clamp(result.adminNotesDraft, 1200),
+      customerReplyDraft: clamp(result.customerReplyDraft, 1500),
+      provider: config.ai.provider,
+      model: config.ai.model,
+    };
+  }
+
+  async generateGpuPackageCopy(gpuPackage) {
+    const result = await this.completeJson({
+      system:
+        'You are a product copy assistant for a GPU cloud marketplace. Return only compact JSON with: description, features, useCases, seoTitle, seoDescription, faqs. Be accurate to the provided specs. Do not invent benchmark numbers or unsupported guarantees.',
+      user: JSON.stringify({
+        gpuPackage,
+        constraints: {
+          description: '2 concise paragraphs under 900 characters total',
+          features: '5 to 7 short feature strings',
+          useCases: '4 to 6 practical workload strings',
+          seoTitle: '45-60 characters',
+          seoDescription: '130-155 characters',
+          faqs: 'up to 4 question/answer objects',
+        },
+      }),
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      description: clamp(result.description, 1200),
+      features: (Array.isArray(result.features) ? result.features : []).map((item) => clamp(item, 120)).filter(Boolean).slice(0, 7),
+      useCases: (Array.isArray(result.useCases) ? result.useCases : []).map((item) => clamp(item, 120)).filter(Boolean).slice(0, 6),
+      seoTitle: clamp(result.seoTitle, 180),
+      seoDescription: clamp(result.seoDescription, 300),
+      faqs: (Array.isArray(result.faqs) ? result.faqs : [])
+        .map((faq) => ({
+          question: clamp(faq.question, 180),
+          answer: clamp(faq.answer, 500),
+        }))
+        .filter((faq) => faq.question && faq.answer)
+        .slice(0, 4),
+      provider: config.ai.provider,
+      model: config.ai.model,
+    };
+  }
 }
 
 export const aiService = new AiService();

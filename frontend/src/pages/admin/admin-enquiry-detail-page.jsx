@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import {
   Alert,
   Button,
@@ -13,6 +14,32 @@ import {
 } from '@/components/ui/index.js';
 import { formatDate } from '@/components/admin/admin-utils.js';
 import { useEnquiry, useUpdateAdminEnquiry } from '@/hooks/index.js';
+import { enquiryService } from '@/services/index.js';
+
+const toGpuPackagePayload = (gpuPackage) => {
+  if (!gpuPackage || typeof gpuPackage === 'string') {
+    return undefined;
+  }
+
+  return {
+    name: gpuPackage.name,
+    gpuModel: gpuPackage.gpuModel,
+    gpuMemoryGb: gpuPackage.gpuMemoryGb,
+    cpuCores: gpuPackage.cpuCores,
+    ramGb: gpuPackage.ramGb,
+    storageGb: gpuPackage.storageGb,
+    storageType: gpuPackage.storageType,
+    bandwidth: gpuPackage.bandwidth,
+    region: gpuPackage.region,
+    hourlyPrice: gpuPackage.hourlyPrice,
+    monthlyPrice: gpuPackage.monthlyPrice,
+    currency: gpuPackage.currency,
+    availabilityStatus: gpuPackage.availabilityStatus,
+    description: gpuPackage.description,
+    features: gpuPackage.features,
+    useCases: gpuPackage.useCases,
+  };
+};
 
 export function AdminEnquiryDetailPage() {
   const { id } = useParams();
@@ -20,6 +47,9 @@ export function AdminEnquiryDetailPage() {
   const updateEnquiry = useUpdateAdminEnquiry();
   const [adminNotes, setAdminNotes] = useState('');
   const [customerVisibleNotes, setCustomerVisibleNotes] = useState('');
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   if (enquiry.isLoading) return <Skeleton className="h-96" />;
   if (enquiry.error) return <Alert variant="danger">{enquiry.error.message}</Alert>;
@@ -36,6 +66,30 @@ export function AdminEnquiryDetailPage() {
       payload: { adminNotes, customerVisibleNotes },
     });
   const updateStatus = (status) => updateEnquiry.mutateAsync({ id, payload: { status } });
+  const analyzeEnquiry = async () => {
+    setAiLoading(true);
+    setAiError('');
+
+    try {
+      const analysis = await enquiryService.analyze({
+        projectDescription: record.projectDescription,
+        expectedUsage: record.expectedUsage,
+        duration: record.duration,
+        budget: record.budget,
+        gpuPackage: toGpuPackagePayload(selectedGpuPackage),
+      });
+      setAiAnalysis(analysis);
+    } catch (error) {
+      setAiError(error.message || 'AI analysis could not be generated.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  const applyAiDrafts = () => {
+    if (!aiAnalysis) return;
+    setAdminNotes(aiAnalysis.adminNotesDraft || '');
+    setCustomerVisibleNotes(aiAnalysis.customerReplyDraft || '');
+  };
 
   return (
     <div className="space-y-6 pt-2">
@@ -118,6 +172,79 @@ export function AdminEnquiryDetailPage() {
           </CardContent>
         </Card>
         <div className="space-y-4">
+          <Card>
+            <CardContent className="space-y-4 p-5">
+              <SectionHeader
+                title="AI Brief"
+                description="Summarize workload fit and draft follow-up notes."
+              />
+              <Button
+                className="w-full"
+                variant="outline"
+                loading={aiLoading}
+                leftIcon={<Sparkles className="h-4 w-4" />}
+                onClick={analyzeEnquiry}
+              >
+                Analyze Enquiry
+              </Button>
+              {aiError && <Alert variant="danger">{aiError}</Alert>}
+              {aiAnalysis && (
+                <div className="space-y-4 rounded-card border border-white/10 bg-white/[0.035] p-4 text-sm">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <p className="text-[#8FA39B]">Priority</p>
+                      <p className="font-semibold text-white">{aiAnalysis.priority || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[#8FA39B]">Fit Score</p>
+                      <p className="font-semibold text-white">{aiAnalysis.fitScore ?? '-'}%</p>
+                    </div>
+                    <div>
+                      <p className="text-[#8FA39B]">Workload</p>
+                      <p className="font-semibold text-white">{aiAnalysis.workloadType || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[#8FA39B]">Estimated VRAM Need</p>
+                      <p className="font-semibold text-white">
+                        {aiAnalysis.requiredVramGb ? `${aiAnalysis.requiredVramGb}GB` : '-'}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[#8FA39B]">Summary</p>
+                    <p className="mt-1 leading-6 text-[#F5F7F6]">{aiAnalysis.summary}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#8FA39B]">Fit Rationale</p>
+                    <p className="mt-1 leading-6 text-[#F5F7F6]">{aiAnalysis.fitRationale}</p>
+                  </div>
+                  {aiAnalysis.risks?.length > 0 && (
+                    <div>
+                      <p className="text-[#8FA39B]">Risks</p>
+                      <ul className="mt-2 space-y-1 text-[#F5F7F6]">
+                        {aiAnalysis.risks.map((risk) => (
+                          <li key={risk}>- {risk}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {aiAnalysis.clarificationQuestions?.length > 0 && (
+                    <div>
+                      <p className="text-[#8FA39B]">Questions to Ask</p>
+                      <ul className="mt-2 space-y-1 text-[#F5F7F6]">
+                        {aiAnalysis.clarificationQuestions.map((question) => (
+                          <li key={question}>- {question}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <Button className="w-full" variant="secondary" onClick={applyAiDrafts}>
+                    Apply Drafts to Notes
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
           <Card>
             <CardContent className="space-y-3 p-5">
               <SectionHeader title="Decision" />

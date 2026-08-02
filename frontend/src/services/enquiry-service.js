@@ -9,6 +9,8 @@ export const enquiryService = {
     normalizeApiList(await apiClient.get('/customer/enquiries', buildRequestConfig(params))),
   listAdmin: async (params) =>
     normalizeApiList(await apiClient.get('/admin/enquiries', buildRequestConfig(params))),
+  analyze: async (payload) =>
+    normalizeApiData(await apiClient.post('/admin/ai/enquiry-analysis', payload)),
   updateAdmin: async (id, payload) =>
     normalizeApiData(await apiClient.patch(`/admin/enquiries/${id}`, payload)),
 };

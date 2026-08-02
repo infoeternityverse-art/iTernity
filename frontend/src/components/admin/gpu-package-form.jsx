@@ -1,8 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Sparkles } from 'lucide-react';
 import { Alert, Button, Checkbox, Input, Select, Textarea } from '@/components/ui/index.js';
+import { gpuPackageService } from '@/services/index.js';
 
 const toNumber = (value) => (value === '' || value === undefined ? undefined : Number(value));
 
@@ -65,9 +67,13 @@ export function GpuPackageForm({
   const {
     register,
     handleSubmit,
+    getValues,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({ resolver: zodResolver(gpuPackageSchema), defaultValues: defaults });
+  const [generatingCopy, setGeneratingCopy] = useState(false);
+  const [copyMessage, setCopyMessage] = useState('');
 
   useEffect(() => {
     if (initialValue) {
@@ -87,6 +93,49 @@ export function GpuPackageForm({
       useCases: fromMultiline(values.useCases),
       currency: values.currency.toUpperCase(),
     });
+
+  const generateCopy = async () => {
+    setGeneratingCopy(true);
+    setCopyMessage('');
+
+    try {
+      const values = getValues();
+      const copy = await gpuPackageService.generateCopy({
+        ...values,
+        gpuMemoryGb: Number(values.gpuMemoryGb),
+        cpuCores: Number(values.cpuCores),
+        ramGb: Number(values.ramGb),
+        storageGb: Number(values.storageGb),
+        hourlyPrice: Number(values.hourlyPrice),
+        monthlyPrice: Number(values.monthlyPrice),
+        features: fromMultiline(values.features),
+        useCases: fromMultiline(values.useCases),
+        currency: values.currency.toUpperCase(),
+      });
+
+      if (copy.description) {
+        setValue('description', copy.description, { shouldDirty: true });
+      }
+
+      if (copy.features?.length) {
+        setValue('features', copy.features.join('\n'), { shouldDirty: true });
+      }
+
+      if (copy.useCases?.length) {
+        setValue('useCases', copy.useCases.join('\n'), { shouldDirty: true });
+      }
+
+      setCopyMessage(
+        copy.provider === 'local-fallback'
+          ? 'Generated with local fallback. Add a backend AI key for stronger copy.'
+          : `Generated with ${copy.provider}. Review before saving.`
+      );
+    } catch (generationError) {
+      setCopyMessage(generationError.message || 'Package copy could not be generated.');
+    } finally {
+      setGeneratingCopy(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(handleValidSubmit)} className="space-y-4">
@@ -206,6 +255,21 @@ export function GpuPackageForm({
         disabled={loading}
         {...register('description')}
       />
+      <div className="flex flex-col gap-2 rounded-card border border-white/10 bg-white/[0.035] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-6 text-[#8FA39B]">
+          Generate editable description, features, and use cases from the package specs.
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          loading={generatingCopy}
+          leftIcon={<Sparkles className="h-4 w-4" />}
+          onClick={generateCopy}
+        >
+          Generate Copy
+        </Button>
+      </div>
+      {copyMessage && <p className="text-sm text-[#8FA39B]">{copyMessage}</p>}
       <Textarea
         id="features"
         label="Features"
