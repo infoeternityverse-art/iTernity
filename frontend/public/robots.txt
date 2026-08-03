@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /thank-you
+Disallow: /403
+Disallow: /500
+
+Sitemap: https://iternityverse.com/sitemap.xml

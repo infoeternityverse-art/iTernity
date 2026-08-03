@@ -31,6 +31,34 @@ Use `npm run media:sync-cloudinary -- --overwrite` only when you intentionally w
 
 New blog images uploaded from the admin UI go to Cloudinary automatically when backend Cloudinary env vars are present. If Cloudinary is not configured, the backend falls back to the existing local `/media/blog` storage for development.
 
+## Search Indexing
+
+`frontend/public/sitemap.xml` and `frontend/public/robots.txt` are served by Vercel at:
+
+```text
+https://iternityverse.com/sitemap.xml
+https://iternityverse.com/robots.txt
+```
+
+Regenerate the sitemap after publishing, unpublishing, or changing public GPU packages or blog
+posts:
+
+```bash
+npm run generate:sitemap
+```
+
+The generator reads public data from `https://api.iternityverse.com/api/v1`, includes public
+marketing routes, GPU detail pages, GPU enquiry pages, and published blog posts, and excludes
+private/auth/admin/customer-dashboard pages through `robots.txt`.
+
+Google Search Console setup:
+
+```text
+Property: iternityverse.com domain property
+Verification: DNS TXT record at Hostinger
+Submitted sitemap: https://iternityverse.com/sitemap.xml
+```
+
 ## Backend AI setup
 
 AI features run only on the backend so provider API keys never ship to the browser. Admin AI tools use validated, admin-only endpoints and fall back to local rule-based suggestions when no AI key is configured.

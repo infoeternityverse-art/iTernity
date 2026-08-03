@@ -90,5 +90,7 @@
 - Configure error alerting.
 - Document rollback steps for frontend and backend deployments.
 - Redeploy Vercel with build cache disabled after production env changes.
+- Run `npm run generate:sitemap` after public GPU/blog content changes and commit the updated sitemap.
 - Sync public media to Cloudinary after replacing files under `frontend/public/media`.
 - Use `npm run media:sync-cloudinary -- --overwrite` only when intentionally replacing existing Cloudinary public IDs.
+- Submit or refresh `https://iternityverse.com/sitemap.xml` in Google Search Console after deployment.
