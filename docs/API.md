@@ -39,6 +39,8 @@ Error:
 - `POST /auth/register`
 - `POST /auth/login`
 - `POST /auth/admin/login`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
 - `POST /auth/logout`
 - `GET /auth/me`
 - `PATCH /auth/me`
