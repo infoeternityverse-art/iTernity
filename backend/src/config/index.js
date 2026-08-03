@@ -19,6 +19,12 @@ export const config = {
     windowMs: Number(loadEnv('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
     max: Number(loadEnv('RATE_LIMIT_MAX', 300)),
   },
+  passwordResetRateLimit: {
+    ipWindowMs: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    ipMax: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_MAX', 10)),
+    emailWindowMs: Number(loadEnv('PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS', 60 * 60 * 1000)),
+    emailMax: Number(loadEnv('PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX', 3)),
+  },
   jwt: {
     accessSecret: requireEnv('JWT_ACCESS_SECRET'),
     refreshSecret: requireEnv('JWT_REFRESH_SECRET'),
