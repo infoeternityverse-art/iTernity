@@ -13,7 +13,9 @@ import {
   StatusBadge,
 } from '@/components/ui/index.js';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { useGpuPackage } from '@/hooks/index.js';
+import { createBreadcrumbSchema, createGpuProductSchema } from '@/utils/seo-schema.js';
 
 const formatPrice = (value, currency = 'USD') =>
   new Intl.NumberFormat('en-US', {
@@ -50,9 +52,28 @@ export function GpuDetailPage() {
     },
     { label: 'Region', value: gpuPackage.region, icon: MapPin },
   ];
+  const packageId = gpuPackage.id || gpuPackage._id;
+  const packagePath = `/gpus/${packageId}`;
 
   return (
     <div className="space-y-8">
+      <Seo
+        title={`${gpuPackage.name} Cloud GPU Rental`}
+        description={
+          gpuPackage.description ||
+          `${gpuPackage.name} cloud GPU rental package with ${gpuPackage.gpuMemoryGb}GB VRAM, ${gpuPackage.cpuCores} CPU cores, and ${gpuPackage.ramGb}GB RAM.`
+        }
+        path={packagePath}
+        type="product"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'GPU Marketplace', path: '/gpus' },
+            { name: gpuPackage.name, path: packagePath },
+          ]),
+          createGpuProductSchema({ gpuPackage, path: packagePath }),
+        ]}
+      />
       <PublicPageHero
         eyebrow="GPU Package"
         title={gpuPackage.name}
@@ -60,7 +81,7 @@ export function GpuDetailPage() {
         variant="detail"
       >
         <Button asChild>
-          <Link to={`/enquiry/${gpuPackage.id || gpuPackage._id}`}>Submit Enquiry</Link>
+          <Link to={`/enquiry/${packageId}`}>Submit Enquiry</Link>
         </Button>
       </PublicPageHero>
 
@@ -157,7 +178,7 @@ export function GpuDetailPage() {
                 </p>
               </div>
               <Button asChild className="w-full">
-                <Link to={`/enquiry/${gpuPackage.id || gpuPackage._id}`}>Submit Enquiry</Link>
+                <Link to={`/enquiry/${packageId}`}>Submit Enquiry</Link>
               </Button>
             </CardContent>
           </Card>

@@ -119,6 +119,7 @@ VITE_API_BASE_URL=https://api.iternityverse.com/api/v1
 VITE_API_TIMEOUT_MS=45000
 VITE_APP_NAME=iTernityverse
 VITE_APP_ENV=production
+VITE_SITE_URL=https://iternityverse.com
 VITE_SUPPORT_EMAIL=info@iternityverse.com
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_ASSET_FOLDER=gpu-cloud-marketplace
@@ -164,6 +165,7 @@ VITE_API_BASE_URL=http://localhost:5000/api/v1
 VITE_API_TIMEOUT_MS=45000
 VITE_APP_NAME=iTernityverse
 VITE_APP_ENV=development
+VITE_SITE_URL=http://localhost:5173
 VITE_SUPPORT_EMAIL=support@example.com
 ```
 

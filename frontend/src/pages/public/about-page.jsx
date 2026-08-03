@@ -1,6 +1,8 @@
 import { Check, Clock, Cpu, Network, ShieldCheck, Sparkles, Users, X, Zap } from 'lucide-react';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { Card, CardContent } from '@/components/ui/index.js';
+import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
 
 const trustMarks = ['AI labs', 'Render teams', 'Research groups', 'Inference teams'];
 
@@ -65,6 +67,17 @@ const platformWork = [
 export function AboutPage() {
   return (
     <div className="space-y-24 py-8">
+      <Seo
+        title="About iTernityverse"
+        description="Learn how iTernityverse helps AI, rendering, research, and inference teams compare GPU packages and request reviewed cloud GPU access."
+        path="/about"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'About', path: '/about' },
+          ]),
+        ]}
+      />
       <section className="mx-auto max-w-5xl space-y-8 text-center">
         <PublicPageHero
           eyebrow="About Us"

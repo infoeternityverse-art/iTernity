@@ -1,9 +1,20 @@
-import { ArrowLeft, CalendarDays, Check, Copy, Facebook, Linkedin, MessageCircle, Share2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  CalendarDays,
+  Check,
+  Copy,
+  Facebook,
+  Linkedin,
+  MessageCircle,
+  Share2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BlogCard } from '@/components/blog/blog-card.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { Alert, Badge, EmptyState, Skeleton } from '@/components/ui/index.js';
 import { useBlogPost, useBlogPosts } from '@/hooks/index.js';
+import { createBlogPostingSchema, createBreadcrumbSchema } from '@/utils/seo-schema.js';
 import { mediaUrl } from '@/utils/media-url.js';
 
 const formatDate = (value) => {
@@ -49,6 +60,8 @@ export function BlogDetailPage() {
   const hasSections = sections.length > 0;
   const encodedShareUrl = encodeURIComponent(shareUrl);
   const encodedShareTitle = encodeURIComponent(post.title || '');
+  const postPath = `/blog/${post.slug}`;
+  const postImage = post.imageUrl ? mediaUrl(post.imageUrl, { width: 1400 }) : undefined;
 
   const copyShareUrl = async () => {
     if (!shareUrl || !navigator.clipboard) {
@@ -62,6 +75,21 @@ export function BlogDetailPage() {
 
   return (
     <article className="blog-article">
+      <Seo
+        title={post.seoTitle || post.title}
+        description={post.seoDescription || post.excerpt}
+        path={postPath}
+        image={postImage}
+        type="article"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Blog', path: '/blog' },
+            { name: post.title, path: postPath },
+          ]),
+          createBlogPostingSchema({ post, path: postPath, image: postImage }),
+        ]}
+      />
       <Link to="/blog" className="blog-back-link">
         <ArrowLeft aria-hidden="true" />
         Back to blog
@@ -103,8 +131,7 @@ export function BlogDetailPage() {
               target="_blank"
               rel="noreferrer"
             >
-              <Share2 aria-hidden="true" />
-              X
+              <Share2 aria-hidden="true" />X
             </a>
             <a
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedShareUrl}`}
@@ -141,10 +168,7 @@ export function BlogDetailPage() {
       <div className={`blog-article-layout ${hasSections ? '' : 'without-sidebar'}`}>
         <div className="blog-article-body">
           {sections.map((section) => (
-            <section
-              key={section.heading}
-              id={section.heading.toLowerCase().replaceAll(' ', '-')}
-            >
+            <section key={section.heading} id={section.heading.toLowerCase().replaceAll(' ', '-')}>
               <h2>{section.heading}</h2>
               <p>{section.copy}</p>
             </section>

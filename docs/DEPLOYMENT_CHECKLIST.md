@@ -18,6 +18,7 @@
   - `PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS=3600000`
   - `PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX=3`
 - Confirm frontend `VITE_API_BASE_URL=https://api.iternityverse.com/api/v1`.
+- Confirm frontend `VITE_SITE_URL=https://iternityverse.com`.
 - Confirm frontend `VITE_SUPPORT_EMAIL=info@iternityverse.com`.
 
 ## Domains

@@ -15,7 +15,9 @@ import {
   Textarea,
 } from '@/components/ui/index.js';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { useCreateEnquiry, useGpuPackages } from '@/hooks/index.js';
+import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
 
 const contactSchema = z.object({
   firstName: z.string().trim().min(2, 'First name must be at least 2 characters.').max(60),
@@ -79,6 +81,24 @@ export function ContactPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-8">
+      <Seo
+        title="Contact iTernityverse"
+        description="Contact iTernityverse to discuss GPU rental requirements, AI workloads, preferred GPU packages, and reviewed access."
+        path="/contact"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Contact', path: '/contact' },
+          ]),
+          {
+            '@context': 'https://schema.org',
+            '@type': 'ContactPage',
+            name: 'Contact iTernityverse',
+            url: `${env.siteUrl}/contact`,
+            email: env.supportEmail,
+          },
+        ]}
+      />
       <PublicPageHero
         eyebrow="Contact"
         title="Get in touch with us"

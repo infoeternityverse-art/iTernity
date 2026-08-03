@@ -2,9 +2,11 @@ import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { BlogCard } from '@/components/blog/blog-card.jsx';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { Alert, Skeleton } from '@/components/ui/index.js';
 import { blogCategories } from '@/data/blog-content.js';
 import { useBlogPosts } from '@/hooks/index.js';
+import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
 
 export function BlogPage() {
   const [category, setCategory] = useState('All');
@@ -20,15 +22,21 @@ export function BlogPage() {
     [category, query]
   );
   const { data, isLoading, error } = useBlogPosts(params);
-  const posts = data?.data || [];
-
-  const filteredPosts = useMemo(
-    () => posts,
-    [posts]
-  );
+  const filteredPosts = data?.data || [];
 
   return (
     <div className="blog-section space-y-8">
+      <Seo
+        title="GPU Cloud Blog"
+        description="Read iTernityverse notes on GPU infrastructure, AI inference economics, secure AI workspaces, model operations, and compute strategy."
+        path="/blog"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'Blog', path: '/blog' },
+          ]),
+        ]}
+      />
       <PublicPageHero
         eyebrow="Research Log"
         title="Blog"

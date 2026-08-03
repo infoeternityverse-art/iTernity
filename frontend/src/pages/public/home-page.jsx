@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
+import { CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, SectionHeader } from '@/components/ui/index.js';
 import { HeroGpuVisual } from '@/components/hero/hero-gpu-visual.jsx';
+import { Seo } from '@/components/common/seo.jsx';
+import { createOrganizationSchema, createWebsiteSchema } from '@/utils/seo-schema.js';
 
 const features = [
   {
@@ -50,6 +52,12 @@ function ScrollIndicator() {
 export function HomePage() {
   return (
     <div className="space-y-16">
+      <Seo
+        title="iTernityverse | Cloud GPU Rental for AI Teams"
+        description="Rent curated cloud GPU packages for AI inference, model training, rendering, research, and creative workloads with reviewed access."
+        path="/"
+        structuredData={[createOrganizationSchema(), createWebsiteSchema()]}
+      />
       <section className="hero-panel relative left-1/2 -ml-[50vw] -mt-12 flex min-h-screen w-screen max-w-[100vw] items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-32">
         <div className="hero-panel-grid pointer-events-none absolute inset-0" />
         <div className="hero-panel-dust pointer-events-none absolute inset-0" />
@@ -61,11 +69,19 @@ export function HomePage() {
             <div className="hero-copy-inner">
               {/* <p className="hero-eyebrow"><span />GPU CLOUD</p> */}
               <h1 className="hero-heading">
-                <span className="hero-heading-line hero-heading-line-1" data-text="Enter the">Enter the</span>
-                <span className="hero-heading-line hero-heading-line-2" data-text="GPU universe">GPU universe</span>
-                <span className="hero-heading-line hero-heading-line-3" data-text="for modern AI.">for modern AI.</span>
+                <span className="hero-heading-line hero-heading-line-1" data-text="Enter the">
+                  Enter the
+                </span>
+                <span className="hero-heading-line hero-heading-line-2" data-text="GPU universe">
+                  GPU universe
+                </span>
+                <span className="hero-heading-line hero-heading-line-3" data-text="for modern AI.">
+                  for modern AI.
+                </span>
               </h1>
-              <p className="hero-typing-line">Rendering intelligence across a living cosmic compute field</p>
+              <p className="hero-typing-line">
+                Rendering intelligence across a living cosmic compute field
+              </p>
               <div className="hero-action-cluster">
                 {/* <Button asChild className="hero-cta-button pointer-events-auto">
                   <Link to="/gpus">

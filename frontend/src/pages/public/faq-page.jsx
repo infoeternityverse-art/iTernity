@@ -1,7 +1,9 @@
 import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { cn, focusRing } from '@/components/ui/ui-utils.js';
+import { createBreadcrumbSchema, createFaqSchema } from '@/utils/seo-schema.js';
 
 const faqItems = [
   {
@@ -47,6 +49,18 @@ export function FaqPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-16 py-8">
+      <Seo
+        title="GPU Rental FAQ"
+        description="Answers about iTernityverse GPU rental approvals, dashboard credentials, marketplace browsing, enquiries, and provisioning."
+        path="/faq"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'FAQ', path: '/faq' },
+          ]),
+          createFaqSchema(faqItems),
+        ]}
+      />
       <PublicPageHero
         eyebrow="FAQ"
         title="Questions worth asking before you request access."

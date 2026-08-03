@@ -2,15 +2,11 @@ import { useMemo, useState } from 'react';
 import { GpuMarketplaceControls } from '@/components/gpu/gpu-marketplace-controls.jsx';
 import { GpuPackageCard } from '@/components/gpu/gpu-package-card.jsx';
 import { GpuRecommendationAssistant } from '@/components/gpu/gpu-recommendation-assistant.jsx';
-import {
-  Alert,
-  EmptyState,
-  Pagination,
-  SectionHeader,
-  Skeleton,
-} from '@/components/ui/index.js';
+import { Alert, EmptyState, Pagination, SectionHeader, Skeleton } from '@/components/ui/index.js';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { useGpuPackages } from '@/hooks/index.js';
+import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
 
 const parseSort = (sortValue) => {
   const [sort, order] = sortValue.split(':');
@@ -47,6 +43,17 @@ export function GpusPage() {
 
   return (
     <div className="space-y-8">
+      <Seo
+        title="GPU Marketplace"
+        description="Compare available cloud GPU rental packages by GPU model, VRAM, CPU, RAM, storage, region, availability, and price."
+        path="/gpus"
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'GPU Marketplace', path: '/gpus' },
+          ]),
+        ]}
+      />
       <PublicPageHero
         eyebrow="GPU Marketplace"
         title="GPU Marketplace"

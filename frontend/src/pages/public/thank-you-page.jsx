@@ -1,11 +1,18 @@
 import { Link } from 'react-router-dom';
 import { CheckCircle } from 'lucide-react';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { Button, Card, CardContent } from '@/components/ui/index.js';
 
 export function ThankYouPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
+      <Seo
+        title="Thank You"
+        description="Your iTernityverse enquiry has been submitted for review."
+        path="/thank-you"
+        noindex
+      />
       <PublicPageHero
         eyebrow="Submitted"
         title="Thank you"

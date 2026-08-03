@@ -1,8 +1,10 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { EnquiryForm } from '@/components/enquiry/enquiry-form.jsx';
 import { PublicPageHero } from '@/components/common/public-page-hero.jsx';
+import { Seo } from '@/components/common/seo.jsx';
 import { Alert, Card, CardContent, Skeleton } from '@/components/ui/index.js';
 import { useCreateEnquiry, useGpuPackage } from '@/hooks/index.js';
+import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
 
 const ENQUIRY_DRAFT_KEY = 'gpu-marketplace-enquiry-draft';
 
@@ -42,9 +44,23 @@ export function EnquiryPage() {
   if (!gpuPackage) {
     return <Alert variant="warning">The selected GPU package could not be found.</Alert>;
   }
+  const enquiryPath = `/enquiry/${gpuPackageId}`;
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
+      <Seo
+        title={`Request ${gpuPackage.name} GPU Access`}
+        description={`Submit an enquiry for ${gpuPackage.name} cloud GPU rental access. Share your workload, timeline, and project requirements for review.`}
+        path={enquiryPath}
+        structuredData={[
+          createBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'GPU Marketplace', path: '/gpus' },
+            { name: gpuPackage.name, path: `/gpus/${gpuPackageId}` },
+            { name: 'Submit Enquiry', path: enquiryPath },
+          ]),
+        ]}
+      />
       <PublicPageHero
         eyebrow="Request Access"
         title="Submit Enquiry"
