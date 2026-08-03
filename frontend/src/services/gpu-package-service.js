@@ -10,6 +10,8 @@ export const gpuPackageService = {
     normalizeApiList(await apiClient.get('/admin/gpu-packages', buildRequestConfig(params))),
   getAdminById: async (id, params) =>
     normalizeApiData(await apiClient.get(`/admin/gpu-packages/${id}`, buildRequestConfig(params))),
+  recommend: async (payload) =>
+    normalizeApiData(await apiClient.post('/ai/gpu-recommendation', payload)),
   generateCopy: async (payload) =>
     normalizeApiData(await apiClient.post('/admin/ai/gpu-package-copy', payload)),
   create: async (payload) => normalizeApiData(await apiClient.post('/admin/gpu-packages', payload)),

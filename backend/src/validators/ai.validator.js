@@ -66,3 +66,40 @@ export const generateGpuPackageCopySchema = z.object({
     })
     .strict(),
 });
+
+export const recommendGpuPackageSchema = z.object({
+  body: z
+    .object({
+      workload: z.string().trim().min(10).max(3000),
+      duration: z.string().trim().max(120).optional(),
+      budget: z.coerce.number().min(0).nullable().optional(),
+    })
+    .strict(),
+});
+
+export const siteAssistantSchema = z.object({
+  body: z
+    .object({
+      message: z.string().trim().min(2).max(2000),
+      history: z
+        .array(
+          z
+            .object({
+              role: z.enum(['user', 'assistant']),
+              content: z.string().trim().max(900),
+            })
+            .strict()
+        )
+        .max(8)
+        .optional(),
+      context: z
+        .object({
+          path: z.string().trim().max(160).optional(),
+          role: z.enum(['guest', 'customer', 'admin']).optional(),
+          pageTitle: z.string().trim().max(180).optional(),
+        })
+        .strict()
+        .optional(),
+    })
+    .strict(),
+});

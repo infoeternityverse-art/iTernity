@@ -7,6 +7,7 @@ import { Button, ToastViewport } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
 import { BrandMark } from '@/components/common/brand-mark.jsx';
 import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
+import { UniversalAiAssistant } from '@/components/ai/universal-ai-assistant.jsx';
 import { useAuthStore } from '@/store/auth-store.js';
 
 /**
@@ -86,6 +87,7 @@ export function AdminLayout() {
           </main>
         </div>
       </div>
+      <UniversalAiAssistant />
       <ToastViewport />
     </div>
   );

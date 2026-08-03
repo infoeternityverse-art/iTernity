@@ -1,6 +1,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
+import { UniversalAiAssistant } from '@/components/ai/universal-ai-assistant.jsx';
 
 /**
  * AuthLayout centers authentication-related placeholder pages in a focused container.
@@ -15,6 +16,7 @@ export function AuthLayout() {
         </Link>
         <Outlet />
       </main>
+      <UniversalAiAssistant />
     </div>
   );
 }

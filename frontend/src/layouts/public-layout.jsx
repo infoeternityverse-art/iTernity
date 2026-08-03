@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
 import { BrandMark } from '@/components/common/brand-mark.jsx';
 import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
+import { UniversalAiAssistant } from '@/components/ai/universal-ai-assistant.jsx';
 
 /**
  * PublicLayout provides the public navbar, constrained content container, and footer.
@@ -387,6 +388,7 @@ export function PublicLayout() {
           </div>
         </div>
       </footer>
+      <UniversalAiAssistant />
     </div>
   );
 }

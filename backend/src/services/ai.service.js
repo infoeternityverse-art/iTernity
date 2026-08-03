@@ -29,6 +29,7 @@ const parseJsonObject = (value) => {
 
 const cleanString = (value, fallback = '') =>
   String(value || fallback)
+    .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 
@@ -226,6 +227,96 @@ class AiService {
         }))
         .filter((faq) => faq.question && faq.answer)
         .slice(0, 4),
+      provider: config.ai.provider,
+      model: config.ai.model,
+    };
+  }
+
+  async explainGpuRecommendation({ workload, duration, budget, recommendation, alternatives }) {
+    const result = await this.completeJson({
+      system:
+        'You are a helpful GPU cloud recommendation assistant. Return only compact JSON with: explanation, suggestedEnquiryText, clarificationQuestions. Be clear, conservative, and only reference packages provided in the prompt. Do not invent specs, prices, availability, benchmark numbers, or guarantees.',
+      user: JSON.stringify({
+        userRequest: {
+          workload,
+          duration,
+          budget,
+        },
+        recommendation,
+        alternatives,
+        constraints: {
+          explanation: 'under 700 characters',
+          suggestedEnquiryText: 'first-person enquiry text under 900 characters',
+          clarificationQuestions: 'up to 4 short strings',
+        },
+      }),
+      temperature: 0.15,
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      explanation: clamp(result.explanation, 900),
+      suggestedEnquiryText: clamp(result.suggestedEnquiryText, 1200),
+      clarificationQuestions: (Array.isArray(result.clarificationQuestions)
+        ? result.clarificationQuestions
+        : []
+      )
+        .map((item) => clamp(item, 180))
+        .filter(Boolean)
+        .slice(0, 4),
+      provider: config.ai.provider,
+      model: config.ai.model,
+    };
+  }
+
+  async answerSiteAssistant({ message, context, history, actions, supportEmail }) {
+    const result = await this.completeJson({
+      system:
+        'You are the universal workflow assistant for iTernityverse, a GPU cloud marketplace. Return only compact JSON with: answer, intent, actions. Give specific next steps for the current site workflow. Never use placeholder prices, HTML, markdown links, fake contact details, or unsupported claims. Do not ask for passwords, API keys, secrets, payment card numbers, or government IDs. Do not claim you changed data, approved access, sent email, or created credentials. Use only action hrefs provided in the prompt.',
+      user: JSON.stringify({
+        message,
+        context,
+        recentConversation: history,
+        allowedActions: actions,
+        supportEmail,
+        siteKnowledge: {
+          gpuSelection:
+            'Users can compare published GPU packages on /gpus and use the GPU Recommender there.',
+          enquiries:
+            'Users request access through /enquiry. Strong enquiries include workload, framework, model size, duration, budget, and urgency.',
+          credentials:
+            'Credentials are issued only after admin review/provisioning. Customers should log in and check the dashboard workspace/credentials area, then contact the team if access is missing. This chat does not create credentials or submit support tickets.',
+          support:
+            'Users can contact support from /contact or by email if configured. The assistant can prepare a message, but it cannot send or store the concern by itself.',
+          admin:
+            'Admins can review enquiries, generate enquiry analysis, manage GPU packages, manage blog SEO, and provision workspaces from the admin console.',
+        },
+        constraints: {
+          answer: 'under 900 characters',
+          intent: 'one short label',
+          actions: 'up to 3 objects from allowedActions only',
+        },
+      }),
+      temperature: 0.2,
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      answer: clamp(result.answer, 1200),
+      intent: clamp(result.intent, 80),
+      actions: (Array.isArray(result.actions) ? result.actions : [])
+        .map((action) => ({
+          label: clamp(action.label, 80),
+          href: clamp(action.href, 160),
+        }))
+        .filter((action) => action.label && action.href)
+        .slice(0, 3),
       provider: config.ai.provider,
       model: config.ai.model,
     };

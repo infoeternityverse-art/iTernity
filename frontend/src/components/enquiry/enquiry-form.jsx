@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Alert, Button, Input, Textarea } from '@/components/ui/index.js';
@@ -22,10 +23,11 @@ const enquiryFormSchema = z.object({
   budget: optionalNumber,
 });
 
-export function EnquiryForm({ gpuPackage, onSubmit, loading = false, error }) {
+export function EnquiryForm({ gpuPackage, initialDraft, onSubmit, loading = false, error }) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(enquiryFormSchema),
@@ -39,6 +41,18 @@ export function EnquiryForm({ gpuPackage, onSubmit, loading = false, error }) {
       budget: '',
     },
   });
+
+  useEffect(() => {
+    reset({
+      name: '',
+      email: '',
+      phone: '',
+      projectDescription: initialDraft?.projectDescription || '',
+      expectedUsage: initialDraft?.expectedUsage || '',
+      duration: initialDraft?.duration || '',
+      budget: initialDraft?.budget || '',
+    });
+  }, [initialDraft, reset]);
 
   const handleValidSubmit = (values) =>
     onSubmit({

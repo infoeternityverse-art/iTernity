@@ -9,6 +9,7 @@ export const config = {
     .map((server) => server.trim())
     .filter(Boolean),
   corsOrigin: loadEnv('CORS_ORIGIN', 'http://localhost:5173'),
+  supportEmail: loadEnv('SUPPORT_EMAIL', loadEnv('SMTP_FROM_EMAIL', 'support@example.com')),
   logLevel: loadEnv('LOG_LEVEL', 'info'),
   rateLimit: {
     windowMs: Number(loadEnv('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),

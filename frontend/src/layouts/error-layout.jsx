@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { ScrollToTop } from '@/components/common/scroll-to-top.jsx';
+import { UniversalAiAssistant } from '@/components/ai/universal-ai-assistant.jsx';
 
 /**
  * ErrorLayout provides a centered shell with an illustration placeholder for error pages.
@@ -14,6 +15,7 @@ export function ErrorLayout() {
         </div>
         <Outlet />
       </main>
+      <UniversalAiAssistant />
     </div>
   );
 }

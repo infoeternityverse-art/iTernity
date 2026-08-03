@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { API_VERSION } from '../constants/app.constants.js';
-import { adminAiRouter } from './ai.routes.js';
+import { adminAiRouter, aiRouter } from './ai.routes.js';
 import { auditLogRouter } from './audit-log.routes.js';
 import { authRouter } from './auth.routes.js';
 import { adminBlogPostRouter, blogPostRouter } from './blog-post.routes.js';
@@ -14,6 +14,7 @@ export const apiRouter = Router();
 
 apiRouter.use(`/api/${API_VERSION}/auth`, authRouter);
 apiRouter.use(`/api/${API_VERSION}/users`, userRouter);
+apiRouter.use(`/api/${API_VERSION}/ai`, aiRouter);
 apiRouter.use(`/api/${API_VERSION}/blog-posts`, blogPostRouter);
 apiRouter.use(`/api/${API_VERSION}/admin/blog-posts`, adminBlogPostRouter);
 apiRouter.use(`/api/${API_VERSION}/gpu-packages`, gpuPackageRouter);

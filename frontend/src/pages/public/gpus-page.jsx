@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { GpuMarketplaceControls } from '@/components/gpu/gpu-marketplace-controls.jsx';
 import { GpuPackageCard } from '@/components/gpu/gpu-package-card.jsx';
+import { GpuRecommendationAssistant } from '@/components/gpu/gpu-recommendation-assistant.jsx';
 import {
   Alert,
   EmptyState,
@@ -52,6 +53,7 @@ export function GpusPage() {
         description="Search and compare GPU rental packages by specs, availability, and price."
         variant="market"
       />
+      <GpuRecommendationAssistant />
       <GpuMarketplaceControls
         search={searchInput}
         availabilityStatus={availabilityStatus}
