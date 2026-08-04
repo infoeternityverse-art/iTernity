@@ -8,6 +8,7 @@ import { customerCredentialRouter, adminCredentialRouter } from './credential.ro
 import { adminContactEnquiryRouter, contactEnquiryRouter } from './contact-enquiry.routes.js';
 import { customerEnquiryRouter, adminEnquiryRouter, enquiryRouter } from './enquiry.routes.js';
 import { adminGpuPackageRouter, gpuPackageRouter } from './gpu-package.routes.js';
+import { adminSiteSettingRouter, siteSettingRouter } from './site-setting.routes.js';
 import { userRouter } from './user.routes.js';
 import { adminWorkspaceRouter, customerWorkspaceRouter } from '../workspace/routes/index.js';
 
@@ -20,6 +21,8 @@ apiRouter.use(`/api/${API_VERSION}/blog-posts`, blogPostRouter);
 apiRouter.use(`/api/${API_VERSION}/admin/blog-posts`, adminBlogPostRouter);
 apiRouter.use(`/api/${API_VERSION}/gpu-packages`, gpuPackageRouter);
 apiRouter.use(`/api/${API_VERSION}/admin/gpu-packages`, adminGpuPackageRouter);
+apiRouter.use(`/api/${API_VERSION}/site-settings`, siteSettingRouter);
+apiRouter.use(`/api/${API_VERSION}/admin/site-settings`, adminSiteSettingRouter);
 apiRouter.use(`/api/${API_VERSION}/contact-enquiries`, contactEnquiryRouter);
 apiRouter.use(`/api/${API_VERSION}/admin/contact-enquiries`, adminContactEnquiryRouter);
 apiRouter.use(`/api/${API_VERSION}/enquiries`, enquiryRouter);

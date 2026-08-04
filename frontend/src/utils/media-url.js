@@ -24,7 +24,7 @@ const publicIdFromMediaPath = (src) => {
 
 export const cloudinaryImageUrl = (
   publicId,
-  { width, quality = 'auto', format = 'auto', crop = 'limit' } = {}
+  { width, quality = 'auto', format = 'auto', crop = 'limit', version } = {}
 ) => {
   if (!CLOUDINARY_BASE || !publicId) {
     return '';
@@ -38,11 +38,13 @@ export const cloudinaryImageUrl = (
 
   const assetFolder = trimSlashes(env.cloudinaryAssetFolder);
   const normalizedPublicId = trimSlashes(publicId);
-  const finalPublicId = assetFolder
+  const finalPublicId = assetFolder && !normalizedPublicId.includes('/')
     ? `${assetFolder}/${normalizedPublicId}`
     : normalizedPublicId;
 
-  return `${CLOUDINARY_BASE}/${transforms.join(',')}/${finalPublicId}`;
+  const versionSegment = version ? `/v${version}` : '';
+
+  return `${CLOUDINARY_BASE}/${transforms.join(',')}${versionSegment}/${finalPublicId}`;
 };
 
 export const mediaUrl = (src, options) => {

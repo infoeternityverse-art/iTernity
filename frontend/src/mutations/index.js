@@ -5,6 +5,7 @@ export {
   useUpdateAdminContactEnquiry,
 } from './contact-enquiry.mutations.js';
 export { useCreateEnquiry, useUpdateAdminEnquiry } from './enquiry.mutations.js';
+export { useUploadSiteMedia } from './site-setting.mutations.js';
 export {
   useCreateGpuPackage,
   useDeleteGpuPackage,

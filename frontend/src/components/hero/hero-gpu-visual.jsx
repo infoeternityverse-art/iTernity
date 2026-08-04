@@ -1,5 +1,6 @@
 import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { mediaUrl } from '@/utils/media-url.js';
+import { useSiteSettings } from '@/hooks/use-site-settings.js';
+import { cloudinaryImageUrl, mediaUrl } from '@/utils/media-url.js';
 
 const loadHeroWireframeScene = () => import('./hero-wireframe-scene.jsx');
 const HeroWireframeScene = lazy(loadHeroWireframeScene);
@@ -13,6 +14,17 @@ const HERO_BACKGROUNDS = {
   contact: { src: '/media/hero_contact.webp' },
   faq: { src: '/media/hero_home.webp' },
   thanks: { src: '/media/hero_home.webp' },
+};
+
+const HERO_MEDIA_SLOT_BY_VARIANT = {
+  home: 'hero_home',
+  market: 'hero_gpu',
+  detail: 'hero_gpu',
+  enquiry: 'hero_gpu',
+  about: 'hero_about',
+  contact: 'hero_contact',
+  faq: 'hero_home',
+  thanks: 'hero_home',
 };
 
 const clampNavigation = (value) => Math.min(1, Math.max(-1, value));
@@ -164,7 +176,16 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const touchGestureRef = useRef(null);
   const scrollRef = useRef(0);
   const background = HERO_BACKGROUNDS[variant] || HERO_BACKGROUNDS.home;
-  const backgroundSrc = mediaUrl(background.src, { width: isMobile ? 900 : 1920 });
+  const siteSettings = useSiteSettings();
+  const mediaSlot = HERO_MEDIA_SLOT_BY_VARIANT[variant] || HERO_MEDIA_SLOT_BY_VARIANT.home;
+  const siteMedia = siteSettings.data?.media?.[mediaSlot];
+  const siteMediaSrc = siteMedia?.publicId
+    ? cloudinaryImageUrl(siteMedia.publicId, {
+        width: isMobile ? 900 : 1920,
+        version: siteMedia.version,
+      })
+    : siteMedia?.imageUrl;
+  const backgroundSrc = siteMediaSrc || mediaUrl(background.src, { width: isMobile ? 900 : 1920 });
   const [displaySrc, setDisplaySrc] = useState(backgroundSrc);
   const [panoramaSrc, setPanoramaSrc] = useState(background.src);
   const getHeroElement = () =>

@@ -14,6 +14,7 @@ export {
   useGpuPackages,
 } from './gpu-package.queries.js';
 export { queryKeys } from './query-keys.js';
+export { useAdminSiteSettings, useSiteSettings } from './site-setting.queries.js';
 export { useUser, useUsers } from './user.queries.js';
 export {
   useAdminWorkspace,

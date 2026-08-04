@@ -28,7 +28,16 @@ class CloudinaryService {
       .join('/');
   }
 
-  async uploadImage({ buffer, mimeType, publicId, folder, tags = [] }) {
+  async uploadImage({
+    buffer,
+    mimeType,
+    publicId,
+    folder,
+    overwrite = false,
+    invalidate = false,
+    uniqueFilename = true,
+    tags = [],
+  }) {
     if (!this.isEnabled) {
       return null;
     }
@@ -37,8 +46,9 @@ class CloudinaryService {
       resource_type: 'image',
       folder: this.buildFolder(folder),
       public_id: publicId,
-      overwrite: false,
-      unique_filename: true,
+      overwrite,
+      invalidate,
+      unique_filename: uniqueFilename,
       use_filename: false,
       tags,
       transformation: [{ quality: 'auto', fetch_format: 'auto' }],
@@ -49,6 +59,7 @@ class CloudinaryService {
       width: response.width,
       height: response.height,
       bytes: response.bytes,
+      version: response.version,
       format: response.format,
       imageUrl: cloudinary.url(response.public_id, {
         secure: true,
@@ -79,6 +90,7 @@ class CloudinaryService {
       width: response.width,
       height: response.height,
       bytes: response.bytes,
+      version: response.version,
       format: response.format,
       imageUrl: cloudinary.url(response.public_id, {
         secure: true,

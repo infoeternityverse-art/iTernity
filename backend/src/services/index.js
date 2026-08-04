@@ -7,4 +7,5 @@ export { contactEnquiryService } from './contact-enquiry.service.js';
 export { credentialService } from './credential.service.js';
 export { enquiryService } from './enquiry.service.js';
 export { gpuPackageService } from './gpu-package.service.js';
+export { siteSettingService } from './site-setting.service.js';
 export { userService } from './user.service.js';

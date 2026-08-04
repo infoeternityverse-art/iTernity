@@ -5,11 +5,17 @@ import { SessionRestore } from '@/components/common/session-restore.jsx';
 import { QueryProvider } from '@/providers/query-provider.jsx';
 import { router } from '@/routes/router.jsx';
 import { cloudinaryImageUrl } from '@/utils/media-url.js';
+import { useSiteSettings } from '@/hooks/use-site-settings.js';
 
-function App() {
+function FooterBackgroundLoader() {
+  const siteSettings = useSiteSettings();
+
   useEffect(() => {
     const localFooterBackground = '/media/footer_bg.jpg';
-    const footerBackground = cloudinaryImageUrl('footer_bg', { width: 1600 });
+    const footerMedia = siteSettings.data?.media?.footer_bg;
+    const footerBackground = footerMedia?.publicId
+      ? cloudinaryImageUrl(footerMedia.publicId, { width: 1600, version: footerMedia.version })
+      : cloudinaryImageUrl('footer_bg', { width: 1600 });
     const setFooterBackground = (src) => {
       document.documentElement.style.setProperty('--footer-bg-image', `url("${src}")`);
     };
@@ -27,10 +33,15 @@ function App() {
       setFooterBackground(localFooterBackground);
     };
     image.src = footerBackground;
-  }, []);
+  }, [siteSettings.data]);
 
+  return null;
+}
+
+function App() {
   return (
     <QueryProvider>
+      <FooterBackgroundLoader />
       <SessionRestore>
         <CursorDot />
         <RouterProvider router={router} />

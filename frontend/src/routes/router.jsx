@@ -44,6 +44,10 @@ const ContactEnquiriesPage = lazyPage(
   () => import('@/pages/admin/contact-enquiries-page.jsx'),
   'ContactEnquiriesPage'
 );
+const SiteSettingsPage = lazyPage(
+  () => import('@/pages/admin/site-settings-page.jsx'),
+  'SiteSettingsPage'
+);
 const AuditLogsPage = lazyPage(() => import('@/pages/admin/audit-logs-page.jsx'), 'AuditLogsPage');
 const BlogManagementPage = lazyPage(
   () => import('@/pages/admin/blog-management-page.jsx'),
@@ -242,6 +246,7 @@ export const router = createBrowserRouter(
         { path: 'enquiries', element: withSuspense(AdminEnquiriesPage) },
         { path: 'enquiries/:id', element: withSuspense(AdminEnquiryDetailPage) },
         { path: 'contact-enquiries', element: withSuspense(ContactEnquiriesPage) },
+        { path: 'site-settings', element: withSuspense(SiteSettingsPage) },
         { path: 'credentials', element: withSuspense(AdminCredentialsPage) },
         { path: 'workspaces', element: withSuspense(WorkspacesPage) },
         { path: 'workspaces/new', element: withSuspense(NewWorkspacePage) },
