@@ -11579,6 +11579,313 @@ footer a:hover {
   border: 0 !important;
 }
 
+.hero-css-motion,
+.footer-css-motion {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-css-motion {
+  mix-blend-mode: screen;
+  opacity: 0.72;
+}
+
+.hero-css-orbit,
+.hero-css-particle,
+.hero-css-scan,
+.footer-css-ray,
+.footer-css-drift,
+.footer-css-pulse {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.hero-css-orbit {
+  width: clamp(30rem, 58vw, 72rem);
+  height: clamp(9rem, 18vw, 18rem);
+  border: 1px solid rgba(45, 232, 196, 0.2);
+  border-left-color: rgba(45, 232, 196, 0.68);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 18px rgba(45, 232, 196, 0.18));
+  animation: hero-css-orbit-drift 18s ease-in-out infinite;
+}
+
+.hero-css-orbit-1 {
+  right: 6vw;
+  top: 20vh;
+  transform: rotate(-12deg);
+}
+
+.hero-css-orbit-2 {
+  left: 7vw;
+  bottom: 16vh;
+  width: clamp(18rem, 36vw, 44rem);
+  height: clamp(6rem, 12vw, 12rem);
+  border-color: rgba(116, 247, 255, 0.16);
+  border-right-color: rgba(116, 247, 255, 0.5);
+  animation-duration: 23s;
+  animation-direction: reverse;
+}
+
+.hero-css-particle {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: #2de8c4;
+  box-shadow:
+    0 0 16px rgba(45, 232, 196, 0.86),
+    0 0 36px rgba(45, 232, 196, 0.4);
+  animation: hero-css-particle-float 7.4s ease-in-out infinite;
+}
+
+.hero-css-particle-1 {
+  left: 38%;
+  top: 76%;
+}
+
+.hero-css-particle-2 {
+  right: 28%;
+  top: 42%;
+  width: 0.35rem;
+  height: 0.35rem;
+  animation-delay: -2.1s;
+}
+
+.hero-css-particle-3 {
+  left: 20%;
+  top: 30%;
+  width: 0.28rem;
+  height: 0.28rem;
+  background: #f5f7f6;
+  animation-delay: -4.6s;
+}
+
+.hero-css-scan {
+  width: clamp(9rem, 16vw, 22rem);
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(45, 232, 196, 0.78), transparent);
+  filter: drop-shadow(0 0 12px rgba(45, 232, 196, 0.46));
+  opacity: 0.58;
+  animation: hero-css-scan-pass 8.8s ease-in-out infinite;
+}
+
+.hero-css-scan-1 {
+  left: 42%;
+  top: 44%;
+}
+
+.hero-css-scan-2 {
+  right: 18%;
+  bottom: 28%;
+  animation-delay: -4.2s;
+  animation-duration: 11.2s;
+}
+
+.footer-css-motion {
+  z-index: 1;
+  opacity: 0.86;
+  mix-blend-mode: screen;
+  transition: opacity 0.4s ease;
+}
+
+.footer-css-ray {
+  top: -18%;
+  width: 20vw;
+  height: 140%;
+  background: linear-gradient(180deg, rgba(184, 255, 230, 0.22), transparent 72%);
+  filter: blur(24px);
+  opacity: 0.5;
+  transform: rotate(8deg);
+  animation: footer-css-ray-sway 18s ease-in-out infinite;
+}
+
+.footer-css-ray-1 {
+  left: 18%;
+}
+
+.footer-css-ray-2 {
+  left: 58%;
+  width: 16vw;
+  opacity: 0.36;
+  animation-delay: -7s;
+  animation-duration: 23s;
+}
+
+.footer-css-drift {
+  width: clamp(3rem, 7vw, 8rem);
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(221, 251, 245, 0.58), transparent);
+  filter: drop-shadow(0 0 12px rgba(45, 232, 196, 0.38));
+  animation: footer-css-drift-swim 16s linear infinite;
+}
+
+.footer-css-drift-1 {
+  left: -8vw;
+  top: 28%;
+}
+
+.footer-css-drift-2 {
+  left: -12vw;
+  top: 54%;
+  animation-delay: -5s;
+  animation-duration: 22s;
+}
+
+.footer-css-drift-3 {
+  right: -10vw;
+  top: 38%;
+  animation-name: footer-css-drift-swim-reverse;
+  animation-delay: -8s;
+  animation-duration: 20s;
+}
+
+.footer-css-drift-4 {
+  right: -12vw;
+  bottom: 20%;
+  opacity: 0.46;
+  animation-name: footer-css-drift-swim-reverse;
+  animation-delay: -12s;
+  animation-duration: 28s;
+}
+
+.footer-css-pulse {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #2de8c4;
+  box-shadow:
+    0 0 20px rgba(45, 232, 196, 0.84),
+    0 0 52px rgba(45, 232, 196, 0.36);
+  animation: footer-css-pulse-float 5.8s ease-in-out infinite;
+}
+
+.footer-css-pulse-1 {
+  left: 58%;
+  top: 54%;
+}
+
+.footer-css-pulse-2 {
+  left: 34%;
+  top: 24%;
+  width: 0.36rem;
+  height: 0.36rem;
+  animation-delay: -2.8s;
+}
+
+@keyframes hero-css-orbit-drift {
+  0%,
+  100% {
+    opacity: 0.38;
+    transform: translate3d(-1.2rem, 0.2rem, 0) rotate(-12deg) scale(0.98);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: translate3d(1rem, -0.8rem, 0) rotate(-16deg) scale(1.03);
+  }
+}
+
+@keyframes hero-css-particle-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.9);
+    opacity: 0.34;
+  }
+
+  45% {
+    transform: translate3d(1.4rem, -1.8rem, 0) scale(1.4);
+    opacity: 0.96;
+  }
+}
+
+@keyframes hero-css-scan-pass {
+  0%,
+  100% {
+    transform: translate3d(-2rem, 1rem, 0) rotate(0deg);
+    opacity: 0.18;
+  }
+
+  48% {
+    transform: translate3d(2.2rem, -1rem, 0) rotate(2deg);
+    opacity: 0.72;
+  }
+}
+
+@keyframes footer-css-ray-sway {
+  0%,
+  100% {
+    transform: translate3d(-2rem, 0, 0) rotate(8deg);
+  }
+
+  50% {
+    transform: translate3d(2rem, 0, 0) rotate(12deg);
+  }
+}
+
+@keyframes footer-css-drift-swim {
+  0% {
+    transform: translate3d(0, 0, 0) scaleX(0.8);
+    opacity: 0;
+  }
+
+  15%,
+  82% {
+    opacity: 0.58;
+  }
+
+  100% {
+    transform: translate3d(118vw, -2.4rem, 0) scaleX(1.12);
+    opacity: 0;
+  }
+}
+
+@keyframes footer-css-drift-swim-reverse {
+  0% {
+    transform: translate3d(0, 0, 0) scaleX(0.8);
+    opacity: 0;
+  }
+
+  15%,
+  82% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translate3d(-118vw, 2.2rem, 0) scaleX(1.08);
+    opacity: 0;
+  }
+}
+
+@keyframes footer-css-pulse-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.85);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translate3d(1rem, -1.2rem, 0) scale(1.35);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-css-orbit,
+  .hero-css-particle,
+  .hero-css-scan,
+  .footer-css-ray,
+  .footer-css-drift,
+  .footer-css-pulse {
+    animation: none !important;
+  }
+}
+
 .public-footer .footer-ocean-nav-panel .footer-ocean-social {
   position: relative !important;
   isolation: isolate !important;

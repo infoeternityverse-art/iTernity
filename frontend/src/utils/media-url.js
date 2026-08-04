@@ -5,6 +5,7 @@ const CLOUDINARY_BASE = env.cloudinaryCloudName
   : '';
 
 const trimSlashes = (value = '') => String(value).replace(/^\/+|\/+$/g, '');
+const isLocalDevelopment = env.appEnv === 'development';
 
 const publicMediaMap = {
   '/media/hero_home.webp': 'hero_home',
@@ -49,6 +50,10 @@ export const cloudinaryImageUrl = (
 
 export const mediaUrl = (src, options) => {
   if (!src || /^https?:\/\//i.test(src) || !CLOUDINARY_BASE) {
+    return src;
+  }
+
+  if (isLocalDevelopment && src.startsWith('/media/')) {
     return src;
   }
 

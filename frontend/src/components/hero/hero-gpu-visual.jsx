@@ -130,6 +130,7 @@ function canCreateWebglContext() {
       canvas.getContext('webgl') ||
       canvas.getContext('experimental-webgl');
 
+    context?.getExtension('WEBGL_lose_context')?.loseContext();
     return Boolean(context);
   } catch {
     return false;
@@ -172,6 +173,7 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [isWebglFallback, setIsWebglFallback] = useState(false);
   const visualRef = useRef(null);
+  const heroImageRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const touchGestureRef = useRef(null);
   const scrollRef = useRef(0);
@@ -213,8 +215,11 @@ export function HeroGpuVisual({ variant = 'home' }) {
     setDisplaySrc(backgroundSrc);
     setPanoramaSrc(background.src);
     setIsSceneReady(false);
-    setIsWebglFallback(false);
   }, [background.src, backgroundSrc]);
+
+  useEffect(() => {
+    heroImageRef.current?.setAttribute('fetchpriority', variant === 'home' ? 'high' : 'auto');
+  }, [variant]);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
@@ -365,16 +370,18 @@ export function HeroGpuVisual({ variant = 'home' }) {
   return (
     <div
       ref={setVisualNode}
-      className={`hero-gpu-visual hero-gpu-visual-${variant}`}
+      className={`hero-gpu-visual hero-gpu-visual-${variant} ${
+        isWebglFallback ? 'hero-gpu-visual-fallback' : ''
+      }`}
       aria-hidden="true"
     >
       <div className="hero-cosmic-composite">
         <img
+          ref={heroImageRef}
           src={displaySrc}
           alt=""
           className="hero-bg-photo"
           decoding="async"
-          fetchPriority={variant === 'home' ? 'high' : 'auto'}
           draggable="false"
           onLoad={() => {
             if (displaySrc !== background.src) {
@@ -399,6 +406,15 @@ export function HeroGpuVisual({ variant = 'home' }) {
         <div className="hero-depth-comet hero-depth-comet-b" />
         <div className="hero-aurora-curtain hero-aurora-curtain-a" />
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
+      </div>
+      <div className="hero-css-motion" aria-hidden="true">
+        <span className="hero-css-orbit hero-css-orbit-1" />
+        <span className="hero-css-orbit hero-css-orbit-2" />
+        <span className="hero-css-particle hero-css-particle-1" />
+        <span className="hero-css-particle hero-css-particle-2" />
+        <span className="hero-css-particle hero-css-particle-3" />
+        <span className="hero-css-scan hero-css-scan-1" />
+        <span className="hero-css-scan hero-css-scan-2" />
       </div>
       <div
         className="hero-r3f-shell"

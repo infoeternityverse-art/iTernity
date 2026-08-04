@@ -4,7 +4,7 @@ import { CursorDot } from '@/components/common/cursor-dot.jsx';
 import { SessionRestore } from '@/components/common/session-restore.jsx';
 import { QueryProvider } from '@/providers/query-provider.jsx';
 import { router } from '@/routes/router.jsx';
-import { cloudinaryImageUrl } from '@/utils/media-url.js';
+import { cloudinaryImageUrl, mediaUrl } from '@/utils/media-url.js';
 import { useSiteSettings } from '@/hooks/use-site-settings.js';
 
 function FooterBackgroundLoader() {
@@ -15,7 +15,7 @@ function FooterBackgroundLoader() {
     const footerMedia = siteSettings.data?.media?.footer_bg;
     const footerBackground = footerMedia?.publicId
       ? cloudinaryImageUrl(footerMedia.publicId, { width: 1600, version: footerMedia.version })
-      : cloudinaryImageUrl('footer_bg', { width: 1600 });
+      : footerMedia?.imageUrl || mediaUrl(localFooterBackground, { width: 1600 });
     const setFooterBackground = (src) => {
       document.documentElement.style.setProperty('--footer-bg-image', `url("${src}")`);
     };

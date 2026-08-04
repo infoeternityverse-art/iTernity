@@ -65,8 +65,6 @@ export function PublicLayout() {
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const hasMountedRef = useRef(false);
   const footerRef = useRef(null);
-  const footerVantaRef = useRef(null);
-  const footerVantaEffectRef = useRef(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const closeMobileNav = () => setIsMobileNavOpen(false);
@@ -130,91 +128,6 @@ export function PublicLayout() {
     observer.observe(footer);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    const vantaTarget = footerVantaRef.current;
-    if (!vantaTarget || !isFooterVisible) return undefined;
-
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (reducedMotionQuery.matches) return undefined;
-
-    let isCancelled = false;
-
-    const loadScript = (id, src) =>
-      new Promise((resolve, reject) => {
-        const existingScript = document.getElementById(id);
-        if (existingScript) {
-          if (existingScript.dataset.loaded === 'true') {
-            resolve();
-            return;
-          }
-
-          existingScript.addEventListener('load', resolve, { once: true });
-          existingScript.addEventListener('error', reject, { once: true });
-          return;
-        }
-
-        const script = document.createElement('script');
-        script.id = id;
-        script.src = src;
-        script.async = true;
-        script.onload = () => {
-          script.dataset.loaded = 'true';
-          resolve();
-        };
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-
-    const initVanta = async () => {
-      try {
-        const previousThree = window.THREE;
-        await loadScript(
-          'three-r134',
-          'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js'
-        );
-        await loadScript(
-          'vanta-birds',
-          'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js'
-        );
-
-        if (isCancelled || !window.VANTA?.BIRDS || !footerVantaRef.current) return;
-
-        footerVantaEffectRef.current = window.VANTA.BIRDS({
-          el: footerVantaRef.current,
-          mouseControls: true,
-          touchControls: true,
-          gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          scale: 1.0,
-          scaleMobile: 1.0,
-          backgroundColor: 0x183b18,
-          color1: 0x0,
-          color2: 0x398913,
-          birdSize: 0.5,
-          wingSpan: 10.0,
-          alignment: 54.0,
-          cohesion: 64.0,
-          backgroundAlpha: 0.0,
-        });
-
-        if (previousThree) {
-          window.THREE = previousThree;
-        }
-      } catch {
-        // Keep the footer usable if the decorative background script cannot load.
-      }
-    };
-
-    initVanta();
-
-    return () => {
-      isCancelled = true;
-      footerVantaEffectRef.current?.destroy();
-      footerVantaEffectRef.current = null;
-    };
-  }, [isFooterVisible]);
 
   return (
     <div className="premium-shell flex min-h-screen flex-col text-[#F5F7F6]">
@@ -323,7 +236,17 @@ export function PublicLayout() {
         ref={footerRef}
         className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
       >
-        <div ref={footerVantaRef} className="footer-vanta-bg" aria-hidden="true" />
+        <div className="footer-vanta-bg" aria-hidden="true" />
+        <div className="footer-css-motion" aria-hidden="true">
+          <span className="footer-css-ray footer-css-ray-1" />
+          <span className="footer-css-ray footer-css-ray-2" />
+          <span className="footer-css-drift footer-css-drift-1" />
+          <span className="footer-css-drift footer-css-drift-2" />
+          <span className="footer-css-drift footer-css-drift-3" />
+          <span className="footer-css-drift footer-css-drift-4" />
+          <span className="footer-css-pulse footer-css-pulse-1" />
+          <span className="footer-css-pulse footer-css-pulse-2" />
+        </div>
         <div className="footer-inner relative z-10 mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="footer-content-grid">
             <div className="footer-brand-block max-w-md">
