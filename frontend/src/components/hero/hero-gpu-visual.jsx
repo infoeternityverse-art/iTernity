@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '@/utils/media-url.js';
 
 const loadHeroWireframeScene = () => import('./hero-wireframe-scene.jsx');
@@ -38,7 +38,7 @@ function useInView() {
           observer.disconnect();
         }
       },
-      { rootMargin: '180px' },
+      { rootMargin: '180px' }
     );
 
     observer.observe(node);
@@ -92,7 +92,8 @@ function useDelayedWebglStart(isInView) {
 
 function useIsMobile() {
   const getIsMobile = () =>
-    typeof window !== 'undefined' && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
   const [isMobile, setIsMobile] = useState(getIsMobile);
 
   useEffect(() => {
@@ -107,11 +108,57 @@ function useIsMobile() {
   return isMobile;
 }
 
+function canCreateWebglContext() {
+  if (typeof document === 'undefined') return false;
+
+  try {
+    const canvas = document.createElement('canvas');
+    const context =
+      canvas.getContext('webgl2') ||
+      canvas.getContext('webgl') ||
+      canvas.getContext('experimental-webgl');
+
+    return Boolean(context);
+  } catch {
+    return false;
+  }
+}
+
+class HeroSceneErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error) {
+    this.props.onError?.(error);
+  }
+
+  componentDidUpdate(previousProps) {
+    if (previousProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
+}
+
 export function HeroGpuVisual({ variant = 'home' }) {
   const [setNode, isInView] = useInView();
   const canStartWebgl = useDelayedWebglStart(isInView);
   const isMobile = useIsMobile();
   const [isSceneReady, setIsSceneReady] = useState(false);
+  const [isWebglFallback, setIsWebglFallback] = useState(false);
   const visualRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const touchGestureRef = useRef(null);
@@ -131,6 +178,13 @@ export function HeroGpuVisual({ variant = 'home' }) {
 
   useEffect(() => {
     if (!canStartWebgl) return;
+
+    if (!canCreateWebglContext()) {
+      setIsWebglFallback(true);
+      return;
+    }
+
+    setIsWebglFallback(false);
     loadHeroWireframeScene();
   }, [canStartWebgl]);
 
@@ -138,13 +192,17 @@ export function HeroGpuVisual({ variant = 'home' }) {
     setDisplaySrc(backgroundSrc);
     setPanoramaSrc(background.src);
     setIsSceneReady(false);
+    setIsWebglFallback(false);
   }, [background.src, backgroundSrc]);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
     visualRef.current.style.setProperty('--hero-nav-x', x.toFixed(3));
     visualRef.current.style.setProperty('--hero-nav-y', y.toFixed(3));
-    visualRef.current.style.setProperty('--hero-nav-depth', Math.min(1, Math.hypot(x, y)).toFixed(3));
+    visualRef.current.style.setProperty(
+      '--hero-nav-depth',
+      Math.min(1, Math.hypot(x, y)).toFixed(3)
+    );
   };
 
   const setNavigation = (x, y) => {
@@ -284,7 +342,11 @@ export function HeroGpuVisual({ variant = 'home' }) {
   };
 
   return (
-    <div ref={setVisualNode} className={`hero-gpu-visual hero-gpu-visual-${variant}`} aria-hidden="true">
+    <div
+      ref={setVisualNode}
+      className={`hero-gpu-visual hero-gpu-visual-${variant}`}
+      aria-hidden="true"
+    >
       <div className="hero-cosmic-composite">
         <img
           src={displaySrc}
@@ -317,22 +379,35 @@ export function HeroGpuVisual({ variant = 'home' }) {
         <div className="hero-aurora-curtain hero-aurora-curtain-a" />
         <div className="hero-aurora-curtain hero-aurora-curtain-b" />
       </div>
-      <div className="hero-r3f-shell" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
-        {canStartWebgl ? (
-          <Suspense fallback={<HeroSceneLoader />}>
-            <HeroWireframeScene
-              key={isMobile ? 'hero-wireframe-mobile' : 'hero-wireframe-desktop'}
-              isMobile={isMobile}
-              pointerRef={pointerRef}
-              scrollRef={scrollRef}
-              panoramaSrc={panoramaSrc}
-              onReady={() => setIsSceneReady(true)}
-            />
-          </Suspense>
+      <div
+        className="hero-r3f-shell"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+      >
+        {canStartWebgl && !isWebglFallback ? (
+          <HeroSceneErrorBoundary
+            resetKey={`${isMobile ? 'mobile' : 'desktop'}-${panoramaSrc}`}
+            fallback={<HeroSceneLoader />}
+            onError={() => {
+              setIsWebglFallback(true);
+              setIsSceneReady(false);
+            }}
+          >
+            <Suspense fallback={<HeroSceneLoader />}>
+              <HeroWireframeScene
+                key={isMobile ? 'hero-wireframe-mobile' : 'hero-wireframe-desktop'}
+                isMobile={isMobile}
+                pointerRef={pointerRef}
+                scrollRef={scrollRef}
+                panoramaSrc={panoramaSrc}
+                onReady={() => setIsSceneReady(true)}
+              />
+            </Suspense>
+          </HeroSceneErrorBoundary>
         ) : (
           <HeroSceneLoader />
         )}
-        {canStartWebgl && !isSceneReady && <HeroSceneLoader overlay />}
+        {canStartWebgl && !isWebglFallback && !isSceneReady && <HeroSceneLoader overlay />}
       </div>
     </div>
   );

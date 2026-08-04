@@ -39,6 +39,11 @@ export const queryKeys = {
     adminLists: () => [...queryKeys.enquiries.all, 'admin', 'list'],
     adminList: (params = {}) => [...queryKeys.enquiries.adminLists(), params],
   },
+  contactEnquiries: {
+    all: ['contact-enquiries'],
+    adminLists: () => [...queryKeys.contactEnquiries.all, 'admin', 'list'],
+    adminList: (params = {}) => [...queryKeys.contactEnquiries.adminLists(), params],
+  },
   credentials: {
     all: ['credentials'],
     customerLists: () => [...queryKeys.credentials.all, 'customer', 'list'],

@@ -3,6 +3,7 @@ export { aiService } from './ai.service.js';
 export { BaseService } from './base.service.js';
 export { blogPostService } from './blog-post.service.js';
 export { cloudinaryService } from './cloudinary.service.js';
+export { contactEnquiryService } from './contact-enquiry.service.js';
 export { credentialService } from './credential.service.js';
 export { enquiryService } from './enquiry.service.js';
 export { gpuPackageService } from './gpu-package.service.js';

@@ -66,7 +66,7 @@ const platformWork = [
 
 export function AboutPage() {
   return (
-    <div className="space-y-24 py-8">
+    <div className="space-y-24 pb-8">
       <Seo
         title="About iTernityverse"
         description="Learn how iTernityverse helps AI, rendering, research, and inference teams compare GPU packages and request reviewed cloud GPU access."

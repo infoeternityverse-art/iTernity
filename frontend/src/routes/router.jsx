@@ -40,6 +40,10 @@ const AdminEnquiryDetailPage = lazyPage(
   () => import('@/pages/admin/admin-enquiry-detail-page.jsx'),
   'AdminEnquiryDetailPage'
 );
+const ContactEnquiriesPage = lazyPage(
+  () => import('@/pages/admin/contact-enquiries-page.jsx'),
+  'ContactEnquiriesPage'
+);
 const AuditLogsPage = lazyPage(() => import('@/pages/admin/audit-logs-page.jsx'), 'AuditLogsPage');
 const BlogManagementPage = lazyPage(
   () => import('@/pages/admin/blog-management-page.jsx'),
@@ -129,11 +133,28 @@ const BlogDetailPage = lazyPage(
   'BlogDetailPage'
 );
 const ContactPage = lazyPage(() => import('@/pages/public/contact-page.jsx'), 'ContactPage');
+const ContactThankYouPage = lazyPage(
+  () => import('@/pages/public/contact-thank-you-page.jsx'),
+  'ContactThankYouPage'
+);
 const FaqPage = lazyPage(() => import('@/pages/public/faq-page.jsx'), 'FaqPage');
 const ForbiddenPage = lazyPage(() => import('@/pages/public/forbidden-page.jsx'), 'ForbiddenPage');
 const GpuDetailPage = lazyPage(() => import('@/pages/public/gpu-detail-page.jsx'), 'GpuDetailPage');
 const GpusPage = lazyPage(() => import('@/pages/public/gpus-page.jsx'), 'GpusPage');
 const EnquiryPage = lazyPage(() => import('@/pages/public/enquiry-page.jsx'), 'EnquiryPage');
+const PrivacyPolicyPage = lazyPage(
+  () => import('@/pages/public/legal-pages.jsx'),
+  'PrivacyPolicyPage'
+);
+const TermsOfAccessPage = lazyPage(
+  () => import('@/pages/public/legal-pages.jsx'),
+  'TermsOfAccessPage'
+);
+const SecurityPage = lazyPage(() => import('@/pages/public/legal-pages.jsx'), 'SecurityPage');
+const AcceptableUsePage = lazyPage(
+  () => import('@/pages/public/legal-pages.jsx'),
+  'AcceptableUsePage'
+);
 const NotFoundPage = lazyPage(() => import('@/pages/public/not-found-page.jsx'), 'NotFoundPage');
 const ServerErrorPage = lazyPage(
   () => import('@/pages/public/server-error-page.jsx'),
@@ -157,11 +178,16 @@ export const router = createBrowserRouter(
         { path: 'gpus/:id', element: withSuspense(GpuDetailPage) },
         { path: 'enquiry/:gpuPackageId', element: withSuspense(EnquiryPage) },
         { path: 'thank-you', element: withSuspense(ThankYouPage) },
+        { path: 'contact-thank-you', element: withSuspense(ContactThankYouPage) },
         { path: 'blog', element: withSuspense(BlogPage) },
         { path: 'blog/:slug', element: withSuspense(BlogDetailPage) },
         { path: 'contact', element: withSuspense(ContactPage) },
         { path: 'about', element: withSuspense(AboutPage) },
         { path: 'faq', element: withSuspense(FaqPage) },
+        { path: 'privacy', element: withSuspense(PrivacyPolicyPage) },
+        { path: 'terms', element: withSuspense(TermsOfAccessPage) },
+        { path: 'security', element: withSuspense(SecurityPage) },
+        { path: 'acceptable-use', element: withSuspense(AcceptableUsePage) },
       ],
     },
     {
@@ -215,6 +241,7 @@ export const router = createBrowserRouter(
         { path: 'gpu-packages/:id/edit', element: withSuspense(EditGpuPackagePage) },
         { path: 'enquiries', element: withSuspense(AdminEnquiriesPage) },
         { path: 'enquiries/:id', element: withSuspense(AdminEnquiryDetailPage) },
+        { path: 'contact-enquiries', element: withSuspense(ContactEnquiriesPage) },
         { path: 'credentials', element: withSuspense(AdminCredentialsPage) },
         { path: 'workspaces', element: withSuspense(WorkspacesPage) },
         { path: 'workspaces/new', element: withSuspense(NewWorkspacePage) },

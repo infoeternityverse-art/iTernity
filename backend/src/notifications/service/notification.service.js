@@ -2,7 +2,10 @@ import { User, USER_ROLES } from '../../models/index.js';
 import { notificationConfig } from '../../config/notification.config.js';
 import { emailProvider } from '../providers/email.provider.js';
 import {
+  adminNewContactEnquiryEmailTemplate,
   adminNewEnquiryEmailTemplate,
+  contactEnquiryReceivedEmailTemplate,
+  contactEnquiryStatusUpdatedEmailTemplate,
   credentialIssuedEmailTemplate,
   criticalSystemErrorEmailTemplate,
   enquiryReceivedEmailTemplate,
@@ -14,6 +17,14 @@ import {
 } from '../templates/index.js';
 
 const createTextFallback = (message) => message.replace(/\s+/g, ' ').trim();
+const normalizeEmailList = (emails) =>
+  emails
+    .map((email) =>
+      String(email || '')
+        .trim()
+        .toLowerCase()
+    )
+    .filter(Boolean);
 
 class NotificationService {
   async runSafely(type, task) {
@@ -71,6 +82,33 @@ class NotificationService {
         subject: 'We received your GPU rental enquiry',
         html: enquiryReceivedEmailTemplate({ enquiry, gpuPackage }),
         text: `We received your enquiry ${enquiry._id}. Our team will review it within 1 business day.`,
+      })
+    );
+  }
+
+  async sendContactEnquiryReceived(contactEnquiry) {
+    await this.runSafely('contact_enquiry.received', async () =>
+      this.sendEmail({
+        type: 'contact_enquiry.received',
+        to: contactEnquiry.contactEmail,
+        subject: 'We received your message',
+        html: contactEnquiryReceivedEmailTemplate({ contactEnquiry }),
+        text: `We received your contact request ${contactEnquiry._id}. Our team will reply as soon as possible.`,
+      })
+    );
+  }
+
+  async sendContactEnquiryStatusUpdated(contactEnquiry) {
+    await this.runSafely('contact_enquiry.status_updated', async () =>
+      this.sendEmail({
+        type: 'contact_enquiry.status_updated',
+        to: contactEnquiry.contactEmail,
+        subject:
+          contactEnquiry.status === 'closed'
+            ? 'Your contact enquiry was closed'
+            : 'Your contact enquiry was resolved',
+        html: contactEnquiryStatusUpdatedEmailTemplate({ contactEnquiry }),
+        text: `Your contact enquiry ${contactEnquiry._id} is now ${contactEnquiry.status}.`,
       })
     );
   }
@@ -138,12 +176,10 @@ class NotificationService {
   async sendNewEnquiryNotification({ enquiry, gpuPackage }) {
     await this.runSafely('admin.enquiry.created', async () => {
       const admins = await User.find({ role: USER_ROLES.ADMIN, isActive: true }).select('email');
-      const recipients = [
-        ...admins.map((admin) => admin.email),
-        ...notificationConfig.adminNotificationEmails,
-      ]
-        .map((email) => String(email || '').trim().toLowerCase())
-        .filter(Boolean);
+      const configuredRecipients = normalizeEmailList(notificationConfig.adminNotificationEmails);
+      const recipients = configuredRecipients.length
+        ? configuredRecipients
+        : normalizeEmailList(admins.map((admin) => admin.email));
       const uniqueRecipients = [...new Set(recipients)];
 
       if (!uniqueRecipients.length) {
@@ -163,6 +199,36 @@ class NotificationService {
             text: `New enquiry from ${enquiry.contactName} for ${
               gpuPackage?.name || 'GPU package'
             }.`,
+          })
+        )
+      );
+    });
+  }
+
+  async sendNewContactEnquiryNotification(contactEnquiry) {
+    await this.runSafely('admin.contact_enquiry.created', async () => {
+      const admins = await User.find({ role: USER_ROLES.ADMIN, isActive: true }).select('email');
+      const configuredRecipients = normalizeEmailList(notificationConfig.adminNotificationEmails);
+      const recipients = configuredRecipients.length
+        ? configuredRecipients
+        : normalizeEmailList(admins.map((admin) => admin.email));
+      const uniqueRecipients = [...new Set(recipients)];
+
+      if (!uniqueRecipients.length) {
+        console.warn(
+          `[notification] ${new Date().toISOString()} admin.contact_enquiry.created skipped: no admin recipients`
+        );
+        return;
+      }
+
+      await Promise.all(
+        uniqueRecipients.map((recipient) =>
+          this.sendEmail({
+            type: 'admin.contact_enquiry.created',
+            to: recipient,
+            subject: 'New contact enquiry received',
+            html: adminNewContactEnquiryEmailTemplate({ contactEnquiry }),
+            text: `New contact enquiry from ${contactEnquiry.contactName}: ${contactEnquiry.subject}.`,
           })
         )
       );

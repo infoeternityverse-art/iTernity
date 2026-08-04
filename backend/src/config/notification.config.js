@@ -7,15 +7,17 @@ const parseEmailList = (value) =>
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
 
-const adminNotificationEmails = [
-  ...parseEmailList(loadEnv('ADMIN_NOTIFICATION_EMAILS')),
-  ...parseEmailList(loadEnv('ADMIN_EMAIL')),
-];
+const configuredAdminNotificationEmails = parseEmailList(loadEnv('ADMIN_NOTIFICATION_EMAILS'));
+const adminNotificationEmails = configuredAdminNotificationEmails.length
+  ? configuredAdminNotificationEmails
+  : parseEmailList(loadEnv('ADMIN_EMAIL'));
 
 const smtpPort = Number(loadEnv('SMTP_PORT', 587));
 const smtpSecureEnv = loadEnv('SMTP_SECURE');
 const smtpSecure =
-  smtpSecureEnv === undefined ? smtpPort === 465 : String(smtpSecureEnv).trim().toLowerCase() === 'true';
+  smtpSecureEnv === undefined
+    ? smtpPort === 465
+    : String(smtpSecureEnv).trim().toLowerCase() === 'true';
 
 export const notificationConfig = {
   enabled: loadEnv('NOTIFICATIONS_ENABLED', 'true') === 'true',

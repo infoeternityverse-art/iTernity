@@ -1,17 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import {
-  ArrowRight,
-  Github,
-  Instagram,
-  Linkedin,
-  Menu,
-  X,
-  Youtube,
-} from 'lucide-react';
+import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
-import { env } from '@/config/env.js';
 import { Button } from '@/components/ui/index.js';
 import { NavLink } from '@/components/common/nav-link.jsx';
 import { BrandMark } from '@/components/common/brand-mark.jsx';
@@ -52,9 +43,18 @@ function FooterShapeVisual({ type }) {
       focusable="false"
     >
       <path className="footer-ocean-shape-fill" d="M21 31 48 10h84l27 21-69 62L21 31Z" />
-      <path className="footer-ocean-facet footer-ocean-facet-light" d="M48 10 63 31H21L48 10Zm84 0-15 21h42l-27-21ZM63 31h54L90 93 63 31Z" />
-      <path className="footer-ocean-facet footer-ocean-facet-dark" d="M48 10h84l-15 21H63L48 10ZM21 31h42l27 62-69-62Zm96 0h42L90 93l27-62Z" />
-      <path className="footer-ocean-shape-line" d="M21 31h138M48 10l15 21 27 62 27-62 15-21M63 31h54" />
+      <path
+        className="footer-ocean-facet footer-ocean-facet-light"
+        d="M48 10 63 31H21L48 10Zm84 0-15 21h42l-27-21ZM63 31h54L90 93 63 31Z"
+      />
+      <path
+        className="footer-ocean-facet footer-ocean-facet-dark"
+        d="M48 10h84l-15 21H63L48 10ZM21 31h42l27 62-69-62Zm96 0h42L90 93l27-62Z"
+      />
+      <path
+        className="footer-ocean-shape-line"
+        d="M21 31h138M48 10l15 21 27 62 27-62 15-21M63 31h54"
+      />
     </svg>
   );
 }
@@ -79,10 +79,10 @@ export function PublicLayout() {
     { label: 'Instagram', href: 'https://www.instagram.com', icon: Instagram, social: 'instagram' },
   ];
   const legalLinks = [
-    { label: 'Privacy Policy', href: '/faq' },
-    { label: 'Terms of Access', href: '/faq' },
-    { label: 'Security', href: '/faq' },
-    { label: 'Acceptable Use', href: '/faq' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Access', href: '/terms' },
+    { label: 'Security', href: '/security' },
+    { label: 'Acceptable Use', href: '/acceptable-use' },
   ];
   const footerOceanLinks = [
     { label: 'Home', href: '/' },
@@ -124,7 +124,7 @@ export function PublicLayout() {
       ([entry]) => {
         setIsFooterVisible(entry.isIntersecting);
       },
-      { threshold: 0.08 },
+      { threshold: 0.08 }
     );
 
     observer.observe(footer);
@@ -169,8 +169,14 @@ export function PublicLayout() {
     const initVanta = async () => {
       try {
         const previousThree = window.THREE;
-        await loadScript('three-r134', 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
-        await loadScript('vanta-birds', 'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js');
+        await loadScript(
+          'three-r134',
+          'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js'
+        );
+        await loadScript(
+          'vanta-birds',
+          'https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js'
+        );
 
         if (isCancelled || !window.VANTA?.BIRDS || !footerVantaRef.current) return;
 
@@ -238,7 +244,10 @@ export function PublicLayout() {
             </Link>
 
             <div className="hidden contents lg:contents">
-              <nav aria-label="Public navigation" className="hidden items-center justify-center gap-10">
+              <nav
+                aria-label="Public navigation"
+                className="hidden items-center justify-center gap-10"
+              >
                 {publicNavigation.map((item) => (
                   <NavLink key={item.href} item={item} />
                 ))}
@@ -251,7 +260,7 @@ export function PublicLayout() {
                 <Link to={authNavigation[0].href}>
                   <span className="public-get-started-border" aria-hidden="true" />
                   <span className="public-get-started-inner">
-                    <span>Let's get started</span>
+                    <span>Let&apos;s get started</span>
                     <ArrowRight className="public-get-started-icon" />
                   </span>
                 </Link>
@@ -304,7 +313,7 @@ export function PublicLayout() {
 
       <main
         className={`mx-auto w-full px-4 sm:px-6 lg:px-8 ${
-          isHomePage ? 'flex-1 max-w-7xl py-12' : 'public-page-main max-w-7xl pb-36 pt-14'
+          isHomePage ? 'flex-1 max-w-7xl py-12' : 'public-page-main max-w-7xl pb-36 pt-0'
         }`}
       >
         <Outlet />
@@ -324,9 +333,7 @@ export function PublicLayout() {
               >
                 <BrandMark className="h-20 w-28" />
               </Link>
-              <p className="text-sm leading-6 text-[#8FA39B]">
-                Beyond Infinite Intelligence
-              </p>
+              <p className="text-sm leading-6 text-[#8FA39B]">Beyond Infinite Intelligence</p>
               <h3 className="footer-minimal-heading">QUICK LINKS</h3>
               <nav className="footer-minimal-links" aria-label="Footer quick links">
                 {footerOceanLinks.map((item) => (
@@ -335,11 +342,6 @@ export function PublicLayout() {
                   </Link>
                 ))}
               </nav>
-
-              <a href={`mailto:${env.supportEmail}`} className="footer-minimal-mail">
-                <span>Mail us</span>
-                <span>{env.supportEmail}</span>
-              </a>
             </div>
 
             <div className="footer-ocean-nav-panel">
@@ -354,7 +356,10 @@ export function PublicLayout() {
                   const Icon = item.icon;
 
                   return (
-                    <li key={item.label} className={`footer-ocean-social-item footer-ocean-social-${index + 1}`}>
+                    <li
+                      key={item.label}
+                      className={`footer-ocean-social-item footer-ocean-social-${index + 1}`}
+                    >
                       <a
                         href={item.href}
                         target="_blank"

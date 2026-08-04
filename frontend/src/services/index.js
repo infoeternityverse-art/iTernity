@@ -3,6 +3,7 @@ export { aiService } from './ai-service.js';
 export { auditLogService } from './audit-log-service.js';
 export { authService } from './auth-service.js';
 export { blogPostService } from './blog-post-service.js';
+export { contactEnquiryService } from './contact-enquiry-service.js';
 export { credentialService } from './credential-service.js';
 export { enquiryService } from './enquiry-service.js';
 export { gpuPackageService } from './gpu-package-service.js';

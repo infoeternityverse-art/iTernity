@@ -1,3 +1,5 @@
+/* global process */
+
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -67,6 +69,10 @@ const staticRoutes = [
   { route: '/about', changefreq: 'monthly', priority: '0.75' },
   { route: '/contact', changefreq: 'monthly', priority: '0.75' },
   { route: '/faq', changefreq: 'monthly', priority: '0.65' },
+  { route: '/privacy', changefreq: 'yearly', priority: '0.45' },
+  { route: '/terms', changefreq: 'yearly', priority: '0.45' },
+  { route: '/security', changefreq: 'yearly', priority: '0.5' },
+  { route: '/acceptable-use', changefreq: 'yearly', priority: '0.45' },
 ];
 
 const buildSitemap = (entries) => `<?xml version="1.0" encoding="UTF-8"?>

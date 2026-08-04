@@ -48,7 +48,7 @@ export function FaqPage() {
   const [openItem, setOpenItem] = useState(faqItems[0].value);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-16 py-8">
+    <div className="mx-auto max-w-5xl space-y-16 pb-8">
       <Seo
         title="GPU Rental FAQ"
         description="Answers about iTernityverse GPU rental approvals, dashboard credentials, marketplace browsing, enquiries, and provisioning."
