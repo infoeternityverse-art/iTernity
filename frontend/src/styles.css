@@ -4771,21 +4771,7 @@ body::after {
 }
 
 .public-cosmic-hero-about .public-cosmic-hero-glow {
-  background:
-    linear-gradient(
-      100deg,
-      transparent 0 14%,
-      rgba(45, 232, 196, 0.12) 22%,
-      rgba(160, 255, 198, 0.36) 38%,
-      rgba(87, 146, 255, 0.2) 56%,
-      transparent 74%
-    ),
-    repeating-linear-gradient(
-      105deg,
-      transparent 0 44px,
-      rgba(225, 255, 244, 0.16) 46px,
-      transparent 76px
-    );
+  display: none;
 }
 
 .public-cosmic-hero-contact {
@@ -11314,18 +11300,20 @@ footer a:hover {
 .public-footer .footer-vanta-bg {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .public-footer .footer-vanta-bg canvas {
   display: block !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .public-footer .footer-vanta-bg {
-    display: none;
+    opacity: 0.55;
   }
 }
 

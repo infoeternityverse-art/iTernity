@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
+import * as VantaThree from 'three-r134';
+import BIRDS from 'vanta/dist/vanta.birds.min';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { Button } from '@/components/ui/index.js';
@@ -57,6 +59,39 @@ function FooterShapeVisual({ type }) {
       />
     </svg>
   );
+}
+
+function FooterVantaBackground() {
+  const containerRef = useRef(null);
+  const effectRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return undefined;
+
+    effectRef.current = BIRDS({
+      el: containerRef.current,
+      THREE: VantaThree,
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.0,
+      color1: 0x155545,
+      color2: 0x00ffb3,
+      colorMode: 'variance',
+      birdSize: 0.5,
+      backgroundAlpha: 0.0,
+    });
+
+    return () => {
+      effectRef.current?.destroy();
+      effectRef.current = null;
+    };
+  }, []);
+
+  return <div ref={containerRef} className="footer-vanta-bg" aria-hidden="true" />;
 }
 
 export function PublicLayout() {
@@ -236,7 +271,7 @@ export function PublicLayout() {
         ref={footerRef}
         className="public-footer relative z-20 mt-16 flex-none overflow-hidden border-t border-[rgba(45,232,196,0.15)] bg-[#060907] pb-24"
       >
-        <div className="footer-vanta-bg" aria-hidden="true" />
+        <FooterVantaBackground />
         <div className="footer-css-motion" aria-hidden="true">
           <span className="footer-css-ray footer-css-ray-1" />
           <span className="footer-css-ray footer-css-ray-2" />
