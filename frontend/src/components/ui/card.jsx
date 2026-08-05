@@ -4,7 +4,7 @@ import { cn } from './ui-utils.js';
 /**
  * Card frames one reusable object, tool, or summary without embedding layout assumptions.
  */
-export function Card({ children, className = '', interactive = false, error = false }) {
+export function Card({ children, className = '', interactive = false, error = false, ...motionProps }) {
   const handlePointerMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     event.currentTarget.style.setProperty('--spot-x', `${event.clientX - rect.left}px`);
@@ -22,6 +22,7 @@ export function Card({ children, className = '', interactive = false, error = fa
       onPointerMove={handlePointerMove}
       whileHover={interactive ? { y: -3 } : undefined}
       transition={{ duration: 0.18, ease: 'easeOut' }}
+      {...motionProps}
     >
       {children}
     </motion.div>

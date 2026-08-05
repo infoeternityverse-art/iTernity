@@ -2738,7 +2738,7 @@ body::after {
 
   header {
     border-color: rgba(23, 22, 29, 0.08);
-    background: rgba(251, 247, 242, 0.86);
+    /* background: rgba(251, 247, 242, 0.86); */
     box-shadow: 0 10px 34px rgba(23, 22, 29, 0.06);
   }
 
