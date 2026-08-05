@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle, Cpu, KeyRound, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, SectionHeader } from '@/components/ui/index.js';
 import { HeroGpuVisual } from '@/components/hero/hero-gpu-visual.jsx';
+import { GpuComputeStory } from '@/components/home/gpu-compute-story.jsx';
 import { Seo } from '@/components/common/seo.jsx';
 import { createOrganizationSchema, createWebsiteSchema } from '@/utils/seo-schema.js';
 
@@ -95,6 +96,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <GpuComputeStory />
 
       <section className="space-y-6">
         <SectionHeader
