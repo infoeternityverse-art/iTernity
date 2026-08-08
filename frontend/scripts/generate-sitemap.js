@@ -70,7 +70,6 @@ const staticRoutes = [
   { route: '/contact', changefreq: 'monthly', priority: '0.75' },
   { route: '/faq', changefreq: 'monthly', priority: '0.65' },
   { route: '/privacy', changefreq: 'yearly', priority: '0.45' },
-  { route: '/terms', changefreq: 'yearly', priority: '0.45' },
   { route: '/security', changefreq: 'yearly', priority: '0.5' },
   { route: '/acceptable-use', changefreq: 'yearly', priority: '0.45' },
 ];
@@ -113,24 +112,16 @@ const main = async () => {
 
   const gpuRoutes = gpuPackages
     .filter((gpuPackage) => gpuPackage.id || gpuPackage._id)
-    .flatMap((gpuPackage) => {
+    .map((gpuPackage) => {
       const id = gpuPackage.id || gpuPackage._id;
       const lastmod = (gpuPackage.updatedAt || gpuPackage.createdAt || today).slice(0, 10);
 
-      return [
-        toUrlEntry({
-          route: `/gpus/${id}`,
-          lastmod,
-          changefreq: 'weekly',
-          priority: '0.9',
-        }),
-        toUrlEntry({
-          route: `/enquiry/${id}`,
-          lastmod,
-          changefreq: 'monthly',
-          priority: '0.55',
-        }),
-      ];
+      return toUrlEntry({
+        route: `/gpus/${id}`,
+        lastmod,
+        changefreq: 'weekly',
+        priority: '0.9',
+      });
     });
 
   const blogRoutes = blogPosts
@@ -153,7 +144,7 @@ const main = async () => {
   ]);
 
   console.info(
-    `Generated sitemap.xml with ${entries.length} URLs (${gpuRoutes.length / 2} GPU packages, ${
+    `Generated sitemap.xml with ${entries.length} URLs (${gpuRoutes.length} GPU packages, ${
       blogRoutes.length
     } blog posts).`
   );

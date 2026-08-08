@@ -2,61 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://iternityverse.com/</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/gpus</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/blog</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/about</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/contact</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/faq</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/privacy</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.45</priority>
-  </url>
-  <url>
-    <loc>https://iternityverse.com/terms</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.45</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/security</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/acceptable-use</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.45</priority>
   </url>
@@ -67,22 +61,10 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://iternityverse.com/enquiry/6a7336f5fc95cff16df8df1c</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
     <loc>https://iternityverse.com/gpus/6a733639fc95cff16df8df0a</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://iternityverse.com/enquiry/6a733639fc95cff16df8df0a</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/gpus/6a733352fc95cff16df8ded7</loc>
@@ -91,22 +73,10 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://iternityverse.com/enquiry/6a733352fc95cff16df8ded7</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
     <loc>https://iternityverse.com/gpus/6a73328dfc95cff16df8dec0</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://iternityverse.com/enquiry/6a73328dfc95cff16df8dec0</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/gpus/6a73319efc95cff16df8deb1</loc>
@@ -115,26 +85,20 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://iternityverse.com/enquiry/6a73319efc95cff16df8deb1</loc>
-    <lastmod>2026-08-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
-  </url>
-  <url>
     <loc>https://iternityverse.com/gpus/6a733123fc95cff16df8dea8</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://iternityverse.com/enquiry/6a733123fc95cff16df8dea8</loc>
-    <lastmod>2026-08-05</lastmod>
+    <loc>https://iternityverse.com/blog/dgx-spark-and-dgx-station-paired-with-nvidia-nemoclaw-deliver-full-stack-platform-for-autonomous-agents</loc>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.55</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://iternityverse.com/blog/ai-inference-economics-gpu-cloud</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
