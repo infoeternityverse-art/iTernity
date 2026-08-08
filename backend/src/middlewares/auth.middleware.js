@@ -2,6 +2,7 @@ import { User } from '../models/index.js';
 import { ApiError } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { verifyAccessToken } from '../services/token.service.js';
+import { syncSupabaseUser } from '../services/auth.service.js';
 
 const getBearerToken = (req) => {
   const header = req.headers.authorization || '';
@@ -25,7 +26,7 @@ export const attachCurrentUser = asyncHandler(async (req, res, next) => {
     const payload = verifyAccessToken(token);
     req.user = await User.findActiveById(payload.sub);
   } catch {
-    req.user = null;
+    req.user = await syncSupabaseUser(token);
   }
 
   return next();
@@ -43,7 +44,14 @@ export const authenticate = asyncHandler(async (req, res, next) => {
   try {
     payload = verifyAccessToken(token);
   } catch {
-    throw new ApiError(401, 'Invalid or expired token.');
+    const supabaseUser = await syncSupabaseUser(token);
+
+    if (!supabaseUser) {
+      throw new ApiError(401, 'Invalid or expired token.');
+    }
+
+    req.user = supabaseUser;
+    return next();
   }
 
   const user = await User.findActiveById(payload.sub);

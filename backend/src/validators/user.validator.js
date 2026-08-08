@@ -17,3 +17,6 @@ export const updateUserSchema = idParamSchema.extend({
     .strict()
     .refine((value) => Object.keys(value).length > 0, 'At least one field is required.'),
 });
+
+export const sendPasswordResetLinkSchema = idParamSchema;
+export const deleteUserSchema = idParamSchema;

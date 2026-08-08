@@ -31,36 +31,30 @@ export function ResetPasswordPage() {
     }
   };
 
-  const missingLinkData = !email || !token;
-
   return (
     <div className="space-y-6">
       <PageHeader title="Create New Password" description="Complete your secure password reset." />
-      {missingLinkData ? (
-        <Alert variant="danger">This password reset link is invalid or incomplete.</Alert>
-      ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {status.error && <Alert variant="danger">{status.error}</Alert>}
-          {status.success && <Alert variant="success">{status.success}</Alert>}
-          <Input
-            id="password"
-            label="New Password"
-            type="password"
-            autoComplete="new-password"
-            disabled={status.loading || Boolean(status.success)}
-            error={errors.password?.message}
-            {...register('password')}
-          />
-          <Button
-            type="submit"
-            className="w-full"
-            loading={status.loading}
-            disabled={Boolean(status.success)}
-          >
-            Reset password
-          </Button>
-        </form>
-      )}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {status.error && <Alert variant="danger">{status.error}</Alert>}
+        {status.success && <Alert variant="success">{status.success}</Alert>}
+        <Input
+          id="password"
+          label="New Password"
+          type="password"
+          autoComplete="new-password"
+          disabled={status.loading || Boolean(status.success)}
+          error={errors.password?.message}
+          {...register('password')}
+        />
+        <Button
+          type="submit"
+          className="w-full"
+          loading={status.loading}
+          disabled={Boolean(status.success)}
+        >
+          Reset password
+        </Button>
+      </form>
       <p className="text-center text-sm text-[#8FA39B]">
         <Link to="/login" className="font-semibold text-brand-400 hover:text-white">
           Back to login

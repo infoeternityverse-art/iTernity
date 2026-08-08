@@ -6,7 +6,7 @@ import {
   listCustomerEnquiries,
   updateAdminEnquiry,
 } from '../controllers/enquiry.controller.js';
-import { attachCurrentUser, authenticate } from '../middlewares/auth.middleware.js';
+import { authenticate } from '../middlewares/auth.middleware.js';
 import { requireAdmin, requireCustomer } from '../middlewares/role.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import {
@@ -20,8 +20,8 @@ export const enquiryRouter = Router();
 export const customerEnquiryRouter = Router();
 export const adminEnquiryRouter = Router();
 
-enquiryRouter.post('/', attachCurrentUser, validate(createEnquirySchema), createEnquiry);
 enquiryRouter.use(authenticate);
+enquiryRouter.post('/', requireCustomer, validate(createEnquirySchema), createEnquiry);
 enquiryRouter.get('/:id', validate(getEnquirySchema), getEnquiry);
 
 customerEnquiryRouter.use(authenticate, requireCustomer);

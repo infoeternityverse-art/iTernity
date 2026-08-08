@@ -1,20 +1,150 @@
 import { apiClient } from './api-client.js';
+import { env } from '@/config/env.js';
+import { isSupabaseConfigured, supabase } from '@/config/supabase-client.js';
+import { tokenStorage } from '@/utils/token-storage.js';
 
 const normalizeAuthPayload = (response) => response.data.data;
 
+const requireSupabase = () => {
+  if (!isSupabaseConfigured || !supabase) {
+    throw new Error('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+  }
+
+  return supabase;
+};
+
+const persistSupabaseSession = (session) => {
+  if (!session?.access_token) {
+    return;
+  }
+
+  tokenStorage.setTokens({
+    accessToken: session.access_token,
+    refreshToken: session.refresh_token,
+  });
+};
+
+const fetchCurrentUserWithSession = async (session) => {
+  persistSupabaseSession(session);
+
+  try {
+    return normalizeAuthPayload(await apiClient.get('/auth/me'));
+  } catch (error) {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+
+    tokenStorage.clearTokens();
+    throw error;
+  }
+};
+
 export const authService = {
-  register: async (payload) =>
-    normalizeAuthPayload(await apiClient.post('/auth/register', payload)),
-  login: async (payload) => normalizeAuthPayload(await apiClient.post('/auth/login', payload)),
+  register: async ({ name, email, password }) => {
+    const client = requireSupabase();
+    const { data, error } = await client.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name },
+        emailRedirectTo: `${env.siteUrl}/login`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data.session) {
+      return {
+        email,
+        verificationRequired: true,
+      };
+    }
+
+    return fetchCurrentUserWithSession(data.session);
+  },
+  login: async ({ email, password }) => {
+    const client = requireSupabase();
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return fetchCurrentUserWithSession(data.session);
+  },
   adminLogin: async (payload) =>
     normalizeAuthPayload(await apiClient.post('/auth/admin/login', payload)),
-  logout: async () => normalizeAuthPayload(await apiClient.post('/auth/logout')),
+  googleLogin: async ({ redirectTo } = {}) => {
+    const client = requireSupabase();
+    const { error } = await client.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectTo || `${window.location.origin}/dashboard`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'select_account',
+        },
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return null;
+  },
+  getSupabaseSession: async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      return null;
+    }
+
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data.session;
+  },
+  logout: async () => {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+
+    return normalizeAuthPayload(await apiClient.post('/auth/logout'));
+  },
   me: async () => normalizeAuthPayload(await apiClient.get('/auth/me')),
   updateMe: async (payload) => normalizeAuthPayload(await apiClient.patch('/auth/me', payload)),
   changePassword: async (payload) =>
     normalizeAuthPayload(await apiClient.patch('/auth/password', payload)),
-  forgotPassword: async (payload) =>
-    normalizeAuthPayload(await apiClient.post('/auth/forgot-password', payload)),
-  resetPassword: async (payload) =>
-    normalizeAuthPayload(await apiClient.post('/auth/reset-password', payload)),
+  forgotPassword: async ({ email }) => {
+    const client = requireSupabase();
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${env.siteUrl}/reset-password`,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return null;
+  },
+  resetPassword: async ({ email, token, password }) => {
+    if (email && token) {
+      return normalizeAuthPayload(
+        await apiClient.post('/auth/reset-password', { email, token, password })
+      );
+    }
+
+    const client = requireSupabase();
+    const { error } = await client.auth.updateUser({ password });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return null;
+  },
 };

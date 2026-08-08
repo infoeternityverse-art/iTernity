@@ -7,4 +7,6 @@ export const env = {
   supportEmail: import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com',
   cloudinaryCloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '',
   cloudinaryAssetFolder: import.meta.env.VITE_CLOUDINARY_ASSET_FOLDER || 'gpu-cloud-marketplace',
+  supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
+  supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
 };

@@ -1,8 +1,12 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { MailPlus, Trash2 } from 'lucide-react';
 import {
   Alert,
   Card,
   CardContent,
+  Button,
+  ConfirmationDialog,
   PageHeader,
   SectionHeader,
   Skeleton,
@@ -11,12 +15,19 @@ import {
 } from '@/components/ui/index.js';
 import { formatDate, getId } from '@/components/admin/admin-utils.js';
 import { useAdminCredentials, useAdminEnquiries, useUser } from '@/hooks/index.js';
+import { useDeleteUser, useSendPasswordResetLink } from '@/mutations/user.mutations.js';
 
 export function CustomerDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const customer = useUser(id);
   const enquiries = useAdminEnquiries({ customer: id, limit: 5 });
   const credentials = useAdminCredentials({ customer: id, limit: 5 });
+  const sendPasswordResetLink = useSendPasswordResetLink();
+  const deleteUser = useDeleteUser({
+    onSuccess: () => navigate('/admin/customers', { replace: true }),
+  });
 
   if (customer.isLoading) return <Skeleton className="h-80" />;
   if (customer.error) return <Alert variant="danger">{customer.error.message}</Alert>;
@@ -27,10 +38,30 @@ export function CustomerDetailPage() {
         title={customer.data.name}
         description={customer.data.email}
         action={
-          <StatusBadge
-            status={customer.data.isActive ? 'active' : 'inactive'}
-            label={customer.data.isActive ? 'Active' : 'Inactive'}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusBadge
+              status={customer.data.isActive ? 'active' : 'inactive'}
+              label={customer.data.isActive ? 'Active' : 'Inactive'}
+            />
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<MailPlus className="h-4 w-4" />}
+              loading={sendPasswordResetLink.isPending}
+              onClick={() => sendPasswordResetLink.mutate(id)}
+            >
+              Send reset link
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<Trash2 className="h-4 w-4" />}
+              loading={deleteUser.isPending}
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              Delete user
+            </Button>
+          </div>
         }
       />
       <Card>
@@ -86,6 +117,18 @@ export function CustomerDetailPage() {
           ]}
         />
       </section>
+      <ConfirmationDialog
+        open={deleteDialogOpen}
+        title="Delete user"
+        description="This permanently removes the customer account. Related enquiries and credentials will remain in the system."
+        confirmLabel="Delete user"
+        loading={deleteUser.isPending}
+        onCancel={() => setDeleteDialogOpen(false)}
+        onConfirm={async () => {
+          await deleteUser.mutateAsync(id);
+          setDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -9918,6 +9918,7 @@ html.light .bg-\[\#2DE8C4\] {
 }
 
 .cosmic-hover-card,
+.cursor-spotlight-card,
 .blog-card,
 .blog-article-hero,
 .blog-article-body,
@@ -9932,6 +9933,7 @@ html.light .rounded-card {
 }
 
 .cosmic-hover-card::before,
+.cursor-spotlight-card::before,
 .blog-card::before,
 .blog-article-hero::before,
 .blog-article-body::before,
@@ -9990,6 +9992,7 @@ html.light .rounded-card::after {
 .blog-article-share:hover::before,
 .premium-shell .rounded-card:hover::before,
 html.light .rounded-card:hover::before,
+.cursor-spotlight-card:hover::before,
 .cosmic-hover-card:hover::after,
 .blog-card:hover::after,
 .blog-article-body:hover::after,

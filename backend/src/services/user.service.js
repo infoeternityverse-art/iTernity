@@ -1,6 +1,10 @@
 import { User, USER_ROLES } from '../models/index.js';
+import { notificationConfig } from '../config/notification.config.js';
+import { notificationService } from '../notifications/index.js';
 import { ConflictError } from '../utils/errors.js';
+import { createSupabaseRecoveryLink, deleteSupabaseUser } from './auth.service.js';
 import { BaseService } from './base.service.js';
+import { signPasswordResetToken } from './token.service.js';
 
 class UserService extends BaseService {
   constructor() {
@@ -31,6 +35,18 @@ class UserService extends BaseService {
     return true;
   }
 
+  findMany(options = {}) {
+    const filters = {
+      ...options.filters,
+      isActive: options.filters?.isActive ?? true,
+    };
+
+    return super.findMany({
+      ...options,
+      filters,
+    });
+  }
+
   findCustomers(options = {}) {
     return this.findMany({
       ...options,
@@ -49,6 +65,55 @@ class UserService extends BaseService {
         role: USER_ROLES.ADMIN,
       },
     });
+  }
+
+  async sendPasswordResetLink(id) {
+    const user = await User.findById(id).select('+passwordHash');
+
+    if (!user) {
+      return null;
+    }
+
+    const supabaseResetUrl = await createSupabaseRecoveryLink(user.email);
+    const token = supabaseResetUrl ? null : signPasswordResetToken(user);
+    const resetUrl =
+      supabaseResetUrl ||
+      `${notificationConfig.frontendUrl}/reset-password?token=${encodeURIComponent(
+        token
+      )}&email=${encodeURIComponent(user.email)}`;
+
+    await notificationService.sendPasswordReset({
+      user,
+      resetUrl,
+      expiresIn: '30m',
+    });
+
+    return user;
+  }
+
+  async delete(id) {
+    this.ensureValidId(id);
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return super.delete(id);
+    }
+
+    if (user.role === USER_ROLES.CUSTOMER) {
+      await deleteSupabaseUser({
+        email: user.email,
+        supabaseUserId: user.supabaseUserId,
+      });
+    }
+
+    user.isActive = false;
+    await user.save();
+
+    return {
+      data: user,
+      message: 'User deleted successfully.',
+    };
   }
 }
 

@@ -16,6 +16,8 @@ const applyAuthData = (data, set) => {
     isAuthenticated: true,
     isRestoring: false,
     error: null,
+    pendingVerification: false,
+    pendingVerificationEmail: null,
   });
 };
 
@@ -26,6 +28,8 @@ export const useAuthStore = create((set, get) => ({
   isRestoring: Boolean(initialAccessToken),
   isLoading: false,
   error: null,
+  pendingVerification: false,
+  pendingVerificationEmail: null,
 
   clearSession: () => {
     tokenStorage.clearTokens();
@@ -36,6 +40,8 @@ export const useAuthStore = create((set, get) => ({
       isRestoring: false,
       isLoading: false,
       error: null,
+      pendingVerification: false,
+      pendingVerificationEmail: null,
     });
   },
 
@@ -44,8 +50,17 @@ export const useAuthStore = create((set, get) => ({
 
     try {
       const data = await authService.register(payload);
-      applyAuthData(data, set);
-      return data.user;
+      if (data.tokens?.accessToken) {
+        applyAuthData(data, set);
+      } else {
+        set({
+          pendingVerification: true,
+          pendingVerificationEmail: data.email || payload.email,
+          isRestoring: false,
+          error: null,
+        });
+      }
+      return data;
     } catch (error) {
       set({ error: error.message, isLoading: false, isRestoring: false });
       throw error;
@@ -76,6 +91,20 @@ export const useAuthStore = create((set, get) => ({
       const data = await authService.adminLogin(payload);
       applyAuthData(data, set);
       return data.user;
+    } catch (error) {
+      set({ error: error.message, isLoading: false, isRestoring: false });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  googleLogin: async (payload) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      await authService.googleLogin(payload);
+      return null;
     } catch (error) {
       set({ error: error.message, isLoading: false, isRestoring: false });
       throw error;
@@ -126,10 +155,32 @@ export const useAuthStore = create((set, get) => ({
   },
 
   restoreSession: async () => {
-    const token = tokenStorage.getAccessToken();
+    let token = tokenStorage.getAccessToken();
+    let supabaseSession = null;
+
+    try {
+      supabaseSession = await authService.getSupabaseSession();
+    } catch {
+      supabaseSession = null;
+    }
+
+    if (supabaseSession?.access_token) {
+      tokenStorage.setTokens({
+        accessToken: supabaseSession.access_token,
+        refreshToken: supabaseSession.refresh_token,
+      });
+      token = supabaseSession.access_token;
+    }
 
     if (!token) {
-      set({ isRestoring: false, isAuthenticated: false, user: null, accessToken: null });
+      set({
+        isRestoring: false,
+        isAuthenticated: false,
+        user: null,
+        accessToken: null,
+        pendingVerification: false,
+        pendingVerificationEmail: null,
+      });
       return null;
     }
 
@@ -152,6 +203,8 @@ export const useAuthStore = create((set, get) => ({
         accessToken: null,
         isAuthenticated: false,
         isRestoring: false,
+        pendingVerification: false,
+        pendingVerificationEmail: null,
       });
       return null;
     }

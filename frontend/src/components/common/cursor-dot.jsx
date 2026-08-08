@@ -29,7 +29,7 @@ export function CursorDot() {
       dot.classList.add('is-visible');
 
       const hoverSurface = event.target.closest?.(
-        '.rounded-card, .cosmic-hover-card, .blog-card, .blog-article-hero, .blog-article-body, .blog-article-sidebar, .blog-article-share'
+        '.rounded-card, .cosmic-hover-card, .cursor-spotlight-card, .blog-card, .blog-article-hero, .blog-article-body, .blog-article-sidebar, .blog-article-share'
       );
       if (hoverSurface) {
         const rect = hoverSurface.getBoundingClientRect();

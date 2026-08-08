@@ -32,6 +32,11 @@ export const config = {
     refreshExpiresIn: loadEnv('JWT_REFRESH_EXPIRES_IN', '7d'),
     passwordResetExpiresIn: loadEnv('PASSWORD_RESET_EXPIRES_IN', '30m'),
   },
+  supabase: {
+    url: loadEnv('SUPABASE_URL', ''),
+    anonKey: loadEnv('SUPABASE_ANON_KEY', ''),
+    serviceRoleKey: loadEnv('SUPABASE_SERVICE_ROLE_KEY', ''),
+  },
   bcryptSaltRounds: Number(loadEnv('BCRYPT_SALT_ROUNDS', 12)),
   cloudinary: {
     cloudName: loadEnv('CLOUDINARY_CLOUD_NAME', ''),

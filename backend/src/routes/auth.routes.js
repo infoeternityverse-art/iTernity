@@ -6,7 +6,6 @@ import {
   login,
   logout,
   me,
-  register,
   resetPasswordWithToken,
   updateMe,
 } from '../controllers/auth.controller.js';
@@ -20,14 +19,12 @@ import {
   changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
-  registerSchema,
   resetPasswordSchema,
   updateMeSchema,
 } from '../validators/auth.validator.js';
 
 export const authRouter = Router();
 
-authRouter.post('/register', validate(registerSchema), register);
 authRouter.post('/login', validate(loginSchema), login);
 authRouter.post('/admin/login', validate(loginSchema), adminLogin);
 authRouter.post(

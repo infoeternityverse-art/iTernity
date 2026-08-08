@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
 import * as VantaThree from 'three-r134';
 import BIRDS from 'vanta/dist/vanta.birds.min';
@@ -222,30 +223,65 @@ export function PublicLayout() {
                 aria-expanded={isMobileNavOpen}
                 onClick={() => setIsMobileNavOpen((current) => !current)}
               >
-                {isMobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileNavOpen ? (
+                  <X className="h-6 w-6 stroke-[2.8]" />
+                ) : (
+                  <Menu className="h-6 w-6 stroke-[2.8]" />
+                )}
               </Button>
             </div>
           </div>
 
           {isMobileNavOpen && (
-            <div className="rounded-[24px] border border-[rgba(45,232,196,0.15)] bg-[#0E1310]/88 p-3 shadow-soft backdrop-blur-xl lg:hidden">
-              <nav aria-label="Mobile public navigation" className="flex flex-col gap-1">
-                {publicNavigation.map((item) => (
-                  <NavLink key={item.href} item={item} compact onClick={closeMobileNav} />
-                ))}
-              </nav>
-              <div className="mt-4">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full justify-center border-[#2DE8C4] bg-[#2DE8C4] text-[#060907] hover:bg-transparent hover:text-[#F5F7F6]"
-                >
-                  <Link to={authNavigation[0].href} onClick={closeMobileNav}>
-                    {authNavigation[0].label}
-                  </Link>
-                </Button>
+            <motion.div
+              initial={{ opacity: 0, x: -28, y: -22, scale: 0.95, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: 'blur(0px)' }}
+              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+              className="origin-top-left pb-5 lg:hidden"
+            >
+              <div className="relative max-w-[21rem] overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_16%_0%,rgba(45,232,196,0.24),transparent_34%),radial-gradient(circle_at_100%_18%,rgba(24,200,162,0.13),transparent_38%),linear-gradient(145deg,rgba(7,42,34,0.96),rgba(3,21,17,0.95)_58%,rgba(7,50,41,0.9))] shadow-[0_28px_84px_rgba(0,0,0,0.36),0_0_44px_rgba(45,232,196,0.08),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_118%,rgba(45,232,196,0.16),transparent_48%)]" />
+                <nav aria-label="Mobile public navigation" className="relative z-10 space-y-2 px-4 pb-5 pt-6">
+                  {publicNavigation.map((item, index) => (
+                    <motion.div
+                      key={item.href}
+                      className="relative"
+                      initial={{ opacity: 0, x: -14, y: -4 }}
+                      animate={{ opacity: 1, x: 0, y: 0 }}
+                      transition={{
+                        duration: 0.32,
+                        delay: 0.06 + index * 0.045,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                    >
+                      {index > 0 && (
+                        <span
+                          className="pointer-events-none absolute -top-1 left-4 right-4 h-px bg-[linear-gradient(90deg,transparent,rgba(245,247,246,0.12)_22%,rgba(45,232,196,0.32)_50%,rgba(245,247,246,0.12)_78%,transparent)]"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <Link
+                        to={item.href}
+                        onClick={closeMobileNav}
+                        className="block rounded-[18px] px-4 py-[1.125rem] text-center text-sm font-semibold leading-none text-[#F5F7F6] drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] transition duration-300 ease-premium hover:-translate-y-0.5 hover:text-[#2DE8C4]"
+                      >
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
+                <div className="relative z-10 px-4 pb-4 pt-1">
+                  <Button
+                    asChild
+                    className="w-full justify-center border-0 bg-[linear-gradient(135deg,#2DE8C4_0%,#18C8A2_100%)] py-3.5 text-sm text-[#060907] shadow-[0_18px_42px_rgba(45,232,196,0.22)]"
+                  >
+                    <Link to={authNavigation[0].href} onClick={closeMobileNav}>
+                      {authNavigation[0].label}
+                    </Link>
+                  </Button>
+                </div>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </header>
@@ -337,7 +373,7 @@ export function PublicLayout() {
             </div>
           </div>
 
-          <div className="footer-legal-row">
+          <div className="footer-legal-row mt-10">
             <nav className="footer-legal-links" aria-label="Footer legal">
               {legalLinks.map((item) => (
                 <Link key={item.label} to={item.href}>

@@ -26,6 +26,16 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
+    emailVerifiedAt: {
+      type: Date,
+      default: null,
+    },
+    supabaseUserId: {
+      type: String,
+      trim: true,
+      default: null,
+      index: true,
+    },
     role: {
       type: String,
       enum: Object.values(USER_ROLES),

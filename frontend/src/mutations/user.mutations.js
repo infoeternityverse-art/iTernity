@@ -17,3 +17,30 @@ export const useUpdateUser = (options = {}) => {
     ...options,
   });
 };
+
+export const useSendPasswordResetLink = (options = {}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id) => userService.sendPasswordResetLink(id),
+    onSuccess: (updatedUser, id, context) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.detail(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+      options.onSuccess?.(updatedUser, id, context);
+    },
+    ...options,
+  });
+};
+
+export const useDeleteUser = (options = {}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id) => userService.delete(id),
+    onSuccess: (deletedUser, id, context) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+      options.onSuccess?.(deletedUser, id, context);
+    },
+    ...options,
+  });
+};

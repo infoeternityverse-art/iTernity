@@ -5,6 +5,8 @@ import { Seo } from '@/components/common/seo.jsx';
 import { Alert, Card, CardContent, Skeleton } from '@/components/ui/index.js';
 import { useCreateEnquiry, useGpuPackage } from '@/hooks/index.js';
 import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
+import { useAuthStore } from '@/store/auth-store.js';
+import { useEffect } from 'react';
 
 const ENQUIRY_DRAFT_KEY = 'gpu-marketplace-enquiry-draft';
 
@@ -21,6 +23,9 @@ export function EnquiryPage() {
   const { gpuPackageId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isRestoring = useAuthStore((state) => state.isRestoring);
   const { data: gpuPackage, isLoading, error } = useGpuPackage(gpuPackageId);
   const enquiryDraft =
     location.state?.enquiryDraft?.gpuPackageId === gpuPackageId
@@ -32,6 +37,18 @@ export function EnquiryPage() {
       navigate('/thank-you', { replace: true });
     },
   });
+
+  useEffect(() => {
+    if (!isRestoring && !isAuthenticated) {
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: location,
+          enquiryDraft: { gpuPackageId, ...enquiryDraft },
+        },
+      });
+    }
+  }, [enquiryDraft, gpuPackageId, isAuthenticated, isRestoring, location, navigate]);
 
   if (isLoading) {
     return <Skeleton className="h-96" />;
@@ -72,6 +89,7 @@ export function EnquiryPage() {
           <EnquiryForm
             gpuPackage={gpuPackage}
             initialDraft={enquiryDraft}
+            currentUser={user}
             onSubmit={createEnquiry.mutateAsync}
             loading={createEnquiry.isPending}
             error={createEnquiry.error?.message}

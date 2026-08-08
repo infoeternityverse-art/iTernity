@@ -4,11 +4,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Alert, Button, Input, Textarea } from '@/components/ui/index.js';
 
-const optionalNumber = z.preprocess(
-  (value) => (value === '' || value === null ? undefined : Number(value)),
-  z.number().min(0, 'Budget must be zero or more.').optional()
-);
-
 const enquiryFormSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters.').max(120),
   email: z.string().trim().email('Enter a valid email address.'),
@@ -20,10 +15,16 @@ const enquiryFormSchema = z.object({
     .max(5000),
   expectedUsage: z.string().trim().max(2000).optional(),
   duration: z.string().trim().max(120).optional(),
-  budget: optionalNumber,
 });
 
-export function EnquiryForm({ gpuPackage, initialDraft, onSubmit, loading = false, error }) {
+export function EnquiryForm({
+  gpuPackage,
+  initialDraft,
+  currentUser,
+  onSubmit,
+  loading = false,
+  error,
+}) {
   const {
     register,
     handleSubmit,
@@ -38,21 +39,19 @@ export function EnquiryForm({ gpuPackage, initialDraft, onSubmit, loading = fals
       projectDescription: '',
       expectedUsage: '',
       duration: '',
-      budget: '',
     },
   });
 
   useEffect(() => {
     reset({
-      name: '',
-      email: '',
+      name: currentUser?.name || '',
+      email: currentUser?.email || '',
       phone: '',
       projectDescription: initialDraft?.projectDescription || '',
       expectedUsage: initialDraft?.expectedUsage || '',
       duration: initialDraft?.duration || '',
-      budget: initialDraft?.budget || '',
     });
-  }, [initialDraft, reset]);
+  }, [currentUser?.email, currentUser?.name, initialDraft, reset]);
 
   const handleValidSubmit = (values) =>
     onSubmit({
@@ -63,7 +62,6 @@ export function EnquiryForm({ gpuPackage, initialDraft, onSubmit, loading = fals
       projectDescription: values.projectDescription,
       expectedUsage: values.expectedUsage,
       duration: values.duration,
-      budget: values.budget,
     });
 
   return (
@@ -121,14 +119,6 @@ export function EnquiryForm({ gpuPackage, initialDraft, onSubmit, loading = fals
           disabled={loading}
           error={errors.duration?.message}
           {...register('duration')}
-        />
-        <Input
-          id="budget"
-          label="Budget"
-          type="number"
-          disabled={loading}
-          error={errors.budget?.message}
-          {...register('budget')}
         />
       </div>
       <Button type="submit" loading={loading}>
