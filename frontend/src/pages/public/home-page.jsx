@@ -67,7 +67,7 @@ const howItWorksSteps = [
     number: '01',
     label: 'DISCOVER',
     title: 'Explore GPU Infrastructure',
-    media: '/media/hero_home.webp',
+    media: '/media/step1.webp',
     description:
       'Browse enterprise GPU clusters designed for AI training, inference, rendering, simulation, and high-performance workloads.',
     icon: Cpu,
@@ -76,7 +76,7 @@ const howItWorksSteps = [
     number: '02',
     label: 'CONFIGURE',
     title: 'Customize Your Deployment',
-    media: '/media/hero_gpu.webp',
+    media: '/media/step2.webp',
     description:
       'Select the GPU series, operating system, storage, networking, software stack, and rental duration that fit your project.',
     icon: MessageSquare,
@@ -85,7 +85,7 @@ const howItWorksSteps = [
     number: '03',
     label: 'VALIDATE',
     title: 'Infrastructure Review',
-    media: '/media/hero_about.webp',
+    media: '/media/step3.webp',
     description:
       'Our team checks the request, confirms resource fit, and validates the environment before deployment begins.',
     icon: ShieldCheck,
@@ -94,7 +94,7 @@ const howItWorksSteps = [
     number: '04',
     label: 'PROVISION',
     title: 'Environment Provisioning',
-    media: '/media/hero_contact.webp',
+    media: '/media/step4.webp',
     description:
       'Dedicated infrastructure is securely configured, benchmarked, and prepared for your approved workload.',
     icon: KeyRound,
@@ -103,7 +103,7 @@ const howItWorksSteps = [
     number: '05',
     label: 'LAUNCH',
     title: 'Access Your Workspace',
-    media: '/media/hero_home.webp',
+    media: '/media/step5.webp',
     description:
       'Receive secure credentials and start working with JupyterLab, SSH, APIs, and the rest of your GPU workspace.',
     icon: CheckCircle,
