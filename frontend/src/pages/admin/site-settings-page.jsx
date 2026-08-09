@@ -14,16 +14,10 @@ const MEDIA_SLOTS = [
     usage: 'Homepage, FAQ, and thank-you hero background',
   },
   {
-    value: 'hero_gpu',
-    label: 'GPU hero',
-    fallback: '/media/hero_gpu.webp',
-    usage: 'GPU listing, GPU detail, and GPU enquiry hero background',
-  },
-  {
-    value: 'hero_about',
-    label: 'About hero',
-    fallback: '/media/hero_about.webp',
-    usage: 'About page hero background',
+    value: 'hero_blog',
+    label: 'Blog hero',
+    fallback: '/media/hero_home.webp',
+    usage: 'Public blog page hero background',
   },
   {
     value: 'hero_contact',

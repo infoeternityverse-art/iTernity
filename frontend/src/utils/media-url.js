@@ -11,6 +11,7 @@ const publicMediaMap = {
   '/media/hero_home.webp': 'hero_home',
   '/media/hero_gpu.webp': 'hero_gpu',
   '/media/hero_about.webp': 'hero_about',
+  '/media/hero_blog.webp': 'hero_blog',
   '/media/hero_contact.webp': 'hero_contact',
   '/media/footer_bg.jpg': 'footer_bg',
 };

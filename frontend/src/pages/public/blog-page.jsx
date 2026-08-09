@@ -41,7 +41,7 @@ export function BlogPage() {
         eyebrow="Research Log"
         title="Blog"
         description="Advanced notes on GPU infrastructure, secure AI workspaces, model operations, and the next era of compute strategy."
-        variant="detail"
+        variant="blog"
       />
 
       <section className="blog-command-bar">

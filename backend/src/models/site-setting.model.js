@@ -4,9 +4,17 @@ export const SITE_MEDIA_SLOTS = {
   HERO_HOME: 'hero_home',
   HERO_GPU: 'hero_gpu',
   HERO_ABOUT: 'hero_about',
+  HERO_BLOG: 'hero_blog',
   HERO_CONTACT: 'hero_contact',
   FOOTER_BG: 'footer_bg',
 };
+
+export const UPLOADABLE_SITE_MEDIA_SLOTS = [
+  SITE_MEDIA_SLOTS.HERO_HOME,
+  SITE_MEDIA_SLOTS.HERO_BLOG,
+  SITE_MEDIA_SLOTS.HERO_CONTACT,
+  SITE_MEDIA_SLOTS.FOOTER_BG,
+];
 
 const siteMediaAssetSchema = new mongoose.Schema(
   {

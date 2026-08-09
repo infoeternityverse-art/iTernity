@@ -1,6 +1,6 @@
 import { HeroGpuVisual } from '@/components/hero/hero-gpu-visual.jsx';
 
-const WEBGL_HERO_VARIANTS = new Set(['market', 'about', 'contact']);
+const WEBGL_HERO_VARIANTS = new Set(['market', 'about', 'blog', 'contact']);
 
 export function PublicPageHero({ eyebrow, title, description, variant = 'aurora', children }) {
   const shouldRenderWebglHero = WEBGL_HERO_VARIANTS.has(variant);

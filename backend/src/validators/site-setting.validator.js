@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { SITE_MEDIA_SLOTS } from '../models/index.js';
+import { UPLOADABLE_SITE_MEDIA_SLOTS } from '../models/index.js';
 
 export const uploadSiteMediaSchema = z.object({
   body: z
     .object({
-      slot: z.enum(Object.values(SITE_MEDIA_SLOTS)),
+      slot: z.enum(UPLOADABLE_SITE_MEDIA_SLOTS),
       image: z
         .string()
         .min(100)
