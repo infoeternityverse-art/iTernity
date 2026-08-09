@@ -4,9 +4,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
+import cookieParser from 'cookie-parser';
 import { config } from './config/index.js';
 import { notFoundHandler, errorHandler } from './middlewares/error.middleware.js';
 import { apiRouter } from './routes/index.js';
+import { requireTrustedCookieOrigin } from './middlewares/origin.middleware.js';
 
 export const app = express();
 
@@ -29,10 +31,13 @@ app.use(
 app.use(
   cors({
     origin: config.corsOrigins,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+app.use(cookieParser());
+app.use(requireTrustedCookieOrigin);
 app.use(express.json({ limit: '12mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize());

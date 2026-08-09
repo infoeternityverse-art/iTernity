@@ -6,34 +6,62 @@ import {
   requestPasswordReset,
   resetPassword,
   updateCurrentUser,
+  buildAuthResponse,
+  refreshAuthSession,
 } from '../services/auth.service.js';
+import { config } from '../config/index.js';
+import { clearAuthCookies, setAuthCookies } from '../utils/auth-cookies.js';
 import { sendSuccess } from '../utils/api-response.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 export const login = asyncHandler(async (req, res) => {
   const data = await loginUser(req.validated.body);
+  setAuthCookies(res, data.tokens);
 
   return sendSuccess(res, {
     message: 'Login successful.',
-    data,
+    data: { user: data.user },
   });
 });
 
 export const adminLogin = asyncHandler(async (req, res) => {
   const data = await loginAdmin(req.validated.body);
+  setAuthCookies(res, data.tokens);
 
   return sendSuccess(res, {
     message: 'Admin login successful.',
-    data,
+    data: { user: data.user },
   });
 });
 
-export const logout = asyncHandler(async (req, res) =>
-  sendSuccess(res, {
+export const createSession = asyncHandler(async (req, res) => {
+  const data = buildAuthResponse(req.user);
+  setAuthCookies(res, data.tokens);
+
+  return sendSuccess(res, {
+    message: 'Session created successfully.',
+    data: { user: data.user },
+  });
+});
+
+export const refreshSession = asyncHandler(async (req, res) => {
+  const data = await refreshAuthSession(req.cookies?.[config.authCookies.refreshName]);
+  setAuthCookies(res, data.tokens);
+
+  return sendSuccess(res, {
+    message: 'Session refreshed successfully.',
+    data: { user: data.user },
+  });
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  clearAuthCookies(res);
+
+  return sendSuccess(res, {
     message: 'Logout successful.',
     data: null,
-  })
-);
+  });
+});
 
 export const me = asyncHandler(async (req, res) =>
   sendSuccess(res, {

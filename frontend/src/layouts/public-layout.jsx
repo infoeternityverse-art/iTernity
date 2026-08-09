@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
 import * as VantaThree from 'three-r134';
-import BIRDS from 'vanta/dist/vanta.birds.min';
+import BirdsEffectModule from 'vanta/dist/vanta.birds.min';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { Button } from '@/components/ui/index.js';
@@ -69,7 +69,12 @@ function FooterVantaBackground() {
   useEffect(() => {
     if (!containerRef.current) return undefined;
 
-    effectRef.current = BIRDS({
+    const createBirdsEffect =
+      typeof BirdsEffectModule === 'function' ? BirdsEffectModule : BirdsEffectModule?.default;
+
+    if (typeof createBirdsEffect !== 'function') return undefined;
+
+    effectRef.current = createBirdsEffect({
       el: containerRef.current,
       THREE: VantaThree,
       mouseControls: true,

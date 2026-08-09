@@ -1,18 +1,9 @@
 import { create } from 'zustand';
 import { authService } from '@/services/auth-service.js';
-import { tokenStorage } from '@/utils/token-storage.js';
-
-const initialAccessToken = tokenStorage.getAccessToken();
 
 const applyAuthData = (data, set) => {
-  tokenStorage.setTokens({
-    accessToken: data.tokens?.accessToken,
-    refreshToken: data.tokens?.refreshToken,
-  });
-
   set({
     user: data.user,
-    accessToken: data.tokens?.accessToken || tokenStorage.getAccessToken(),
     isAuthenticated: true,
     isRestoring: false,
     error: null,
@@ -23,19 +14,16 @@ const applyAuthData = (data, set) => {
 
 export const useAuthStore = create((set, get) => ({
   user: null,
-  accessToken: initialAccessToken,
-  isAuthenticated: Boolean(initialAccessToken),
-  isRestoring: Boolean(initialAccessToken),
+  isAuthenticated: false,
+  isRestoring: true,
   isLoading: false,
   error: null,
   pendingVerification: false,
   pendingVerificationEmail: null,
 
   clearSession: () => {
-    tokenStorage.clearTokens();
     set({
       user: null,
-      accessToken: null,
       isAuthenticated: false,
       isRestoring: false,
       isLoading: false,
@@ -50,7 +38,7 @@ export const useAuthStore = create((set, get) => ({
 
     try {
       const data = await authService.register(payload);
-      if (data.tokens?.accessToken) {
+      if (data.user) {
         applyAuthData(data, set);
       } else {
         set({
@@ -114,17 +102,13 @@ export const useAuthStore = create((set, get) => ({
   },
 
   logout: async () => {
-    const hadToken = Boolean(get().accessToken);
     set({ isLoading: true });
 
     try {
-      if (hadToken) {
-        await authService.logout();
-      }
+      await authService.logout();
     } catch {
       // Logout must clear the local session even if the token is already expired.
     } finally {
-      tokenStorage.clearTokens();
       get().clearSession();
     }
   },
@@ -155,7 +139,6 @@ export const useAuthStore = create((set, get) => ({
   },
 
   restoreSession: async () => {
-    let token = tokenStorage.getAccessToken();
     let supabaseSession = null;
 
     try {
@@ -165,42 +148,29 @@ export const useAuthStore = create((set, get) => ({
     }
 
     if (supabaseSession?.access_token) {
-      tokenStorage.setTokens({
-        accessToken: supabaseSession.access_token,
-        refreshToken: supabaseSession.refresh_token,
-      });
-      token = supabaseSession.access_token;
+      try {
+        const data = await authService.createSession(supabaseSession);
+        applyAuthData(data, set);
+        return data.user;
+      } catch {
+        // A backend cookie may still be valid, so continue with normal restoration.
+      }
     }
 
-    if (!token) {
-      set({
-        isRestoring: false,
-        isAuthenticated: false,
-        user: null,
-        accessToken: null,
-        pendingVerification: false,
-        pendingVerificationEmail: null,
-      });
-      return null;
-    }
-
-    set({ isRestoring: true, accessToken: token });
+    set({ isRestoring: true });
 
     try {
       const data = await authService.me();
       set({
         user: data.user,
-        accessToken: token,
         isAuthenticated: true,
         isRestoring: false,
         error: null,
       });
       return data.user;
     } catch {
-      tokenStorage.clearTokens();
       set({
         user: null,
-        accessToken: null,
         isAuthenticated: false,
         isRestoring: false,
         pendingVerification: false,

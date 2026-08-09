@@ -3,6 +3,7 @@ import { ApiError } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { verifyAccessToken } from '../services/token.service.js';
 import { syncSupabaseUser } from '../services/auth.service.js';
+import { config } from '../config/index.js';
 
 const getBearerToken = (req) => {
   const header = req.headers.authorization || '';
@@ -14,8 +15,12 @@ const getBearerToken = (req) => {
   return header.slice(7);
 };
 
+const getAccessToken = (req) =>
+  getBearerToken(req) || req.cookies?.[config.authCookies.accessName] || null;
+
 export const attachCurrentUser = asyncHandler(async (req, res, next) => {
-  const token = getBearerToken(req);
+  const token = getAccessToken(req);
+  const bearerToken = getBearerToken(req);
 
   if (!token) {
     req.user = null;
@@ -26,14 +31,15 @@ export const attachCurrentUser = asyncHandler(async (req, res, next) => {
     const payload = verifyAccessToken(token);
     req.user = await User.findActiveById(payload.sub);
   } catch {
-    req.user = await syncSupabaseUser(token);
+    req.user = bearerToken ? await syncSupabaseUser(bearerToken) : null;
   }
 
   return next();
 });
 
 export const authenticate = asyncHandler(async (req, res, next) => {
-  const token = getBearerToken(req);
+  const token = getAccessToken(req);
+  const bearerToken = getBearerToken(req);
 
   if (!token) {
     throw new ApiError(401, 'Authentication required.');
@@ -44,7 +50,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
   try {
     payload = verifyAccessToken(token);
   } catch {
-    const supabaseUser = await syncSupabaseUser(token);
+    const supabaseUser = bearerToken ? await syncSupabaseUser(bearerToken) : null;
 
     if (!supabaseUser) {
       throw new ApiError(401, 'Invalid or expired token.');

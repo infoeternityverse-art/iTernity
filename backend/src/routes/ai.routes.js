@@ -10,6 +10,10 @@ import { authenticate } from '../middlewares/auth.middleware.js';
 import { requireAdmin } from '../middlewares/role.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import {
+  gpuRecommendationRateLimiter,
+  siteAssistantRateLimiter,
+} from '../middlewares/rate-limit.middleware.js';
+import {
   analyzeEnquirySchema,
   generateBlogMetadataSchema,
   generateGpuPackageCopySchema,
@@ -20,8 +24,18 @@ import {
 export const aiRouter = Router();
 export const adminAiRouter = Router();
 
-aiRouter.post('/gpu-recommendation', validate(recommendGpuPackageSchema), recommendGpuPackage);
-aiRouter.post('/site-assistant', validate(siteAssistantSchema), answerSiteAssistant);
+aiRouter.post(
+  '/gpu-recommendation',
+  gpuRecommendationRateLimiter,
+  validate(recommendGpuPackageSchema),
+  recommendGpuPackage
+);
+aiRouter.post(
+  '/site-assistant',
+  siteAssistantRateLimiter,
+  validate(siteAssistantSchema),
+  answerSiteAssistant
+);
 
 adminAiRouter.use(authenticate, requireAdmin);
 adminAiRouter.post('/blog-metadata', validate(generateBlogMetadataSchema), generateBlogMetadata);

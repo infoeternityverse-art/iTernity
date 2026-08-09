@@ -8,15 +8,38 @@ import { comparePassword, hashPassword } from './password.service.js';
 import {
   issueAuthTokens,
   signPasswordResetToken,
+  verifyRefreshToken,
   verifyPasswordResetToken,
 } from './token.service.js';
 
 const sanitizeUser = (user) => user.toJSON();
 
-const buildAuthResponse = (user) => ({
+export const buildAuthResponse = (user) => ({
   user: sanitizeUser(user),
   tokens: issueAuthTokens(user),
 });
+
+export const refreshAuthSession = async (refreshToken) => {
+  if (!refreshToken) {
+    throw new ApiError(401, 'Refresh session required.');
+  }
+
+  let payload;
+
+  try {
+    payload = verifyRefreshToken(refreshToken);
+  } catch {
+    throw new ApiError(401, 'Invalid or expired refresh session.');
+  }
+
+  const user = await User.findActiveById(payload.sub);
+
+  if (!user || user.role !== payload.role) {
+    throw new ApiError(401, 'Refresh session is no longer valid.');
+  }
+
+  return buildAuthResponse(user);
+};
 
 const getSupabaseUser = async (token) => {
   if (!config.supabase.url || !config.supabase.anonKey) {

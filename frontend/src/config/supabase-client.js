@@ -6,7 +6,7 @@ export const isSupabaseConfigured = Boolean(env.supabaseUrl && env.supabaseAnonK
 export const supabase = isSupabaseConfigured
   ? createClient(env.supabaseUrl, env.supabaseAnonKey, {
       auth: {
-        persistSession: true,
+        persistSession: false,
         autoRefreshToken: true,
         detectSessionInUrl: true,
       },

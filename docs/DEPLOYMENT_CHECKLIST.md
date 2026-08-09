@@ -6,6 +6,8 @@
 - Set `PORT=5000` for the Northflank backend service.
 - Set `MONGO_URI` to the production MongoDB connection string.
 - Set `CORS_ORIGIN=https://iternityverse.com,https://www.iternityverse.com`.
+- Set `AUTH_COOKIE_SECURE=true` and `AUTH_COOKIE_SAME_SITE=lax` for the HTTPS frontend/API subdomains.
+- Confirm auth responses set `HttpOnly`, `Secure`, `SameSite=Lax` cookies and never expose tokens in JSON or browser storage.
 - Set `APP_FRONTEND_URL=https://iternityverse.com`.
 - Set `APP_DASHBOARD_URL=https://iternityverse.com/dashboard`.
 - Set `APP_ADMIN_URL=https://iternityverse.com/admin`.

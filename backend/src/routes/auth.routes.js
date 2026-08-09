@@ -2,15 +2,22 @@ import { Router } from 'express';
 import {
   adminLogin,
   changePassword,
+  createSession,
   forgotPassword,
   login,
   logout,
   me,
   resetPasswordWithToken,
+  refreshSession,
   updateMe,
 } from '../controllers/auth.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import {
+  adminLoginAccountRateLimiter,
+  adminLoginIpRateLimiter,
+  authSessionRateLimiter,
+  loginAccountRateLimiter,
+  loginIpRateLimiter,
   passwordResetEmailRateLimiter,
   passwordResetIpRateLimiter,
 } from '../middlewares/rate-limit.middleware.js';
@@ -25,8 +32,20 @@ import {
 
 export const authRouter = Router();
 
-authRouter.post('/login', validate(loginSchema), login);
-authRouter.post('/admin/login', validate(loginSchema), adminLogin);
+authRouter.post(
+  '/login',
+  validate(loginSchema),
+  loginIpRateLimiter,
+  loginAccountRateLimiter,
+  login
+);
+authRouter.post(
+  '/admin/login',
+  validate(loginSchema),
+  adminLoginIpRateLimiter,
+  adminLoginAccountRateLimiter,
+  adminLogin
+);
 authRouter.post(
   '/forgot-password',
   validate(forgotPasswordSchema),
@@ -35,7 +54,9 @@ authRouter.post(
   forgotPassword
 );
 authRouter.post('/reset-password', validate(resetPasswordSchema), resetPasswordWithToken);
-authRouter.post('/logout', authenticate, logout);
+authRouter.post('/session', authSessionRateLimiter, authenticate, createSession);
+authRouter.post('/refresh', authSessionRateLimiter, refreshSession);
+authRouter.post('/logout', logout);
 authRouter.get('/me', authenticate, me);
 authRouter.patch('/me', authenticate, validate(updateMeSchema), updateMe);
 authRouter.patch('/password', authenticate, validate(changePasswordSchema), changePassword);

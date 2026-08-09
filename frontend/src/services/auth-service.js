@@ -1,7 +1,6 @@
 import { apiClient } from './api-client.js';
 import { env } from '@/config/env.js';
 import { isSupabaseConfigured, supabase } from '@/config/supabase-client.js';
-import { tokenStorage } from '@/utils/token-storage.js';
 
 const normalizeAuthPayload = (response) => response.data.data;
 
@@ -13,28 +12,24 @@ const requireSupabase = () => {
   return supabase;
 };
 
-const persistSupabaseSession = (session) => {
+const fetchCurrentUserWithSession = async (session) => {
   if (!session?.access_token) {
-    return;
+    throw new Error('Authentication session was not returned.');
   }
 
-  tokenStorage.setTokens({
-    accessToken: session.access_token,
-    refreshToken: session.refresh_token,
-  });
-};
-
-const fetchCurrentUserWithSession = async (session) => {
-  persistSupabaseSession(session);
-
   try {
-    return normalizeAuthPayload(await apiClient.get('/auth/me'));
+    return normalizeAuthPayload(
+      await apiClient.post(
+        '/auth/session',
+        {},
+        { headers: { Authorization: `Bearer ${session.access_token}` } }
+      )
+    );
   } catch (error) {
     if (supabase) {
       await supabase.auth.signOut();
     }
 
-    tokenStorage.clearTokens();
     throw error;
   }
 };
@@ -110,11 +105,16 @@ export const authService = {
   },
   logout: async () => {
     if (supabase) {
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // The backend cookie must still be cleared if Supabase is unavailable.
+      }
     }
 
     return normalizeAuthPayload(await apiClient.post('/auth/logout'));
   },
+  createSession: fetchCurrentUserWithSession,
   me: async () => normalizeAuthPayload(await apiClient.get('/auth/me')),
   updateMe: async (payload) => normalizeAuthPayload(await apiClient.patch('/auth/me', payload)),
   changePassword: async (payload) =>

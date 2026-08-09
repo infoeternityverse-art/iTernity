@@ -19,6 +19,19 @@ export const config = {
     windowMs: Number(loadEnv('RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
     max: Number(loadEnv('RATE_LIMIT_MAX', 300)),
   },
+  authRateLimit: {
+    windowMs: Number(loadEnv('AUTH_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    ipMax: Number(loadEnv('AUTH_RATE_LIMIT_IP_MAX', 20)),
+    accountMax: Number(loadEnv('AUTH_RATE_LIMIT_ACCOUNT_MAX', 7)),
+    adminIpMax: Number(loadEnv('ADMIN_AUTH_RATE_LIMIT_IP_MAX', 10)),
+    adminAccountMax: Number(loadEnv('ADMIN_AUTH_RATE_LIMIT_ACCOUNT_MAX', 5)),
+    sessionMax: Number(loadEnv('AUTH_SESSION_RATE_LIMIT_MAX', 60)),
+  },
+  aiRateLimit: {
+    windowMs: Number(loadEnv('AI_RATE_LIMIT_WINDOW_MS', 10 * 60 * 1000)),
+    recommendationMax: Number(loadEnv('AI_RECOMMENDATION_RATE_LIMIT_MAX', 10)),
+    assistantMax: Number(loadEnv('AI_ASSISTANT_RATE_LIMIT_MAX', 20)),
+  },
   passwordResetRateLimit: {
     ipWindowMs: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
     ipMax: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_MAX', 10)),
@@ -31,6 +44,19 @@ export const config = {
     accessExpiresIn: loadEnv('JWT_ACCESS_EXPIRES_IN', '15m'),
     refreshExpiresIn: loadEnv('JWT_REFRESH_EXPIRES_IN', '7d'),
     passwordResetExpiresIn: loadEnv('PASSWORD_RESET_EXPIRES_IN', '30m'),
+  },
+  authCookies: {
+    accessName: loadEnv('AUTH_ACCESS_COOKIE_NAME', 'itv_access'),
+    refreshName: loadEnv('AUTH_REFRESH_COOKIE_NAME', 'itv_refresh'),
+    secure:
+      loadEnv(
+        'AUTH_COOKIE_SECURE',
+        loadEnv('NODE_ENV', 'development') === 'production' ? 'true' : 'false'
+      ) === 'true',
+    sameSite: loadEnv('AUTH_COOKIE_SAME_SITE', 'lax').toLowerCase(),
+    domain: loadEnv('AUTH_COOKIE_DOMAIN', ''),
+    accessMaxAgeMs: Number(loadEnv('AUTH_ACCESS_COOKIE_MAX_AGE_MS', 15 * 60 * 1000)),
+    refreshMaxAgeMs: Number(loadEnv('AUTH_REFRESH_COOKIE_MAX_AGE_MS', 7 * 24 * 60 * 60 * 1000)),
   },
   supabase: {
     url: loadEnv('SUPABASE_URL', ''),

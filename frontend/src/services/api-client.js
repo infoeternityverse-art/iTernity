@@ -1,31 +1,51 @@
 import axios from 'axios';
 import { env } from '@/config/env.js';
-import { tokenStorage } from '@/utils/token-storage.js';
+import { notifySessionExpired } from '@/utils/token-storage.js';
 
 export const apiClient = axios.create({
   baseURL: env.apiBaseUrl,
   timeout: env.apiTimeoutMs,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-apiClient.interceptors.request.use((config) => {
-  const token = tokenStorage.getAccessToken();
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+let refreshRequest = null;
+const NON_REFRESHABLE_AUTH_PATHS = new Set([
+  '/auth/login',
+  '/auth/admin/login',
+  '/auth/session',
+  '/auth/refresh',
+  '/auth/reset-password',
+]);
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      tokenStorage.clearTokens();
-      tokenStorage.notifySessionExpired();
+  async (error) => {
+    const originalRequest = error.config;
+    const isRefreshRequest = originalRequest?.url === '/auth/refresh';
+    const canRefreshRequest = !NON_REFRESHABLE_AUTH_PATHS.has(originalRequest?.url);
+
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      canRefreshRequest
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        refreshRequest ||= apiClient.post('/auth/refresh');
+        await refreshRequest;
+        return apiClient(originalRequest);
+      } catch {
+        notifySessionExpired();
+      } finally {
+        refreshRequest = null;
+      }
+    } else if (error.response?.status === 401 && isRefreshRequest) {
+      notifySessionExpired();
     }
 
     const normalizedError = {
