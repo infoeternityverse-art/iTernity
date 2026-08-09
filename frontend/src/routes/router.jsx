@@ -124,6 +124,14 @@ const DashboardPage = lazyPage(
   () => import('@/pages/customer/dashboard-page.jsx'),
   'DashboardPage'
 );
+const CustomerInventoryPage = lazyPage(
+  () => import('@/pages/customer/inventory-page.jsx'),
+  'CustomerInventoryPage'
+);
+const CustomerInventoryDetailPage = lazyPage(
+  () => import('@/pages/customer/inventory-detail-page.jsx'),
+  'CustomerInventoryDetailPage'
+);
 const BlogHubPage = lazyPage(() => import('@/pages/customer/blog-hub-page.jsx'), 'BlogHubPage');
 const EnquiriesPage = lazyPage(
   () => import('@/pages/customer/enquiries-page.jsx'),
@@ -232,6 +240,8 @@ export const router = createBrowserRouter(
       ),
       children: [
         { index: true, element: withSuspense(DashboardPage) },
+        { path: 'inventory', element: withSuspense(CustomerInventoryPage) },
+        { path: 'inventory/:id', element: withSuspense(CustomerInventoryDetailPage) },
         { path: 'blog', element: withSuspense(BlogHubPage) },
         { path: 'enquiries', element: withSuspense(EnquiriesPage) },
         { path: 'enquiries/:id', element: withSuspense(EnquiryDetailPage) },

@@ -7,12 +7,12 @@ export const useCreateEnquiry = (options = {}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    ...options,
     mutationFn: (payload) => enquiryService.create(payload),
     onSuccess: (createdEnquiry, variables, context) => {
       invalidateQueries(queryClient, queryKeys.enquiries.all);
       options.onSuccess?.(createdEnquiry, variables, context);
     },
-    ...options,
   });
 };
 

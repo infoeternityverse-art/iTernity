@@ -2,6 +2,10 @@
 
 ## 0.2.0 - Experience, Identity, and Production Hardening
 
+- Added protected customer GPU Packages and package-detail routes so authenticated users can compare
+  GPUs and submit enquiries without leaving the dashboard layout.
+- Added an in-dashboard enquiry confirmation state with explicit follow-up actions and preserved
+  shared enquiry-cache invalidation when page-level success callbacks are used.
 - Redesigned the Home compute story, About experience, GPU Observatory, Contact page, mobile
   navigation, footer, and blog article spacing around the iTernityverse visual system.
 - Added the About GLB/WebGL scene with responsive sizing, reduced-motion support, viewport-aware

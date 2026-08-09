@@ -14,8 +14,8 @@ history.
   reduced-motion support, static fallbacks, and mobile-specific sizing.
 - GPU search, availability filtering, sorting, recommendations, detail pages, and authenticated
   enquiry submission.
-- Customer dashboard for identity-scoped enquiries, workspaces, credentials, profile management,
-  and password changes.
+- Customer dashboard with protected GPU Packages and requests, identity-scoped enquiries,
+  workspaces, credentials, profile management, and password changes.
 - Admin console for GPU packages, blog posts, enquiries, contact requests, customers, workspaces,
   credentials, site media, AI-assisted content, and audit logs.
 - Supabase email and Google authentication bridged to backend-issued `HttpOnly` session cookies.

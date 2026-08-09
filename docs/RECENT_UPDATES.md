@@ -109,6 +109,14 @@ Last updated: 2026-08-10
 
 ## Customer Identity Isolation
 
+- Added GPU Packages at `/dashboard/inventory` and `/dashboard/inventory/:id` so customers can search, filter,
+  compare, inspect, and request GPU packages without being redirected to the public site.
+- Added GPU Packages to desktop/mobile dashboard navigation and redirected dashboard browse actions
+  to the protected package catalogue.
+- Reused the authenticated enquiry mutation inside the package detail view; successful requests show
+  an in-dashboard confirmation with user-controlled actions to view enquiries or continue exploring.
+- Corrected enquiry mutation callback composition so shared query invalidation still runs when a page
+  supplies its own success handler.
 - Synchronize returning users by immutable Supabase user ID before considering email.
 - Reject attempts to bind one Supabase identity to another account.
 - Scope enquiry lists and details strictly by MongoDB customer ObjectId; removed contact-email

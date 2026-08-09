@@ -1,6 +1,7 @@
 import {
   BookOpenText,
   ClipboardList,
+  Cpu,
   FileClock,
   Gauge,
   LayoutDashboard,
@@ -28,6 +29,7 @@ export const authNavigation = [{ label: 'Get started', href: '/login' }];
 
 export const customerNavigation = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'GPU Packages', href: '/dashboard/inventory', icon: Cpu },
   { label: 'Blog Hub', href: '/dashboard/blog', icon: BookOpenText },
   { label: 'Enquiries', href: '/dashboard/enquiries', icon: ClipboardList },
   { label: 'Workspace', href: '/dashboard/workspace', icon: Workflow },
@@ -74,6 +76,7 @@ export const breadcrumbLabels = {
   '/security': 'Security',
   '/acceptable-use': 'Acceptable Use',
   '/dashboard': 'Dashboard',
+  '/dashboard/inventory': 'GPU Packages',
   '/dashboard/blog': 'Blog Hub',
   '/dashboard/enquiries': 'Enquiries',
   '/dashboard/workspace': 'Workspace',

@@ -57,7 +57,7 @@ export function DashboardPage() {
         description="Track enquiries, workspace access, and account activity from your customer portal."
         action={
           <Button asChild>
-            <Link to="/gpus">Browse GPUs</Link>
+            <Link to="/dashboard/inventory">Explore GPUs</Link>
           </Button>
         }
       />
@@ -205,7 +205,7 @@ export function DashboardPage() {
           <SectionHeader title="Quick Actions" description="Common self-service paths." />
           <div className="flex flex-wrap gap-3">
             <Button asChild variant="outline" leftIcon={<Search className="h-4 w-4" />}>
-              <Link to="/gpus">Find GPU package</Link>
+              <Link to="/dashboard/inventory">Explore GPU packages</Link>
             </Button>
             <Button asChild variant="outline" leftIcon={<ClipboardList className="h-4 w-4" />}>
               <Link to="/dashboard/enquiries">Track enquiries</Link>

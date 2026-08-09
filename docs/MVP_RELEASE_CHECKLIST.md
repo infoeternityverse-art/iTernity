@@ -43,6 +43,11 @@
 - Continue with Google and confirm backend session creation.
 - Log in and log out with backend `HttpOnly` cookies.
 - Open dashboard home.
+- Open GPU Packages from the sidebar and dashboard quick actions without entering the public layout.
+- Search, filter, sort, and paginate the dashboard catalog.
+- Open a package detail and submit an enquiry entirely inside the dashboard.
+- Confirm a successful request shows "Request received" without automatic navigation, then verify
+  both "View enquiries" and "Explore more GPU packages" actions.
 - Review recent enquiries and active credentials.
 - Search and filter enquiries.
 - Open enquiry details.

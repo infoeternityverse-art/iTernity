@@ -17,7 +17,7 @@ const formatPrice = (value, currency = 'USD') =>
     maximumFractionDigits: 2,
   }).format(Number(value || 0));
 
-export function GpuPackageCard({ gpuPackage }) {
+export function GpuPackageCard({ gpuPackage, detailsBasePath = '/gpus' }) {
   const id = gpuPackage.id || gpuPackage._id;
   const storage = `${gpuPackage.storageGb || '-'}GB ${gpuPackage.storageType || 'storage'}`;
 
@@ -81,7 +81,7 @@ export function GpuPackageCard({ gpuPackage }) {
         </CardContent>
         <CardFooter>
           <Button asChild className="w-full">
-            <Link to={`/gpus/${id}`}>View Details</Link>
+            <Link to={`${detailsBasePath}/${id}`}>View Details</Link>
           </Button>
         </CardFooter>
       </div>
