@@ -38,6 +38,8 @@ const NODE_POSITIONS = [
   [0.4, 3.7, -3.2],
 ];
 
+// Legacy geometry is retained for reference but is no longer mounted as a loading fallback.
+// eslint-disable-next-line no-unused-vars
 function ComputeObject({ progressRef }) {
   const assemblyRef = useRef(null);
   const coreRef = useRef(null);
@@ -271,8 +273,8 @@ function Scene({ progressRef }) {
         ))}
       </group>
 
-      <ModelBoundary fallback={<ComputeObject progressRef={progressRef} />}>
-        <Suspense fallback={<ComputeObject progressRef={progressRef} />}>
+      <ModelBoundary fallback={null}>
+        <Suspense fallback={null}>
           <EarthObject progressRef={progressRef} />
         </Suspense>
       </ModelBoundary>
