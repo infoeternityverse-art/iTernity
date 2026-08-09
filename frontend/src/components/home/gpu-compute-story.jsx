@@ -4,10 +4,16 @@ const FRAME_SEQUENCE = {
   folder: '/media/gpu frames',
   prefix: 'ezgif-frame-',
   extension: 'jpg',
-  totalFrames: 300,
+  totalFrames: 240,
   padding: 3,
   width: 1280,
   height: 720,
+};
+
+const FRAME_PROFILES = {
+  mobile: { width: 640, height: 360, radius: 4, maxCached: 12, concurrency: 2 },
+  tablet: { width: 960, height: 540, radius: 6, maxCached: 20, concurrency: 3 },
+  desktop: { width: 1280, height: 720, radius: 8, maxCached: 28, concurrency: 4 },
 };
 
 const stages = [
@@ -67,118 +73,342 @@ const stageStyle = (progress, start, end, baseTransform = '') => {
   return {
     opacity: visible,
     transform: `${baseTransform} translate3d(0, ${(1 - visible) * 18}px, 0)`,
-    filter: `blur(${(1 - visible) * 8}px)`,
     pointerEvents: visible > 0.6 ? 'auto' : 'none',
   };
+};
+
+const getFrameProfile = () => {
+  if (window.matchMedia('(max-width: 640px)').matches) return FRAME_PROFILES.mobile;
+  if (window.matchMedia('(max-width: 1023px)').matches) return FRAME_PROFILES.tablet;
+  return FRAME_PROFILES.desktop;
+};
+
+const buildFramePriority = (frame, direction, radius) => {
+  const frames = [frame];
+
+  for (let offset = 1; offset <= radius; offset += 1) {
+    frames.push(frame + offset * direction, frame - offset * direction);
+  }
+
+  return frames.filter(
+    (candidate, index) =>
+      candidate >= 1 &&
+      candidate <= FRAME_SEQUENCE.totalFrames &&
+      frames.indexOf(candidate) === index
+  );
 };
 
 function useFrameCanvas() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
-  const cacheRef = useRef(new Map());
-  const rafRef = useRef(0);
-  const currentFrameRef = useRef(1);
   const [progress, setProgress] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const cache = cacheRef.current;
+    const section = sectionRef.current;
+    const canvas = canvasRef.current;
+    if (!section || !canvas) return undefined;
 
-    const loadFrame = (frame) => {
-      if (frame < 1 || frame > FRAME_SEQUENCE.totalFrames || cache.has(frame)) return;
+    const context = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    if (!context) return undefined;
 
-      const image = new Image();
-      image.decoding = 'async';
-      image.onload = () => {
-        if (currentFrameRef.current === frame) drawFrame(frame);
-      };
-      image.src = formatFrame(frame);
-      cache.set(frame, image);
-    };
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cache = new Map();
+    const pending = new Map();
+    const queued = new Set();
+    let queue = [];
+    let profile = getFrameProfile();
+    let activeLoads = 0;
+    let disposed = false;
+    let isNearViewport = false;
+    let isPageVisible = !document.hidden;
+    let targetProgress = 0;
+    let renderedProgress = 0;
+    let targetFrame = 1;
+    let drawnFrame = 0;
+    let direction = 1;
+    let measurementFrame = 0;
+    let motionFrame = 0;
+    let lastProgressCommit = 0;
+    let hasMeasured = false;
 
-    const drawFrame = (frame) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+    const setCanvasProfile = () => {
+      const nextProfile = getFrameProfile();
+      profile = nextProfile;
 
-      const context = canvas.getContext('2d', { alpha: false });
-      const exact = cache.get(frame);
-      const fallback =
-        exact?.complete && exact.naturalWidth
-          ? exact
-          : [...cache.entries()]
-              .filter(([, image]) => image.complete && image.naturalWidth)
-              .sort(([a], [b]) => Math.abs(a - frame) - Math.abs(b - frame))[0]?.[1];
-
-      if (!fallback) return;
+      if (canvas.width !== profile.width || canvas.height !== profile.height) {
+        canvas.width = profile.width;
+        canvas.height = profile.height;
+        drawnFrame = 0;
+      }
 
       context.imageSmoothingEnabled = true;
-      context.imageSmoothingQuality = 'high';
-      context.clearRect(0, 0, FRAME_SEQUENCE.width, FRAME_SEQUENCE.height);
-      context.drawImage(fallback, 0, 0, FRAME_SEQUENCE.width, FRAME_SEQUENCE.height);
+      context.imageSmoothingQuality = profile === FRAME_PROFILES.desktop ? 'high' : 'medium';
     };
 
-    const preloadAround = (frame) => {
-      const radius = window.matchMedia('(max-width: 768px)').matches ? 28 : 48;
-      for (let index = frame - radius; index <= frame + radius; index += 1) {
-        loadFrame(index);
-      }
+    const releaseEntry = (entry) => {
+      entry?.drawable?.close?.();
+      if (entry?.image && entry.drawable === entry.image) entry.image.src = '';
+    };
 
-      for (const cachedFrame of cache.keys()) {
-        if (Math.abs(cachedFrame - frame) > radius * 2.4) {
-          const image = cache.get(cachedFrame);
-          if (image) image.src = '';
-          cache.delete(cachedFrame);
+    const findNearestEntry = (frame) => {
+      let nearestFrame = 0;
+      let nearestEntry = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      for (const [cachedFrame, entry] of cache) {
+        const distance = Math.abs(cachedFrame - frame);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestFrame = cachedFrame;
+          nearestEntry = entry;
         }
       }
+
+      return nearestEntry ? { frame: nearestFrame, entry: nearestEntry } : null;
     };
 
-    const update = () => {
-      rafRef.current = 0;
+    const drawNearestFrame = (frame, force = false) => {
+      const match = cache.has(frame)
+        ? { frame, entry: cache.get(frame) }
+        : findNearestEntry(frame);
+
+      if (!match || (!force && drawnFrame === match.frame)) return;
+
+      context.drawImage(match.entry.drawable, 0, 0, canvas.width, canvas.height);
+      match.entry.lastUsed = performance.now();
+      drawnFrame = match.frame;
+      setIsReady(true);
+    };
+
+    const pruneCache = () => {
+      if (cache.size <= profile.maxCached) return;
+
+      const removable = [...cache.entries()]
+        .filter(([frame]) => frame !== drawnFrame && frame !== targetFrame)
+        .sort(([frameA, entryA], [frameB, entryB]) => {
+          const distanceDifference =
+            Math.abs(frameB - targetFrame) - Math.abs(frameA - targetFrame);
+          return distanceDifference || entryA.lastUsed - entryB.lastUsed;
+        });
+
+      while (cache.size > profile.maxCached && removable.length) {
+        const [frame, entry] = removable.shift();
+        releaseEntry(entry);
+        cache.delete(frame);
+      }
+    };
+
+    const createDrawable = async (image) => {
+      if (typeof window.createImageBitmap !== 'function') return image;
+
+      try {
+        return await window.createImageBitmap(image, {
+          resizeWidth: profile.width,
+          resizeHeight: profile.height,
+          resizeQuality: profile === FRAME_PROFILES.desktop ? 'high' : 'medium',
+        });
+      } catch {
+        return image;
+      }
+    };
+
+    const pumpQueue = () => {
+      if (disposed || !isNearViewport || !isPageVisible) return;
+
+      while (activeLoads < profile.concurrency && queue.length) {
+        const frame = queue.shift();
+        queued.delete(frame);
+        if (cache.has(frame) || pending.has(frame)) continue;
+
+        activeLoads += 1;
+        const image = new Image();
+        image.decoding = 'async';
+        image.fetchPriority = frame === targetFrame ? 'high' : 'low';
+        pending.set(frame, image);
+
+        const finish = () => {
+          pending.delete(frame);
+          activeLoads = Math.max(0, activeLoads - 1);
+          pumpQueue();
+        };
+
+        image.onload = async () => {
+          try {
+            await image.decode?.();
+            if (disposed) return;
+
+            const drawable = await createDrawable(image);
+            if (disposed) {
+              drawable?.close?.();
+              return;
+            }
+
+            cache.set(frame, { drawable, image, lastUsed: performance.now() });
+            if (drawable !== image) {
+              image.onload = null;
+              image.onerror = null;
+              image.src = '';
+            }
+            drawNearestFrame(targetFrame, frame === targetFrame);
+            pruneCache();
+          } catch {
+            // A nearby decoded frame remains visible if one frame cannot be decoded.
+          } finally {
+            finish();
+          }
+        };
+
+        image.onerror = finish;
+        image.src = formatFrame(frame);
+      }
+    };
+
+    const scheduleFrames = (frame) => {
+      const radius = reducedMotion ? 0 : profile.radius;
+      queue = [];
+      queued.clear();
+
+      for (const candidate of buildFramePriority(frame, direction, radius)) {
+        if (cache.has(candidate) || pending.has(candidate)) continue;
+        queue.push(candidate);
+        queued.add(candidate);
+      }
+
+      pumpQueue();
+      drawNearestFrame(frame);
+    };
+
+    const commitProgress = (timestamp, force = false) => {
+      if (!force && timestamp - lastProgressCommit < 32) return;
+      lastProgressCommit = timestamp;
+      setProgress(renderedProgress);
+    };
+
+    const runMotion = (timestamp) => {
+      motionFrame = 0;
+      if (!isNearViewport || !isPageVisible) return;
+
+      const difference = targetProgress - renderedProgress;
+      renderedProgress =
+        reducedMotion || Math.abs(difference) < 0.0008
+          ? targetProgress
+          : renderedProgress + difference * 0.18;
+
+      const nextFrame = reducedMotion
+        ? 1
+        : Math.round(renderedProgress * (FRAME_SEQUENCE.totalFrames - 1)) + 1;
+
+      if (nextFrame !== targetFrame) {
+        direction = nextFrame > targetFrame ? 1 : -1;
+        targetFrame = nextFrame;
+        scheduleFrames(targetFrame);
+      } else {
+        drawNearestFrame(targetFrame);
+      }
+
+      const settled = Math.abs(targetProgress - renderedProgress) < 0.0008;
+      commitProgress(timestamp, settled);
+
+      if (!settled) motionFrame = window.requestAnimationFrame(runMotion);
+    };
+
+    const startMotion = () => {
+      if (!motionFrame && isNearViewport && isPageVisible) {
+        motionFrame = window.requestAnimationFrame(runMotion);
+      }
+    };
+
+    const updateMeasurement = () => {
+      measurementFrame = 0;
       const section = sectionRef.current;
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
       const scrollable = Math.max(section.offsetHeight - window.innerHeight, 1);
-      const nextProgress = clamp(-rect.top / scrollable);
-      const nextFrame = Math.round(nextProgress * (FRAME_SEQUENCE.totalFrames - 1)) + 1;
+      targetProgress = clamp(-rect.top / scrollable);
 
-      preloadAround(nextFrame);
-      if (nextFrame !== currentFrameRef.current) {
-        currentFrameRef.current = nextFrame;
-        drawFrame(nextFrame);
+      if (!hasMeasured) {
+        hasMeasured = true;
+        renderedProgress = targetProgress;
+        targetFrame = reducedMotion
+          ? 1
+          : Math.round(renderedProgress * (FRAME_SEQUENCE.totalFrames - 1)) + 1;
+        setProgress(renderedProgress);
+        if (isNearViewport) scheduleFrames(targetFrame);
       }
 
-      setProgress((current) => (Math.abs(current - nextProgress) > 0.006 ? nextProgress : current));
+      startMotion();
     };
 
-    const requestUpdate = () => {
-      if (!rafRef.current) rafRef.current = window.requestAnimationFrame(update);
+    const requestMeasurement = () => {
+      if (!measurementFrame) {
+        measurementFrame = window.requestAnimationFrame(updateMeasurement);
+      }
     };
 
-    const firstFrame = new Image();
-    firstFrame.decoding = 'sync';
-    firstFrame.onload = () => drawFrame(1);
-    firstFrame.src = formatFrame(1);
-    cache.set(1, firstFrame);
-    preloadAround(1);
-    update();
+    const handleResize = () => {
+      setCanvasProfile();
+      drawNearestFrame(targetFrame, true);
+      requestMeasurement();
+    };
 
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      if (isPageVisible) {
+        requestMeasurement();
+        pumpQueue();
+        startMotion();
+      } else if (motionFrame) {
+        window.cancelAnimationFrame(motionFrame);
+        motionFrame = 0;
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isNearViewport = entry.isIntersecting;
+        if (isNearViewport) {
+          requestMeasurement();
+          scheduleFrames(targetFrame);
+          startMotion();
+        } else {
+          queue = [];
+          queued.clear();
+          if (motionFrame) window.cancelAnimationFrame(motionFrame);
+          motionFrame = 0;
+        }
+      },
+      { rootMargin: '600px 0px' }
+    );
+
+    setCanvasProfile();
+    observer.observe(section);
+
+    window.addEventListener('scroll', requestMeasurement, { passive: true });
+    window.addEventListener('resize', handleResize);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
-      for (const image of cache.values()) image.src = '';
+      disposed = true;
+      observer.disconnect();
+      window.removeEventListener('scroll', requestMeasurement);
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (measurementFrame) window.cancelAnimationFrame(measurementFrame);
+      if (motionFrame) window.cancelAnimationFrame(motionFrame);
+      for (const image of pending.values()) image.src = '';
+      for (const entry of cache.values()) releaseEntry(entry);
+      pending.clear();
       cache.clear();
     };
   }, []);
 
-  return { sectionRef, canvasRef, progress };
+  return { sectionRef, canvasRef, progress, isReady };
 }
 
 export function GpuComputeStory() {
-  const { sectionRef, canvasRef, progress } = useFrameCanvas();
+  const { sectionRef, canvasRef, progress, isReady } = useFrameCanvas();
   const activeStage = useMemo(() => {
     return stages.find((stage) => progress >= stage.start && progress <= stage.end) || stages.at(-1);
   }, [progress]);
@@ -194,9 +424,7 @@ export function GpuComputeStory() {
         <div className="compute-frame-shell" aria-hidden="true">
           <canvas
             ref={canvasRef}
-            className="compute-story-canvas"
-            width={FRAME_SEQUENCE.width}
-            height={FRAME_SEQUENCE.height}
+            className={`compute-story-canvas ${isReady ? 'is-ready' : ''}`}
           />
         </div>
 
