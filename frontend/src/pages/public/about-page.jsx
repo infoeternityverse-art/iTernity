@@ -10,44 +10,60 @@ import {
 import { ArrowRight, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { AboutComputeScene } from '@/components/about/about-compute-scene.jsx';
 import { Seo } from '@/components/common/seo.jsx';
-import { createBreadcrumbSchema } from '@/utils/seo-schema.js';
+import { createAboutPageSchema, createBreadcrumbSchema } from '@/utils/seo-schema.js';
+
+const ABOUT_DESCRIPTION =
+  'Learn how iTernityverse helps AI teams discover and access suitable, reliable GPU infrastructure for training, inference, fine-tuning, rendering, research, and development.';
 
 const storyChapters = [
   {
-    number: '01',
-    label: 'Why we exist',
-    title: 'Ambition should meet infrastructure without losing momentum.',
-    body: 'iTernityverse is building a clearer path between a serious workload and the compute it deserves. Less ambiguity before access. More confidence in what comes next.',
-    alignment: 'left',
-  },
-  {
     number: '02',
-    label: 'How we think',
-    title: 'A catalog can list GPUs. It cannot understand the work.',
-    body: 'Models, rendering pipelines, inference systems, and experiments ask different things of infrastructure. We start with the workload, then shape the route to compute around it.',
-    alignment: 'right',
+    label: 'Why we exist',
+    title: 'Your work should not wait for the right infrastructure.',
+    paragraphs: [
+      'AI development moves quickly. Training, inference, fine-tuning, rendering, and experimentation all require different levels of compute.',
+      'iTernityverse helps teams find suitable GPU infrastructure for their workloads, so they can spend less time figuring out where to run their work and more time building it.',
+    ],
+    alignment: 'left',
   },
   {
     number: '03',
-    label: 'How we operate',
-    title: 'Remove uncertainty before it becomes operational drag.',
-    body: 'Clear specifications, reviewed enquiries, deliberate recommendations, and composed handoffs keep teams focused on the work rather than the machinery around it.',
-    alignment: 'left',
+    label: 'How we think',
+    title: 'The right GPU is about more than specifications.',
+    paragraphs: [
+      'A GPU should match the workload, not just look powerful on a specification sheet.',
+      'We look at what you are actually trying to run \u2014 from model training and inference to development, rendering, and research \u2014 and help you choose infrastructure that fits the job.',
+    ],
+    closing: 'Clear requirements. Suitable compute. Straightforward access.',
+    alignment: 'right',
   },
   {
     number: '04',
+    label: 'How we operate',
+    title: 'Make compute easier to access.',
+    paragraphs: [
+      'From choosing the right GPU configuration to getting your environment ready, we aim to remove the friction between your workload and the infrastructure behind it.',
+      'We focus on clear options, practical recommendations, reliable provisioning, and the tools teams need to get started.',
+    ],
+    alignment: 'left',
+  },
+  {
+    number: '05',
     label: 'What we protect',
-    title: 'Access is a responsibility, not a checkout event.',
-    body: 'Trust is designed into the journey: thoughtful review, careful handling, explicit next steps, and infrastructure access that never feels casual.',
+    title: 'Compute access should be reliable, secure, and considered.',
+    paragraphs: [
+      'GPU infrastructure is more than hardware. It is where models, applications, data, and important workloads run.',
+      'That is why we care about controlled access, secure credentials, clear workspace information, and dependable infrastructure throughout the customer journey.',
+    ],
     alignment: 'right',
   },
 ];
 
 const principles = [
-  ['Clarity', 'Make the important details understandable before commitment.'],
-  ['Fit', 'Match infrastructure to the shape of the workload, not the loudest specification.'],
-  ['Care', 'Treat access, credentials, and handoffs with operational seriousness.'],
-  ['Momentum', 'Keep capable teams moving without turning urgency into pressure.'],
+  ['Clarity', 'Make GPU options, pricing, specifications, and access easy to understand.'],
+  ['Fit', 'Match infrastructure to the workload instead of simply choosing the biggest GPU.'],
+  ['Reliability', 'Provide dependable compute environments teams can build and work on with confidence.'],
+  ['Access', 'Make getting started with GPU infrastructure simple, secure, and straightforward.'],
 ];
 
 const reveal = {
@@ -72,10 +88,12 @@ export function AboutPage() {
   return (
     <div className="about-cinematic">
       <Seo
-        title="About iTernityverse"
-        description="Meet iTernityverse: a clearer, more deliberate path to GPU infrastructure for AI, research, inference, rendering, and ambitious compute workloads."
+        title="About iTernityverse | GPU Infrastructure for AI Teams"
+        description={ABOUT_DESCRIPTION}
         path="/about"
+        image="/media/hero_about.webp"
         structuredData={[
+          createAboutPageSchema({ description: ABOUT_DESCRIPTION }),
           createBreadcrumbSchema([
             { name: 'Home', path: '/' },
             { name: 'About', path: '/about' },
@@ -107,14 +125,15 @@ export function AboutPage() {
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               className="about-opening-inner"
             >
-              <p className="about-kicker">About iTernityverse</p>
+              <p className="about-kicker">01 &mdash; About iTernityverse</p>
               <h1>
-                Compute should
-                <span>accelerate conviction.</span>
+                Compute should move
+                <span>at the speed of your work.</span>
               </h1>
               <p className="about-opening-summary">
-                We are creating a more considered way for ambitious teams to understand,
-                approach, and access accelerated infrastructure.
+                iTernityverse makes high-performance GPU infrastructure easier to discover,
+                access, and use &mdash; giving AI teams the compute they need without unnecessary
+                complexity.
               </p>
               <a className="about-scroll-cue" href="#about-purpose">
                 <span>Enter our story</span>
@@ -142,7 +161,12 @@ export function AboutPage() {
                   <span>{chapter.label}</span>
                 </div>
                 <h2>{chapter.title}</h2>
-                <p>{chapter.body}</p>
+                {chapter.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {chapter.closing && (
+                  <strong className="about-chapter-closing">{chapter.closing}</strong>
+                )}
               </motion.div>
             </article>
           ))}
@@ -158,25 +182,25 @@ export function AboutPage() {
           variants={reveal}
           transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="about-kicker">The standard we hold</p>
-          <h2 id="about-principles-title">The quiet architecture behind every decision.</h2>
+          <p className="about-kicker">06 &mdash; The standard we hold</p>
+          <h2 id="about-principles-title">The principles behind every compute decision.</h2>
         </motion.div>
 
-        <div className="about-principles-list">
+        <dl className="about-principles-list">
           {principles.map(([title, description], index) => (
-            <motion.article
+            <motion.div
               key={title}
               initial={reduceMotion ? false : { opacity: 0, x: index % 2 ? 26 : -26 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.55 }}
               transition={{ duration: 0.65, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span>0{index + 1}</span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </motion.article>
+              <span aria-hidden="true">0{index + 1}</span>
+              <dt>{title}</dt>
+              <dd>{description}</dd>
+            </motion.div>
           ))}
-        </div>
+        </dl>
       </section>
 
       <section className="about-direction" aria-labelledby="about-direction-title">
@@ -193,13 +217,22 @@ export function AboutPage() {
           variants={reveal}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="about-kicker">Where we are going</p>
-          <h2 id="about-direction-title">A dependable front door to the next era of compute.</h2>
+          <p className="about-kicker">07 &mdash; Where we are going</p>
+          <h2 id="about-direction-title">
+            A simpler way to access the compute behind what comes next.
+          </h2>
           <p>
-            iTernityverse is growing toward an ecosystem where discovering the right
-            infrastructure feels precise, gaining access feels considered, and moving from idea
-            to execution feels natural.
+            iTernityverse is building toward a more accessible GPU infrastructure ecosystem
+            &mdash; where teams can discover suitable compute, provision the right environment,
+            and move from an idea to execution with less friction.
           </p>
+          <p>
+            Whether you are training a model, running inference, developing an AI application,
+            rendering, or experimenting with new workloads, the goal is simple:
+          </p>
+          <strong className="about-direction-closing">
+            Give ambitious teams the compute to keep moving.
+          </strong>
           <div className="about-direction-actions">
             <Link to="/gpus" className="about-primary-link">
               Explore infrastructure <ArrowRight />

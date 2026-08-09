@@ -14933,6 +14933,19 @@ footer a:hover {
   line-height: 1.75;
 }
 
+.about-chapter p + p {
+  margin-top: 1rem;
+}
+
+.about-chapter-closing {
+  display: block;
+  margin-top: 1.35rem;
+  color: var(--about-ink);
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
 .about-static-processor {
   position: absolute;
   left: 50%;
@@ -14986,7 +14999,7 @@ footer a:hover {
   border-top: 1px solid rgba(45, 232, 196, 0.2);
 }
 
-.about-principles-list article {
+.about-principles-list > div {
   display: grid;
   grid-template-columns: 4rem minmax(10rem, 0.7fr) minmax(16rem, 1fr);
   gap: 2rem;
@@ -14995,21 +15008,22 @@ footer a:hover {
   border-bottom: 1px solid rgba(45, 232, 196, 0.2);
 }
 
-.about-principles-list article > span {
+.about-principles-list > div > span {
   color: var(--about-accent);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.2em;
 }
 
-.about-principles-list h3 {
+.about-principles-list dt {
   font-size: clamp(1.5rem, 2.7vw, 2.5rem);
   font-weight: 600;
   letter-spacing: -0.035em;
 }
 
-.about-principles-list p {
+.about-principles-list dd {
   max-width: 35rem;
+  margin: 0;
   color: var(--about-muted);
   font-size: 1rem;
   line-height: 1.7;
@@ -15058,6 +15072,14 @@ footer a:hover {
   color: #9dafaa;
   font-size: clamp(1rem, 1.4vw, 1.15rem);
   line-height: 1.8;
+}
+
+.about-direction-closing {
+  display: block;
+  margin: 1.6rem auto 0;
+  color: var(--about-ink);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.5;
 }
 
 .about-direction-actions {
@@ -15189,12 +15211,12 @@ footer a:hover {
     backdrop-filter: blur(8px);
   }
 
-  .about-principles-list article {
+  .about-principles-list > div {
     grid-template-columns: 2.5rem 1fr;
     gap: 0.75rem 1rem;
   }
 
-  .about-principles-list p {
+  .about-principles-list dd {
     grid-column: 2;
   }
 
@@ -15212,6 +15234,870 @@ footer a:hover {
 
   .about-primary-link,
   .about-secondary-link {
+    transition: none;
+  }
+}
+/* GPU marketplace: compute observatory */
+.gpu-observatory-page {
+  --gpu-accent: #2de8c4;
+  --gpu-ink: #f5f7f6;
+  --gpu-muted: #8fa39b;
+  padding-bottom: 3rem;
+}
+
+.gpu-observatory-hero {
+  position: relative;
+  left: 50%;
+  display: grid;
+  width: 100vw;
+  min-height: min(58rem, 88svh);
+  margin-left: -50vw;
+  overflow: hidden;
+  align-items: center;
+  padding: clamp(5rem, 9vw, 8rem) max(2rem, calc((100vw - 80rem) / 2));
+  background:
+    radial-gradient(circle at 72% 46%, rgba(45, 232, 196, 0.13), transparent 27rem),
+    var(--site-bg-gradient);
+  isolation: isolate;
+}
+
+.gpu-observatory-hero::before,
+.gpu-observatory-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: '';
+}
+
+.gpu-observatory-hero::before {
+  background:
+    linear-gradient(90deg, rgba(2, 5, 4, 0.92), rgba(2, 5, 4, 0.3) 48%, transparent 74%),
+    linear-gradient(180deg, rgba(2, 5, 4, 0.18), transparent 60%, rgba(2, 5, 4, 0.76));
+}
+
+.gpu-observatory-hero::after {
+  opacity: 0.16;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.gpu-observatory-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(45, 232, 196, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 232, 196, 0.12) 1px, transparent 1px);
+  background-size: 74px 74px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 5%, black 44%, black 100%);
+  mask-image: linear-gradient(90deg, transparent 5%, black 44%, black 100%);
+}
+
+.gpu-observatory-beam {
+  position: absolute;
+  right: -8%;
+  top: 50%;
+  width: 64%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(45, 232, 196, 0.82), transparent);
+  box-shadow: 0 0 28px rgba(45, 232, 196, 0.55);
+  transform: rotate(-18deg);
+  transform-origin: center;
+  animation: gpu-beam-sweep 7s ease-in-out infinite;
+}
+
+.gpu-observatory-copy {
+  position: relative;
+  z-index: 3;
+  width: min(100%, 48rem);
+}
+
+.gpu-observatory-kicker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--gpu-accent);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-kicker span {
+  color: rgba(245, 247, 246, 0.4);
+}
+
+.gpu-observatory-kicker p {
+  margin: 0;
+}
+
+.gpu-observatory-copy h1 {
+  margin: 1.3rem 0 0;
+  max-width: 11ch;
+  color: var(--gpu-ink);
+  font-size: clamp(3.8rem, 7.7vw, 7.8rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.96;
+  word-spacing: 0.025em;
+}
+
+.gpu-observatory-copy h1 span {
+  display: block;
+  color: rgba(245, 247, 246, 0.47);
+}
+
+.gpu-observatory-intro {
+  max-width: 37rem;
+  margin: 2rem 0 0;
+  color: #a4b8b0;
+  font-size: clamp(1rem, 1.25vw, 1.14rem);
+  line-height: 1.75;
+}
+
+.gpu-observatory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.gpu-observatory-primary,
+.gpu-observatory-secondary {
+  display: inline-flex;
+  min-height: 3.35rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1.25rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 850;
+  transition: transform 240ms ease, border-color 240ms ease, background-color 240ms ease;
+}
+
+.gpu-observatory-primary {
+  color: #04100d;
+  background: var(--gpu-accent);
+}
+
+.gpu-observatory-secondary {
+  border: 1px solid rgba(245, 247, 246, 0.18);
+  color: var(--gpu-ink);
+  background: rgba(2, 12, 10, 0.34);
+  backdrop-filter: blur(14px);
+}
+
+.gpu-observatory-primary:hover,
+.gpu-observatory-secondary:hover {
+  transform: translateY(-3px);
+}
+
+.gpu-observatory-secondary:hover {
+  border-color: rgba(45, 232, 196, 0.5);
+  background: rgba(45, 232, 196, 0.08);
+}
+
+.gpu-observatory-primary:focus-visible,
+.gpu-observatory-secondary:focus-visible,
+.gpu-observatory-card-link:focus-visible {
+  outline: 2px solid var(--gpu-accent);
+  outline-offset: 5px;
+}
+
+.gpu-observatory-primary svg,
+.gpu-observatory-secondary svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gpu-observatory-map {
+  position: absolute;
+  right: max(-4rem, calc((100vw - 96rem) / 2));
+  top: 50%;
+  z-index: 1;
+  width: min(56vw, 48rem);
+  aspect-ratio: 1;
+  translate: 0 -50%;
+}
+
+.gpu-observatory-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: gpu-map-drift 14s ease-in-out infinite;
+}
+
+.gpu-observatory-ring,
+.gpu-observatory-path,
+.gpu-observatory-axis {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.gpu-observatory-ring {
+  stroke: rgba(45, 232, 196, 0.24);
+  stroke-width: 1;
+  stroke-dasharray: 4 11;
+  transform-origin: center;
+}
+
+.gpu-observatory-ring.ring-one {
+  stroke: rgba(45, 232, 196, 0.48);
+  animation: gpu-ring-turn 17s linear infinite;
+}
+
+.gpu-observatory-ring.ring-two {
+  animation: gpu-ring-turn 28s linear infinite reverse;
+}
+
+.gpu-observatory-ring.ring-three {
+  stroke: rgba(245, 247, 246, 0.12);
+  stroke-dasharray: 2 18;
+  animation: gpu-ring-turn 42s linear infinite;
+}
+
+.gpu-observatory-path {
+  stroke: rgba(45, 232, 196, 0.34);
+  stroke-width: 1;
+  stroke-dasharray: 12 18;
+  animation: gpu-path-flow 9s linear infinite;
+}
+
+.gpu-observatory-path.path-two {
+  animation-duration: 13s;
+  animation-direction: reverse;
+}
+
+.gpu-observatory-path.path-three {
+  stroke: rgba(245, 247, 246, 0.11);
+  animation-duration: 18s;
+}
+
+.gpu-observatory-axis {
+  stroke: rgba(45, 232, 196, 0.11);
+  stroke-width: 1;
+}
+
+.gpu-observatory-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  width: 8.4rem;
+  aspect-ratio: 1;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(45, 232, 196, 0.42);
+  color: var(--gpu-ink);
+  background: rgba(3, 20, 16, 0.74);
+  box-shadow:
+    0 0 70px rgba(45, 232, 196, 0.18),
+    inset 0 0 34px rgba(45, 232, 196, 0.08);
+  transform: translate(-50%, -50%) rotate(45deg);
+  backdrop-filter: blur(12px);
+}
+
+.gpu-observatory-core strong,
+.gpu-observatory-core small {
+  position: relative;
+  z-index: 1;
+  transform: rotate(-45deg);
+}
+
+.gpu-observatory-core strong {
+  font-size: 1.45rem;
+  letter-spacing: 0.08em;
+}
+
+.gpu-observatory-core small {
+  margin-top: 0.25rem;
+  color: var(--gpu-accent);
+  font-size: 0.45rem;
+  font-weight: 850;
+  letter-spacing: 0.2em;
+}
+
+.gpu-observatory-core-grid {
+  position: absolute;
+  inset: 0.7rem;
+  opacity: 0.3;
+  background-image:
+    linear-gradient(rgba(45, 232, 196, 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 232, 196, 0.28) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.gpu-observatory-node {
+  position: absolute;
+  display: grid;
+  min-width: 5.4rem;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+  color: rgba(245, 247, 246, 0.8);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-node > span {
+  width: 0.48rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--gpu-accent);
+  box-shadow: 0 0 18px var(--gpu-accent);
+  animation: gpu-node-pulse 2.4s ease-in-out infinite;
+}
+
+.gpu-observatory-node p {
+  margin: 0;
+}
+
+.gpu-observatory-node small {
+  color: rgba(245, 247, 246, 0.3);
+}
+
+.gpu-observatory-node-train { left: 10%; top: 28%; }
+.gpu-observatory-node-infer { right: 5%; top: 36%; }
+.gpu-observatory-node-render { left: 15%; bottom: 20%; }
+.gpu-observatory-node-create { right: 12%; bottom: 16%; }
+
+.gpu-observatory-status {
+  position: absolute;
+  right: max(1.5rem, calc((100vw - 80rem) / 2));
+  bottom: 2rem;
+  left: max(1.5rem, calc((100vw - 80rem) / 2));
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(1rem, 3vw, 3rem);
+  border-top: 1px solid rgba(45, 232, 196, 0.14);
+  padding-top: 1rem;
+  color: rgba(245, 247, 246, 0.4);
+  font-size: 0.59rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-status span::before {
+  display: inline-block;
+  width: 0.3rem;
+  aspect-ratio: 1;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--gpu-accent);
+  box-shadow: 0 0 10px rgba(45, 232, 196, 0.6);
+  content: '';
+}
+
+.gpu-inventory,
+.gpu-match {
+  padding-top: clamp(6rem, 10vw, 10rem);
+  scroll-margin-top: 3.5rem;
+}
+
+.gpu-inventory-header,
+.gpu-match-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2.4rem;
+}
+
+.gpu-section-kicker {
+  margin: 0;
+  color: var(--gpu-accent);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.gpu-inventory-header h2,
+.gpu-match-heading h2 {
+  max-width: 13ch;
+  margin: 1rem 0 0;
+  color: var(--gpu-ink);
+  font-size: clamp(2.8rem, 6vw, 6.4rem);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+}
+
+.gpu-inventory-signal {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.7rem;
+  border-bottom: 1px solid rgba(45, 232, 196, 0.26);
+  padding: 0.75rem 0;
+  color: var(--gpu-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gpu-inventory-signal svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--gpu-accent);
+}
+
+.gpu-observatory-controls {
+  position: relative;
+  z-index: 12;
+  margin-bottom: 2rem;
+  border-top: 1px solid rgba(45, 232, 196, 0.22);
+  border-bottom: 1px solid rgba(45, 232, 196, 0.22);
+  padding: 1.1rem;
+  background: rgba(3, 14, 11, 0.88);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(22px);
+}
+
+.gpu-inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.gpu-inventory-grid > div {
+  min-width: 0;
+}
+
+.gpu-observatory-card {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.25rem;
+  color: var(--gpu-ink);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(45, 232, 196, 0.07), transparent 33%),
+    linear-gradient(160deg, rgba(7, 27, 22, 0.98), rgba(2, 9, 7, 0.98));
+  transition: background-color 280ms ease;
+}
+
+.gpu-observatory-card::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(45, 232, 196, 0.1), transparent 66%);
+  transform: translateX(-90%);
+  transition: opacity 300ms ease, transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gpu-observatory-card:hover::before,
+.gpu-observatory-card:focus-within::before {
+  opacity: 1;
+  transform: translateX(90%);
+}
+
+.gpu-observatory-card-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 1.8rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(245, 247, 246, 0.34);
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.gpu-observatory-card-visual {
+  position: relative;
+  display: grid;
+  min-height: 12.5rem;
+  place-items: center;
+  margin: 1rem -1.25rem 1.4rem;
+  overflow: hidden;
+  border-top: 1px solid rgba(45, 232, 196, 0.1);
+  border-bottom: 1px solid rgba(45, 232, 196, 0.1);
+  background:
+    linear-gradient(rgba(45, 232, 196, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 232, 196, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.gpu-card-chip {
+  position: relative;
+  display: flex;
+  width: 7.6rem;
+  aspect-ratio: 1;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(45, 232, 196, 0.38);
+  background: rgba(4, 24, 19, 0.88);
+  box-shadow:
+    0 0 50px rgba(45, 232, 196, 0.13),
+    inset 0 0 24px rgba(45, 232, 196, 0.07);
+  transform: rotate(45deg);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms ease;
+}
+
+.gpu-observatory-card:hover .gpu-card-chip,
+.gpu-observatory-card:focus-within .gpu-card-chip {
+  box-shadow:
+    0 0 70px rgba(45, 232, 196, 0.22),
+    inset 0 0 28px rgba(45, 232, 196, 0.1);
+  transform: rotate(135deg) scale(1.04);
+}
+
+.gpu-card-chip::before,
+.gpu-card-chip::after,
+.gpu-card-chip > span {
+  position: absolute;
+  background: rgba(45, 232, 196, 0.34);
+  content: '';
+}
+
+.gpu-card-chip::before { left: -2rem; right: -2rem; height: 1px; }
+.gpu-card-chip::after { top: -2rem; bottom: -2rem; width: 1px; }
+.gpu-card-chip > span:first-child { inset: 0.65rem; border: 1px solid rgba(45, 232, 196, 0.22); background: transparent; }
+.gpu-card-chip > span:nth-child(2) { width: 0.38rem; aspect-ratio: 1; border-radius: 50%; box-shadow: 0 0 12px var(--gpu-accent); }
+
+.gpu-card-chip strong,
+.gpu-card-chip small {
+  position: relative;
+  z-index: 1;
+  transform: rotate(-45deg);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gpu-observatory-card:hover .gpu-card-chip strong,
+.gpu-observatory-card:hover .gpu-card-chip small,
+.gpu-observatory-card:focus-within .gpu-card-chip strong,
+.gpu-observatory-card:focus-within .gpu-card-chip small {
+  transform: rotate(-135deg);
+}
+
+.gpu-card-chip strong {
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.gpu-card-chip small {
+  margin-top: 0.18rem;
+  color: var(--gpu-accent);
+  font-size: 0.45rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+}
+
+.gpu-card-scanline {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gpu-accent), transparent);
+  box-shadow: 0 0 14px rgba(45, 232, 196, 0.45);
+  animation: gpu-card-scan 4.8s ease-in-out infinite;
+}
+
+.gpu-observatory-card-title {
+  position: relative;
+  z-index: 1;
+}
+
+.gpu-observatory-card-title p {
+  margin: 0;
+  color: var(--gpu-accent);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-card-title h3 {
+  margin: 0.6rem 0 0;
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  font-weight: 550;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.gpu-observatory-specs {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 1.4rem 0 0;
+  border-top: 1px solid rgba(245, 247, 246, 0.09);
+  border-left: 1px solid rgba(245, 247, 246, 0.09);
+}
+
+.gpu-observatory-specs > div {
+  min-width: 0;
+  padding: 0.85rem;
+  border-right: 1px solid rgba(245, 247, 246, 0.09);
+  border-bottom: 1px solid rgba(245, 247, 246, 0.09);
+}
+
+.gpu-observatory-specs dt {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--gpu-muted);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-specs dt svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  color: var(--gpu-accent);
+}
+
+.gpu-observatory-specs dd {
+  margin: 0.45rem 0 0;
+  overflow: hidden;
+  color: var(--gpu-ink);
+  font-size: 0.83rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gpu-observatory-card-region {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  color: #a8b9b2;
+  font-size: 0.75rem;
+}
+
+.gpu-observatory-card-region svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--gpu-accent);
+}
+
+.gpu-observatory-pricing {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(45, 232, 196, 0.16);
+}
+
+.gpu-observatory-pricing span {
+  display: block;
+  color: var(--gpu-muted);
+  font-size: 0.57rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gpu-observatory-pricing strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.92rem;
+}
+
+.gpu-observatory-card-link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 3.2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  padding: 0.8rem 1rem;
+  color: #04100d;
+  background: var(--gpu-accent);
+  font-size: 0.76rem;
+  font-weight: 850;
+  transition: background-color 220ms ease, padding 220ms ease;
+}
+
+.gpu-observatory-card-link:hover {
+  padding-inline: 1.2rem 0.8rem;
+  background: #7cf7df;
+}
+
+.gpu-observatory-card-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gpu-match {
+  margin-top: clamp(2rem, 6vw, 6rem);
+  border-top: 1px solid rgba(45, 232, 196, 0.16);
+}
+
+.gpu-match-heading > svg {
+  width: clamp(3rem, 7vw, 6rem);
+  height: clamp(3rem, 7vw, 6rem);
+  color: rgba(45, 232, 196, 0.38);
+  stroke-width: 1;
+}
+
+.gpu-observatory-assistant {
+  border-radius: 0 !important;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(45, 232, 196, 0.11), transparent 26rem),
+    linear-gradient(145deg, rgba(7, 27, 22, 0.98), rgba(2, 9, 7, 0.98)) !important;
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.34) !important;
+}
+
+@keyframes gpu-ring-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gpu-path-flow {
+  to { stroke-dashoffset: -180; }
+}
+
+@keyframes gpu-map-drift {
+  0%, 100% { transform: translate3d(0, -0.4rem, 0); }
+  50% { transform: translate3d(0.6rem, 0.6rem, 0); }
+}
+
+@keyframes gpu-node-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes gpu-beam-sweep {
+  0%, 100% { opacity: 0.12; transform: rotate(-18deg) translateY(-4rem); }
+  50% { opacity: 0.7; transform: rotate(-18deg) translateY(4rem); }
+}
+
+@keyframes gpu-card-scan {
+  0%, 100% { top: 8%; opacity: 0; }
+  15% { opacity: 0.7; }
+  80% { opacity: 0.7; }
+  95% { top: 92%; opacity: 0; }
+}
+
+@media (max-width: 1023px) {
+  .gpu-observatory-map {
+    right: -14rem;
+    width: min(78vw, 43rem);
+    opacity: 0.66;
+  }
+
+  .gpu-observatory-hero::before {
+    background: linear-gradient(90deg, rgba(2, 5, 4, 0.96), rgba(2, 5, 4, 0.64) 58%, rgba(2, 5, 4, 0.28));
+  }
+
+  .gpu-inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .gpu-observatory-hero {
+    min-height: 50rem;
+    align-items: end;
+    padding-bottom: 7rem;
+  }
+
+  .gpu-observatory-copy h1 {
+    max-width: 9ch;
+    font-size: clamp(3.7rem, 17vw, 6rem);
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+    word-spacing: 0.035em;
+  }
+
+  .gpu-observatory-intro {
+    max-width: 31rem;
+    font-size: 0.94rem;
+  }
+
+  .gpu-observatory-map {
+    right: -12rem;
+    top: 30%;
+    width: 37rem;
+    opacity: 0.42;
+  }
+
+  .gpu-observatory-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gpu-observatory-primary,
+  .gpu-observatory-secondary {
+    width: 100%;
+  }
+
+  .gpu-observatory-status {
+    justify-content: flex-start;
+    gap: 1rem;
+    overflow: hidden;
+  }
+
+  .gpu-observatory-status span {
+    flex: 0 0 auto;
+  }
+
+  .gpu-inventory-header,
+  .gpu-match-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gpu-inventory-header h2,
+  .gpu-match-heading h2 {
+    font-size: clamp(2.8rem, 13vw, 4.4rem);
+  }
+
+  .gpu-inventory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gpu-observatory-card-visual {
+    min-height: 11rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gpu-observatory-beam,
+  .gpu-observatory-map svg,
+  .gpu-observatory-ring,
+  .gpu-observatory-path,
+  .gpu-observatory-node > span,
+  .gpu-card-scanline {
+    animation: none;
+  }
+
+  .gpu-observatory-primary,
+  .gpu-observatory-secondary,
+  .gpu-observatory-card::before,
+  .gpu-card-chip,
+  .gpu-card-chip strong,
+  .gpu-card-chip small,
+  .gpu-observatory-card-link {
     transition: none;
   }
 }

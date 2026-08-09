@@ -29,6 +29,21 @@ export const createWebsiteSchema = () => ({
   },
 });
 
+export const createAboutPageSchema = ({ description }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'About iTernityverse',
+  url: absoluteUrl('/about'),
+  description,
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'iTernityverse',
+    url: env.siteUrl,
+    logo: absoluteUrl('/media/logo.png'),
+    email: env.supportEmail,
+  },
+});
+
 export const createBreadcrumbSchema = (items) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',

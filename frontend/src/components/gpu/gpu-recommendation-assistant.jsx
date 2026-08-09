@@ -70,7 +70,7 @@ export function GpuRecommendationAssistant() {
   };
 
   return (
-    <Card className="overflow-hidden border-[rgba(45,232,196,0.22)] bg-[#07110E]/90">
+    <Card className="gpu-observatory-assistant overflow-hidden border-[rgba(45,232,196,0.22)] bg-[#07110E]/90">
       <CardContent className="grid gap-5 p-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-4">
           <div className="flex items-center gap-3">

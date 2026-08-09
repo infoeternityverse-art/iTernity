@@ -25,7 +25,7 @@ export function GpuMarketplaceControls({
   onSortChange,
 }) {
   return (
-    <div className="grid items-end gap-4 rounded-[20px] border border-[rgba(45,232,196,0.15)] bg-[#0E1310]/88 p-4 shadow-[0_22px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_220px_220px]">
+    <div className="gpu-observatory-controls grid items-end gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_220px_220px]">
       <SearchBar
         value={search}
         onChange={onSearchChange}
