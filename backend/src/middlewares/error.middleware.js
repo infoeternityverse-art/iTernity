@@ -11,7 +11,7 @@ export const errorHandler = (error, req, res, _next) => {
   const message = error.message || 'Internal server error.';
   const errors = error.errors || [];
 
-  if (config.nodeEnv !== 'test') {
+  if (config.nodeEnv !== 'test' && (!error.isOperational || statusCode >= 500)) {
     console.error(error);
   }
 

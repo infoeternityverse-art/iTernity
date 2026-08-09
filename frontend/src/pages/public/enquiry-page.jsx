@@ -26,6 +26,8 @@ export function EnquiryPage() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isRestoring = useAuthStore((state) => state.isRestoring);
+  const hasRestored = useAuthStore((state) => state.hasRestored);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
   const { data: gpuPackage, isLoading, error } = useGpuPackage(gpuPackageId);
   const enquiryDraft =
     location.state?.enquiryDraft?.gpuPackageId === gpuPackageId
@@ -39,7 +41,11 @@ export function EnquiryPage() {
   });
 
   useEffect(() => {
-    if (!isRestoring && !isAuthenticated) {
+    if (!hasRestored && !isRestoring) restoreSession();
+  }, [hasRestored, isRestoring, restoreSession]);
+
+  useEffect(() => {
+    if (hasRestored && !isRestoring && !isAuthenticated) {
       navigate('/login', {
         replace: true,
         state: {
@@ -48,9 +54,17 @@ export function EnquiryPage() {
         },
       });
     }
-  }, [enquiryDraft, gpuPackageId, isAuthenticated, isRestoring, location, navigate]);
+  }, [
+    enquiryDraft,
+    gpuPackageId,
+    hasRestored,
+    isAuthenticated,
+    isRestoring,
+    location,
+    navigate,
+  ]);
 
-  if (isLoading) {
+  if (!hasRestored || isRestoring || isLoading) {
     return <Skeleton className="h-96" />;
   }
 

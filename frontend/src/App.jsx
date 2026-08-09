@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { CursorDot } from '@/components/common/cursor-dot.jsx';
-import { SessionRestore } from '@/components/common/session-restore.jsx';
+import { SessionEvents } from '@/components/common/session-restore.jsx';
 import { QueryProvider } from '@/providers/query-provider.jsx';
 import { router } from '@/routes/router.jsx';
 import { cloudinaryImageUrl, mediaUrl } from '@/utils/media-url.js';
@@ -42,10 +42,10 @@ function App() {
   return (
     <QueryProvider>
       <FooterBackgroundLoader />
-      <SessionRestore>
+      <SessionEvents>
         <CursorDot />
         <RouterProvider router={router} />
-      </SessionRestore>
+      </SessionEvents>
     </QueryProvider>
   );
 }

@@ -1,11 +1,14 @@
 import { create } from 'zustand';
 import { authService } from '@/services/auth-service.js';
 
+let activeRestoreRequest = null;
+
 const applyAuthData = (data, set) => {
   set({
     user: data.user,
     isAuthenticated: true,
     isRestoring: false,
+    hasRestored: true,
     error: null,
     pendingVerification: false,
     pendingVerificationEmail: null,
@@ -15,7 +18,8 @@ const applyAuthData = (data, set) => {
 export const useAuthStore = create((set, get) => ({
   user: null,
   isAuthenticated: false,
-  isRestoring: true,
+  isRestoring: false,
+  hasRestored: false,
   isLoading: false,
   error: null,
   pendingVerification: false,
@@ -26,6 +30,7 @@ export const useAuthStore = create((set, get) => ({
       user: null,
       isAuthenticated: false,
       isRestoring: false,
+      hasRestored: true,
       isLoading: false,
       error: null,
       pendingVerification: false,
@@ -45,6 +50,7 @@ export const useAuthStore = create((set, get) => ({
           pendingVerification: true,
           pendingVerificationEmail: data.email || payload.email,
           isRestoring: false,
+          hasRestored: true,
           error: null,
         });
       }
@@ -139,44 +145,56 @@ export const useAuthStore = create((set, get) => ({
   },
 
   restoreSession: async () => {
-    let supabaseSession = null;
+    if (get().hasRestored) return get().user;
+    if (activeRestoreRequest) return activeRestoreRequest;
 
-    try {
-      supabaseSession = await authService.getSupabaseSession();
-    } catch {
-      supabaseSession = null;
-    }
+    activeRestoreRequest = (async () => {
+      set({ isRestoring: true });
+      let supabaseSession = null;
 
-    if (supabaseSession?.access_token) {
       try {
-        const data = await authService.createSession(supabaseSession);
-        applyAuthData(data, set);
+        supabaseSession = await authService.getSupabaseSession();
+      } catch {
+        supabaseSession = null;
+      }
+
+      if (supabaseSession?.access_token) {
+        try {
+          const data = await authService.createSession(supabaseSession);
+          applyAuthData(data, set);
+          return data.user;
+        } catch {
+          // A backend cookie may still be valid, so continue with normal restoration.
+        }
+      }
+
+      try {
+        const data = await authService.me();
+        set({
+          user: data.user,
+          isAuthenticated: true,
+          isRestoring: false,
+          hasRestored: true,
+          error: null,
+        });
         return data.user;
       } catch {
-        // A backend cookie may still be valid, so continue with normal restoration.
+        set({
+          user: null,
+          isAuthenticated: false,
+          isRestoring: false,
+          hasRestored: true,
+          pendingVerification: false,
+          pendingVerificationEmail: null,
+        });
+        return null;
       }
-    }
-
-    set({ isRestoring: true });
+    })();
 
     try {
-      const data = await authService.me();
-      set({
-        user: data.user,
-        isAuthenticated: true,
-        isRestoring: false,
-        error: null,
-      });
-      return data.user;
-    } catch {
-      set({
-        user: null,
-        isAuthenticated: false,
-        isRestoring: false,
-        pendingVerification: false,
-        pendingVerificationEmail: null,
-      });
-      return null;
+      return await activeRestoreRequest;
+    } finally {
+      activeRestoreRequest = null;
     }
   },
 }));

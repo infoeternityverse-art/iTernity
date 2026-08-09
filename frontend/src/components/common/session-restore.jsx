@@ -3,15 +3,11 @@ import { useAuthStore } from '@/store/auth-store.js';
 import { AUTH_SESSION_EXPIRED_EVENT } from '@/utils/token-storage.js';
 
 /**
- * SessionRestore restores a persisted auth session once when the application starts.
+ * SessionEvents keeps cross-cutting session-expiry handling active without forcing
+ * public routes to make authentication requests.
  */
-export function SessionRestore({ children }) {
-  const restoreSession = useAuthStore((state) => state.restoreSession);
+export function SessionEvents({ children }) {
   const clearSession = useAuthStore((state) => state.clearSession);
-
-  useEffect(() => {
-    restoreSession();
-  }, [restoreSession]);
 
   useEffect(() => {
     window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, clearSession);

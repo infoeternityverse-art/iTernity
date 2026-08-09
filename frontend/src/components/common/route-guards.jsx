@@ -1,8 +1,21 @@
+import { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { SparkLoader } from '@/components/common/spark-loader.jsx';
 import { useAuthStore } from '@/store/auth-store.js';
 
 const RouteLoader = () => <SparkLoader label="Checking your spark" />;
+
+function useRouteSession() {
+  const hasRestored = useAuthStore((state) => state.hasRestored);
+  const isRestoring = useAuthStore((state) => state.isRestoring);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
+
+  useEffect(() => {
+    if (!hasRestored && !isRestoring) restoreSession();
+  }, [hasRestored, isRestoring, restoreSession]);
+
+  return { hasRestored, isRestoring };
+}
 
 /**
  * ProtectedRoute requires an authenticated customer session before rendering dashboard routes.
@@ -11,9 +24,9 @@ export function ProtectedRoute({ children }) {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isRestoring = useAuthStore((state) => state.isRestoring);
+  const { hasRestored, isRestoring } = useRouteSession();
 
-  if (isRestoring) {
+  if (!hasRestored || isRestoring) {
     return <RouteLoader />;
   }
 
@@ -42,9 +55,9 @@ export function AdminRoute({ children }) {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isRestoring = useAuthStore((state) => state.isRestoring);
+  const { hasRestored, isRestoring } = useRouteSession();
 
-  if (isRestoring) {
+  if (!hasRestored || isRestoring) {
     return <RouteLoader />;
   }
 
@@ -75,9 +88,9 @@ export function GuestRoute({ children }) {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isRestoring = useAuthStore((state) => state.isRestoring);
+  const { hasRestored, isRestoring } = useRouteSession();
 
-  if (isRestoring) {
+  if (!hasRestored || isRestoring) {
     return <RouteLoader />;
   }
 
