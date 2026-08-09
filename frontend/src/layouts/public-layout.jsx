@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
-import * as VantaThree from 'three-r134';
-import BirdsEffectModule from 'vanta/dist/vanta.birds.min';
 import { APP_NAME } from '@/constants/app.constants.js';
 import { authNavigation, publicNavigation } from '@/config/navigation.config.js';
 import { Button } from '@/components/ui/index.js';
@@ -67,31 +65,73 @@ function FooterVantaBackground() {
   const effectRef = useRef(null);
 
   useEffect(() => {
-    if (!containerRef.current) return undefined;
+    const container = containerRef.current;
+    if (!container) return undefined;
 
-    const createBirdsEffect =
-      typeof BirdsEffectModule === 'function' ? BirdsEffectModule : BirdsEffectModule?.default;
+    let cancelled = false;
+    let idleId = 0;
 
-    if (typeof createBirdsEffect !== 'function') return undefined;
+    const startEffect = async () => {
+      try {
+        const threeModule = await import('three-r134');
+        if (cancelled) return;
 
-    effectRef.current = createBirdsEffect({
-      el: containerRef.current,
-      THREE: VantaThree,
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.0,
-      minWidth: 200.0,
-      scale: 1.0,
-      scaleMobile: 1.0,
-      color1: 0x155545,
-      color2: 0x00ffb3,
-      colorMode: 'variance',
-      birdSize: 0.5,
-      backgroundAlpha: 0.0,
-    });
+        // Vanta captures window.THREE while its UMD module is evaluated.
+        window.THREE = threeModule;
+        const birdsModule = await import('vanta/dist/vanta.birds.min');
+        if (cancelled) return;
+
+        const createBirdsEffect = [
+          birdsModule.default,
+          birdsModule.default?.default,
+          birdsModule,
+          window.VANTA?.BIRDS,
+          window._vantaEffect,
+        ].find((candidate) => typeof candidate === 'function');
+        if (typeof createBirdsEffect !== 'function') return;
+
+        effectRef.current = createBirdsEffect({
+          el: container,
+          THREE: threeModule,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          scale: 1.0,
+          scaleMobile: 1.0,
+          color1: 0x155545,
+          color2: 0x00ffb3,
+          colorMode: 'variance',
+          birdSize: 0.5,
+          backgroundAlpha: 0.0,
+        });
+      } catch {
+        // The static footer treatment remains available if WebGL cannot initialize.
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        if (window.requestIdleCallback) {
+          idleId = window.requestIdleCallback(startEffect, { timeout: 1800 });
+        } else {
+          idleId = window.setTimeout(startEffect, 250);
+        }
+      },
+      { rootMargin: '320px 0px' }
+    );
+
+    observer.observe(container.closest('footer') || container);
 
     return () => {
+      cancelled = true;
+      observer.disconnect();
+      if (window.cancelIdleCallback && idleId) window.cancelIdleCallback(idleId);
+      else if (idleId) window.clearTimeout(idleId);
       effectRef.current?.destroy();
       effectRef.current = null;
     };

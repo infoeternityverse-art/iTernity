@@ -20,13 +20,19 @@ export function CursorDot() {
       currentRef.current.x += (targetRef.current.x - currentRef.current.x) * 0.22;
       currentRef.current.y += (targetRef.current.y - currentRef.current.y) * 0.22;
       dot.style.transform = `translate3d(${currentRef.current.x}px, ${currentRef.current.y}px, 0)`;
-      frameRef.current = window.requestAnimationFrame(tick);
+
+      const distance = Math.hypot(
+        targetRef.current.x - currentRef.current.x,
+        targetRef.current.y - currentRef.current.y
+      );
+      frameRef.current = distance > 0.1 ? window.requestAnimationFrame(tick) : 0;
     };
 
     const handlePointerMove = (event) => {
       targetRef.current.x = event.clientX;
       targetRef.current.y = event.clientY;
       dot.classList.add('is-visible');
+      if (!frameRef.current) frameRef.current = window.requestAnimationFrame(tick);
 
       const hoverSurface = event.target.closest?.(
         '.rounded-card, .cosmic-hover-card, .cursor-spotlight-card, .blog-card, .blog-article-hero, .blog-article-body, .blog-article-sidebar, .blog-article-share'
@@ -46,8 +52,6 @@ export function CursorDot() {
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
     document.documentElement.addEventListener('mouseleave', handlePointerLeave);
-    frameRef.current = window.requestAnimationFrame(tick);
-
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerdown', handlePointerDown);

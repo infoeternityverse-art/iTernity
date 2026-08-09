@@ -68,36 +68,50 @@ function useDelayedWebglStart(isInView) {
   useEffect(() => {
     if (!isInView || canStart) return undefined;
 
-    let idleId;
-    let settleTimer;
     let cancelled = false;
+    let settleTimer = 0;
+    let hasInteracted = false;
+    let hasLoaded = document.readyState === 'complete';
 
-    const start = () => {
-      if (!cancelled) setCanStart(true);
+    const cleanupInteractionListeners = () => {
+      window.removeEventListener('pointermove', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
     };
 
-    const scheduleAfterPaint = () => {
+    const scheduleStart = () => {
+      if (!hasInteracted || !hasLoaded || settleTimer || cancelled) return;
+
+      cleanupInteractionListeners();
       settleTimer = window.setTimeout(() => {
-        if (window.requestIdleCallback) {
-          idleId = window.requestIdleCallback(start, { timeout: 3200 });
-          return;
-        }
-
-        start();
-      }, 1800);
+        if (!cancelled) setCanStart(true);
+      }, 650);
     };
 
-    if (document.readyState === 'complete') {
-      scheduleAfterPaint();
-    } else {
-      window.addEventListener('load', scheduleAfterPaint, { once: true });
+    function handleInteraction() {
+      hasInteracted = true;
+      scheduleStart();
     }
+
+    const handleLoad = () => {
+      hasLoaded = true;
+      scheduleStart();
+    };
+
+    window.addEventListener('pointermove', handleInteraction, { passive: true, once: true });
+    window.addEventListener('pointerdown', handleInteraction, { passive: true, once: true });
+    window.addEventListener('touchstart', handleInteraction, { passive: true, once: true });
+    window.addEventListener('keydown', handleInteraction, { once: true });
+    window.addEventListener('scroll', handleInteraction, { passive: true, once: true });
+    if (!hasLoaded) window.addEventListener('load', handleLoad, { once: true });
 
     return () => {
       cancelled = true;
-      window.removeEventListener('load', scheduleAfterPaint);
+      cleanupInteractionListeners();
+      window.removeEventListener('load', handleLoad);
       window.clearTimeout(settleTimer);
-      if (idleId) window.cancelIdleCallback?.(idleId);
     };
   }, [canStart, isInView]);
 
@@ -175,7 +189,6 @@ export function HeroGpuVisual({ variant = 'home' }) {
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [isWebglFallback, setIsWebglFallback] = useState(false);
   const visualRef = useRef(null);
-  const heroImageRef = useRef(null);
   const pointerRef = useRef({ x: 0, y: 0 });
   const touchGestureRef = useRef(null);
   const scrollRef = useRef(0);
@@ -218,10 +231,6 @@ export function HeroGpuVisual({ variant = 'home' }) {
     setPanoramaSrc(background.src);
     setIsSceneReady(false);
   }, [background.src, backgroundSrc]);
-
-  useEffect(() => {
-    heroImageRef.current?.setAttribute('fetchpriority', variant === 'home' ? 'high' : 'auto');
-  }, [variant]);
 
   const syncCssCameraVars = (x, y) => {
     if (!visualRef.current) return;
@@ -379,11 +388,12 @@ export function HeroGpuVisual({ variant = 'home' }) {
     >
       <div className="hero-cosmic-composite">
         <img
-          ref={heroImageRef}
           src={displaySrc}
           alt=""
           className="hero-bg-photo"
           decoding="async"
+          {...{ fetchpriority: variant === 'home' ? 'high' : 'auto' }}
+          loading={variant === 'home' ? 'eager' : 'lazy'}
           draggable="false"
           onLoad={() => {
             if (displaySrc !== background.src) {
