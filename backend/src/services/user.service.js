@@ -1,9 +1,12 @@
-import { User, USER_ROLES } from '../models/index.js';
+import { randomBytes } from 'node:crypto';
+import { Credential, CREDENTIAL_STATUSES, User, USER_ROLES } from '../models/index.js';
 import { notificationConfig } from '../config/notification.config.js';
 import { notificationService } from '../notifications/index.js';
 import { ConflictError } from '../utils/errors.js';
+import { Workspace, WORKSPACE_STATUSES } from '../workspace/models/index.js';
 import { createSupabaseRecoveryLink, deleteSupabaseUser } from './auth.service.js';
 import { BaseService } from './base.service.js';
+import { hashPassword } from './password.service.js';
 import { signPasswordResetToken } from './token.service.js';
 
 class UserService extends BaseService {
@@ -101,18 +104,42 @@ class UserService extends BaseService {
     }
 
     if (user.role === USER_ROLES.CUSTOMER) {
+      const hasActiveWorkspace = await Workspace.exists({
+        customer: user._id,
+        status: { $in: [WORKSPACE_STATUSES.PROVISIONING, WORKSPACE_STATUSES.RUNNING] },
+      });
+
+      if (hasActiveWorkspace) {
+        throw new ConflictError(
+          'Stop the customer active workspace before deleting this account.'
+        );
+      }
+
       await deleteSupabaseUser({
         email: user.email,
         supabaseUserId: user.supabaseUserId,
       });
+
+      const revokedAt = new Date();
+
+      await Credential.updateMany(
+        { customer: user._id, status: CREDENTIAL_STATUSES.ACTIVE },
+        { $set: { status: CREDENTIAL_STATUSES.REVOKED, revokedAt } }
+      );
     }
 
+    user.name = 'Deleted customer';
+    user.email = `deleted-${user._id}@accounts.invalid`;
+    user.passwordHash = await hashPassword(randomBytes(48).toString('hex'));
+    user.emailVerifiedAt = null;
+    user.supabaseUserId = null;
     user.isActive = false;
+    user.lastLoginAt = null;
     await user.save();
 
     return {
       data: user,
-      message: 'User deleted successfully.',
+      message: 'User access revoked and account deleted successfully.',
     };
   }
 }

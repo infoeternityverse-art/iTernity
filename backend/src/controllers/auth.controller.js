@@ -8,11 +8,13 @@ import {
   updateCurrentUser,
   buildAuthResponse,
   refreshAuthSession,
+  requestCurrentUserEmailChange,
 } from '../services/auth.service.js';
 import { config } from '../config/index.js';
 import { clearAuthCookies, setAuthCookies } from '../utils/auth-cookies.js';
 import { sendSuccess } from '../utils/api-response.js';
 import { asyncHandler } from '../utils/async-handler.js';
+import { auditLogService } from '../services/audit-log.service.js';
 
 export const login = asyncHandler(async (req, res) => {
   const data = await loginUser(req.validated.body);
@@ -78,6 +80,30 @@ export const updateMe = asyncHandler(async (req, res) => {
   return sendSuccess(res, {
     message: 'Profile updated successfully.',
     data: { user },
+  });
+});
+
+export const requestEmailChange = asyncHandler(async (req, res) => {
+  await requestCurrentUserEmailChange(req.user, req.validated.body);
+
+  try {
+    await auditLogService.record({
+      actor: req.user._id,
+      action: 'user.email_change_requested',
+      entityType: 'User',
+      entityId: req.user._id,
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent') || '',
+    });
+  } catch (error) {
+    console.error('Email change audit log failed.', error);
+  }
+
+  return sendSuccess(res, {
+    message: 'Email change confirmations sent.',
+    data: {
+      confirmationRequired: true,
+    },
   });
 });
 

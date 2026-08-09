@@ -1,6 +1,11 @@
 export const renderBrandLogo = ({ brandName }) => `
-  <div style="display:inline-flex;align-items:center;gap:12px;">
-    <div style="width:34px;height:34px;border-radius:8px;background:#2DE8C4;display:inline-flex;align-items:center;justify-content:center;text-align:center;color:#03110d;font-weight:900;font-size:20px;line-height:34px;">i</div>
-    <span style="font-size:17px;font-weight:800;color:#111827;">${brandName}</span>
-  </div>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;border-radius:9px;background:#2DE8C4;text-align:center;vertical-align:middle;">
+        <span style="display:block;width:42px;color:#03110d;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:900;line-height:42px;text-align:center;">i</span>
+      </td>
+      <td width="12" style="width:12px;font-size:0;line-height:0;">&nbsp;</td>
+      <td valign="middle" style="color:#111827;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:800;line-height:22px;vertical-align:middle;white-space:nowrap;">${brandName}</td>
+    </tr>
+  </table>
 `;

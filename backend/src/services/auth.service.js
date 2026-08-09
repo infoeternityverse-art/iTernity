@@ -60,26 +60,61 @@ const getSupabaseUser = async (token) => {
   return response.json();
 };
 
-const callSupabaseAdmin = async (path, options = {}) => {
+const getSupabaseErrorMessage = async (response) => {
+  try {
+    const payload = await response.json();
+    return payload?.msg || payload?.message || payload?.error_description || payload?.error || null;
+  } catch {
+    return null;
+  }
+};
+
+const callSupabaseAdmin = async (
+  path,
+  options = {},
+  { required = false, acceptedStatuses = [] } = {}
+) => {
   if (!config.supabase.url || !config.supabase.serviceRoleKey) {
+    if (required) {
+      throw new ApiError(503, 'Supabase account administration is not configured.');
+    }
+
     return null;
   }
 
-  const response = await fetch(`${config.supabase.url.replace(/\/+$/g, '')}${path}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${config.supabase.serviceRoleKey}`,
-      apikey: config.supabase.serviceRoleKey,
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
+  let response;
 
-  if (!response.ok) {
+  try {
+    response = await fetch(`${config.supabase.url.replace(/\/+$/g, '')}${path}`, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${config.supabase.serviceRoleKey}`,
+        apikey: config.supabase.serviceRoleKey,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+  } catch {
+    if (required) {
+      throw new ApiError(502, 'Supabase account administration is temporarily unavailable.');
+    }
+
     return null;
   }
 
-  if (response.status === 204) {
+  if (!response.ok && !acceptedStatuses.includes(response.status)) {
+    const providerMessage = await getSupabaseErrorMessage(response);
+
+    if (required) {
+      const error = new ApiError(502, 'Supabase rejected the account administration request.');
+      error.cause = providerMessage ? new Error(providerMessage) : undefined;
+      throw error;
+    }
+
+    return null;
+  }
+
+  if (response.status === 204 || acceptedStatuses.includes(response.status)) {
     return {};
   }
 
@@ -99,33 +134,83 @@ export const createSupabaseRecoveryLink = async (email) => {
   return data?.action_link || null;
 };
 
-export const findSupabaseUserIdByEmail = async (email) => {
+const getSupabaseAdminUser = async (userId) => {
+  const data = await callSupabaseAdmin(
+    `/auth/v1/admin/users/${encodeURIComponent(userId)}`,
+    {},
+    { required: true }
+  );
+
+  return data?.user || data;
+};
+
+const createSupabaseEmailChangeLink = async ({ type, email, newEmail }) => {
+  const data = await callSupabaseAdmin(
+    '/auth/v1/admin/generate_link',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type,
+        email,
+        new_email: newEmail,
+        redirect_to: `${notificationConfig.frontendUrl}/email-change-confirmed`,
+      }),
+    },
+    { required: true }
+  );
+
+  if (!data?.action_link) {
+    throw new ApiError(502, 'Supabase did not return an email-change verification link.');
+  }
+
+  return data.action_link;
+};
+
+export const findSupabaseUserIdByEmail = async (email, { required = false } = {}) => {
   const normalizedEmail = String(email || '').toLowerCase().trim();
 
   if (!normalizedEmail) {
     return null;
   }
 
-  const data = await callSupabaseAdmin('/auth/v1/admin/users?page=1&per_page=1000');
-  const user = data?.users?.find(
-    (candidate) => String(candidate.email || '').toLowerCase().trim() === normalizedEmail
-  );
+  for (let page = 1; page <= 100; page += 1) {
+    const data = await callSupabaseAdmin(
+      `/auth/v1/admin/users?page=${page}&per_page=1000`,
+      {},
+      { required }
+    );
+    const users = data?.users || [];
+    const user = users.find(
+      (candidate) => String(candidate.email || '').toLowerCase().trim() === normalizedEmail
+    );
 
-  return user?.id || null;
+    if (user) {
+      return user.id;
+    }
+
+    if (users.length < 1000) {
+      break;
+    }
+  }
+
+  return null;
 };
 
 export const deleteSupabaseUser = async ({ email, supabaseUserId }) => {
-  const userId = supabaseUserId || (await findSupabaseUserIdByEmail(email));
+  const userId =
+    supabaseUserId || (await findSupabaseUserIdByEmail(email, { required: true }));
 
   if (!userId) {
-    return false;
+    return true;
   }
 
-  const data = await callSupabaseAdmin(`/auth/v1/admin/user/${encodeURIComponent(userId)}`, {
-    method: 'DELETE',
-  });
+  await callSupabaseAdmin(
+    `/auth/v1/admin/users/${encodeURIComponent(userId)}`,
+    { method: 'DELETE' },
+    { required: true, acceptedStatuses: [404] }
+  );
 
-  return Boolean(data);
+  return true;
 };
 
 const getSupabaseDisplayName = (profile) => {
@@ -143,10 +228,12 @@ export const syncSupabaseUser = async (token) => {
   }
 
   const email = String(profile.email).toLowerCase().trim();
-  const emailVerifiedAt = profile.email_confirmed_at
-    ? new Date(profile.email_confirmed_at)
-    : new Date();
-  let user = await User.findByEmail(email);
+  const emailVerifiedAt = profile.email_confirmed_at ? new Date(profile.email_confirmed_at) : null;
+  let user = await User.findOne({ supabaseUserId: profile.id });
+
+  if (!user) {
+    user = await User.findByEmail(email);
+  }
 
   if (!user) {
     user = await User.create({
@@ -159,11 +246,27 @@ export const syncSupabaseUser = async (token) => {
     });
     notificationService.sendWelcomeEmail(user);
   } else {
+    if (user.supabaseUserId && user.supabaseUserId !== profile.id) {
+      throw new ApiError(409, 'This email is linked to a different account identity.');
+    }
+
     if (!user.isActive) {
       throw new ApiError(403, 'This account is inactive.');
     }
 
-    user.emailVerifiedAt = user.emailVerifiedAt || emailVerifiedAt;
+    if (user.email !== email) {
+      const emailOwner = await User.findByEmail(email);
+
+      if (emailOwner && String(emailOwner._id) !== String(user._id)) {
+        throw new ApiError(409, 'The verified email is already linked to another account.');
+      }
+
+      user.email = email;
+      user.emailVerifiedAt = emailVerifiedAt;
+    } else {
+      user.emailVerifiedAt = user.emailVerifiedAt || emailVerifiedAt;
+    }
+
     user.supabaseUserId = user.supabaseUserId || profile.id;
     if (!user.name) {
       user.name = getSupabaseDisplayName(profile);
@@ -225,20 +328,70 @@ export const loginAdmin = async ({ email, password }) => {
 export const getCurrentUser = (user) => sanitizeUser(user);
 
 export const updateCurrentUser = async (user, payload) => {
-  if (payload.email) {
-    const existingUser = await User.findByEmail(payload.email);
-
-    if (existingUser && String(existingUser._id) !== String(user._id)) {
-      throw new ApiError(409, 'An account with this email already exists.');
-    }
+  if (payload.name) {
+    user.name = payload.name;
   }
 
-  Object.assign(user, payload);
   await user.save();
 
   notificationService.sendProfileUpdated(user);
 
   return sanitizeUser(user);
+};
+
+export const requestCurrentUserEmailChange = async (user, { newEmail }) => {
+  const normalizedEmail = String(newEmail).toLowerCase().trim();
+
+  if (!user.supabaseUserId) {
+    throw new ApiError(409, 'Re-authenticate before changing your email address.');
+  }
+
+  const supabaseUser = await getSupabaseAdminUser(user.supabaseUserId);
+  const currentEmail = String(supabaseUser?.email || '').toLowerCase().trim();
+
+  if (!currentEmail) {
+    throw new ApiError(409, 'The current verified email could not be confirmed.');
+  }
+
+  if (normalizedEmail === currentEmail) {
+    throw new ApiError(400, 'Enter a different email address.');
+  }
+
+  const existingUser = await User.findByEmail(normalizedEmail);
+
+  if (existingUser && String(existingUser._id) !== String(user._id)) {
+    throw new ApiError(409, 'An account with this email already exists.');
+  }
+
+  const [currentVerificationUrl, newVerificationUrl] = await Promise.all([
+    createSupabaseEmailChangeLink({
+      type: 'email_change_current',
+      email: currentEmail,
+      newEmail: normalizedEmail,
+    }),
+    createSupabaseEmailChangeLink({
+      type: 'email_change_new',
+      email: currentEmail,
+      newEmail: normalizedEmail,
+    }),
+  ]);
+
+  await Promise.all([
+    notificationService.sendEmailChangeVerification({
+      to: currentEmail,
+      verificationUrl: currentVerificationUrl,
+      newEmail: normalizedEmail,
+      isCurrent: true,
+    }),
+    notificationService.sendEmailChangeVerification({
+      to: normalizedEmail,
+      verificationUrl: newVerificationUrl,
+      newEmail: normalizedEmail,
+      isCurrent: false,
+    }),
+  ]);
+
+  return { currentEmail, newEmail: normalizedEmail };
 };
 
 export const changeCurrentUserPassword = async (user, { currentPassword, newPassword }) => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChangePasswordForm, ProfileForm } from '@/components/dashboard/profile-forms.jsx';
 import { formatDate } from '@/components/dashboard/dashboard-utils.js';
 import { Alert, Card, CardContent, PageHeader, SectionHeader } from '@/components/ui/index.js';
@@ -11,9 +11,51 @@ export function ProfilePage() {
   const loading = useAuthStore((state) => state.isLoading);
   const error = useAuthStore((state) => state.error);
   const [success, setSuccess] = useState('');
+  const [pendingEmailChange, setPendingEmailChange] = useState(null);
+  const [emailChangeRetryAt, setEmailChangeRetryAt] = useState(0);
+  const [clock, setClock] = useState(Date.now());
+  const emailChangeCooldownSeconds = emailChangeRetryAt
+    ? Math.max(0, Math.ceil((emailChangeRetryAt - clock) / 1000))
+    : 0;
+
+  useEffect(() => {
+    if (!emailChangeRetryAt || emailChangeRetryAt <= Date.now()) return undefined;
+
+    const timer = window.setInterval(() => {
+      const now = Date.now();
+      setClock(now);
+
+      if (now >= emailChangeRetryAt) {
+        window.clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [emailChangeRetryAt]);
 
   const handleProfileUpdate = async (payload) => {
-    await updateProfile(payload);
+    let result;
+
+    try {
+      result = await updateProfile(payload);
+    } catch (requestError) {
+      if (requestError.status === 429 && requestError.retryAfterSeconds) {
+        const retryAt = Date.now() + requestError.retryAfterSeconds * 1000;
+        setClock(Date.now());
+        setEmailChangeRetryAt(retryAt);
+      }
+      return;
+    }
+
+    if (result.emailChangePending) {
+      setSuccess('');
+      setPendingEmailChange({ currentEmail: user.email, newEmail: payload.email });
+      setClock(Date.now());
+      setEmailChangeRetryAt(Date.now() + 60 * 1000);
+      return;
+    }
+
+    setPendingEmailChange(null);
     setSuccess('Profile updated successfully.');
   };
 
@@ -31,6 +73,24 @@ export function ProfilePage() {
       {success && (
         <Alert variant="success" onDismiss={() => setSuccess('')}>
           {success}
+        </Alert>
+      )}
+      {pendingEmailChange && (
+        <Alert
+          variant="warning"
+          title="Action required: confirm both email addresses"
+          onDismiss={() => setPendingEmailChange(null)}
+        >
+          <ol className="list-decimal space-y-2 pl-4">
+            <li>
+              Confirm the security message sent to <strong>{pendingEmailChange.currentEmail}</strong>.
+            </li>
+            <li>
+              Confirm the ownership message sent to <strong>{pendingEmailChange.newEmail}</strong>.
+            </li>
+            <li>After both confirmations, sign out and use the new email on your next sign-in.</li>
+          </ol>
+          <p className="mt-3">Until then, your account continues using the current email.</p>
         </Alert>
       )}
       <Card>
@@ -58,6 +118,7 @@ export function ProfilePage() {
               onSubmit={handleProfileUpdate}
               loading={loading}
               error={error}
+              emailChangeCooldownSeconds={emailChangeCooldownSeconds}
             />
           </CardContent>
         </Card>

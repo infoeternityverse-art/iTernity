@@ -31,8 +31,8 @@ export function RegisterPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Register" description="Create your customer account." />
-      <RegisterForm onSubmit={handleSubmit} loading={isLoading} error={error} />
       <GoogleSignInButton onClick={handleGoogleLogin} loading={isLoading} disabled={isLoading} />
+      <RegisterForm onSubmit={handleSubmit} loading={isLoading} error={error} />
       <p className="text-center text-sm text-slate-500 dark:text-slate-400">
         Already have an account?{' '}
         <Link to="/login" className="font-medium text-brand-600 hover:underline dark:text-blue-300">

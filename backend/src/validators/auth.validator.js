@@ -26,10 +26,17 @@ export const updateMeSchema = z.object({
   body: z
     .object({
       name: z.string().trim().min(2).max(120).optional(),
-      email: z.string().trim().email('Enter a valid email address.').max(254).optional(),
     })
     .strict()
     .refine((value) => Object.keys(value).length > 0, 'At least one field is required.'),
+});
+
+export const requestEmailChangeSchema = z.object({
+  body: z
+    .object({
+      newEmail: z.string().trim().email('Enter a valid email address.').max(254),
+    })
+    .strict(),
 });
 
 export const changePasswordSchema = z.object({

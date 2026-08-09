@@ -10,6 +10,7 @@ import {
   criticalSystemErrorEmailTemplate,
   enquiryReceivedEmailTemplate,
   enquiryStatusUpdatedEmailTemplate,
+  emailChangeVerificationEmailTemplate,
   passwordChangedEmailTemplate,
   passwordResetEmailTemplate,
   profileUpdatedEmailTemplate,
@@ -170,6 +171,23 @@ class NotificationService {
         html: profileUpdatedEmailTemplate({ user }),
         text: 'Your profile information was updated successfully.',
       })
+    );
+  }
+
+  async sendEmailChangeVerification({ to, verificationUrl, newEmail, isCurrent }) {
+    const result = await emailProvider.send({
+      to,
+      subject: 'Confirm your iTernityverse email change',
+      html: emailChangeVerificationEmailTemplate({ verificationUrl, newEmail, isCurrent }),
+      text: `Confirm your email change using this secure link: ${verificationUrl}`,
+    });
+
+    if (result?.skipped) {
+      throw new Error(`Email change verification could not be sent: ${result.reason}`);
+    }
+
+    console.info(
+      `[notification] ${new Date().toISOString()} email.change_verification sent to ${to}`
     );
   }
 

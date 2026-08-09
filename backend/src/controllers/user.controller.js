@@ -1,4 +1,4 @@
-import { userService } from '../services/index.js';
+import { auditLogService, userService } from '../services/index.js';
 import { sendServiceResponse } from '../utils/controller-response.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { ApiError } from '../utils/api-error.js';
@@ -42,5 +42,19 @@ export const deleteUser = asyncHandler(async (req, res) => {
   }
 
   const response = await userService.delete(req.validated.params.id);
+
+  try {
+    await auditLogService.record({
+      actor: req.user._id,
+      action: 'user.deleted',
+      entityType: 'User',
+      entityId: req.validated.params.id,
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent') || '',
+    });
+  } catch (error) {
+    console.error('User deletion audit log failed.', error);
+  }
+
   return sendServiceResponse(res, response);
 });

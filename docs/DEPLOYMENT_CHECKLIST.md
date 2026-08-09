@@ -9,6 +9,7 @@
 - Set `AUTH_COOKIE_SECURE=true` and `AUTH_COOKIE_SAME_SITE=lax` for the HTTPS frontend/API subdomains.
 - Confirm auth responses set `HttpOnly`, `Secure`, `SameSite=Lax` cookies and never expose tokens in JSON or browser storage.
 - Set `APP_FRONTEND_URL=https://iternityverse.com`.
+- Add `https://iternityverse.com/email-change-confirmed` to the Supabase Auth redirect URL allow list.
 - Set `APP_DASHBOARD_URL=https://iternityverse.com/dashboard`.
 - Set `APP_ADMIN_URL=https://iternityverse.com/admin`.
 - Set long, unique `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` values.
@@ -19,6 +20,10 @@
   - `PASSWORD_RESET_IP_RATE_LIMIT_MAX=10`
   - `PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS=3600000`
   - `PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX=3`
+  - `EMAIL_CHANGE_IP_RATE_LIMIT_WINDOW_MS=900000`
+  - `EMAIL_CHANGE_IP_RATE_LIMIT_MAX=10`
+  - `EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_WINDOW_MS=3600000`
+  - `EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_MAX=3`
 - Confirm frontend `VITE_API_BASE_URL=https://api.iternityverse.com/api/v1`.
 - Confirm frontend `VITE_SITE_URL=https://iternityverse.com`.
 - Confirm frontend `VITE_SUPPORT_EMAIL=info@iternityverse.com`.

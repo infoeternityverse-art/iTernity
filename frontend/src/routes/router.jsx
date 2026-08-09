@@ -108,6 +108,10 @@ const ResetPasswordPage = lazyPage(
   () => import('@/pages/auth/reset-password-page.jsx'),
   'ResetPasswordPage'
 );
+const EmailChangeConfirmedPage = lazyPage(
+  () => import('@/pages/auth/email-change-confirmed-page.jsx'),
+  'EmailChangeConfirmedPage'
+);
 const CredentialsPage = lazyPage(
   () => import('@/pages/customer/credentials-page.jsx'),
   'CredentialsPage'
@@ -192,6 +196,15 @@ export const router = createBrowserRouter(
         { path: 'terms', element: withSuspense(TermsOfAccessPage) },
         { path: 'security', element: withSuspense(SecurityPage) },
         { path: 'acceptable-use', element: withSuspense(AcceptableUsePage) },
+      ],
+    },
+    {
+      element: <AuthLayout />,
+      children: [
+        {
+          path: '/email-change-confirmed',
+          element: withSuspense(EmailChangeConfirmedPage),
+        },
       ],
     },
     {

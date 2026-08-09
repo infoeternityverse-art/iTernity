@@ -50,6 +50,12 @@ export const authService = {
       throw new Error(error.message);
     }
 
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      throw new Error(
+        'Account registration could not be completed. Try logging in or resetting your password.'
+      );
+    }
+
     if (!data.session) {
       return {
         email,
@@ -64,10 +70,28 @@ export const authService = {
     const { data, error } = await client.auth.signInWithPassword({ email, password });
 
     if (error) {
-      throw new Error(error.message);
+      const authError = new Error(error.message);
+      authError.code = error.code;
+      throw authError;
     }
 
     return fetchCurrentUserWithSession(data.session);
+  },
+  resendConfirmation: async ({ email }) => {
+    const client = requireSupabase();
+    const { error } = await client.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${env.siteUrl}/login`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return null;
   },
   adminLogin: async (payload) =>
     normalizeAuthPayload(await apiClient.post('/auth/admin/login', payload)),
@@ -117,6 +141,8 @@ export const authService = {
   createSession: fetchCurrentUserWithSession,
   me: async () => normalizeAuthPayload(await apiClient.get('/auth/me')),
   updateMe: async (payload) => normalizeAuthPayload(await apiClient.patch('/auth/me', payload)),
+  requestEmailChange: async ({ newEmail }) =>
+    normalizeAuthPayload(await apiClient.post('/auth/email-change', { newEmail })),
   changePassword: async (payload) =>
     normalizeAuthPayload(await apiClient.patch('/auth/password', payload)),
   forgotPassword: async ({ email }) => {

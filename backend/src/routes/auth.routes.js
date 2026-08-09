@@ -10,6 +10,7 @@ import {
   resetPasswordWithToken,
   refreshSession,
   updateMe,
+  requestEmailChange,
 } from '../controllers/auth.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import {
@@ -20,6 +21,8 @@ import {
   loginIpRateLimiter,
   passwordResetEmailRateLimiter,
   passwordResetIpRateLimiter,
+  emailChangeAccountRateLimiter,
+  emailChangeIpRateLimiter,
 } from '../middlewares/rate-limit.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import {
@@ -28,6 +31,7 @@ import {
   loginSchema,
   resetPasswordSchema,
   updateMeSchema,
+  requestEmailChangeSchema,
 } from '../validators/auth.validator.js';
 
 export const authRouter = Router();
@@ -59,4 +63,12 @@ authRouter.post('/refresh', authSessionRateLimiter, refreshSession);
 authRouter.post('/logout', logout);
 authRouter.get('/me', authenticate, me);
 authRouter.patch('/me', authenticate, validate(updateMeSchema), updateMe);
+authRouter.post(
+  '/email-change',
+  authenticate,
+  emailChangeIpRateLimiter,
+  emailChangeAccountRateLimiter,
+  validate(requestEmailChangeSchema),
+  requestEmailChange
+);
 authRouter.patch('/password', authenticate, validate(changePasswordSchema), changePassword);

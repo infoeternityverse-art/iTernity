@@ -1,5 +1,6 @@
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { config } from '../config/index.js';
+import { MongoRateLimitStore } from '../utils/mongo-rate-limit-store.js';
 
 const passwordResetRateLimitMessage = {
   success: false,
@@ -100,4 +101,28 @@ export const passwordResetEmailRateLimiter = rateLimit({
     return `password-reset-email:${ipKeyGenerator(req.ip)}`;
   },
   message: passwordResetRateLimitMessage,
+});
+
+const emailChangeRateLimitMessage = createMessage(
+  'Too many email change requests. Please try again later.'
+);
+
+export const emailChangeIpRateLimiter = rateLimit({
+  windowMs: config.emailChangeRateLimit.ipWindowMs,
+  max: config.emailChangeRateLimit.ipMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'email-change-ip:' }),
+  keyGenerator: (req) => ipKeyGenerator(req.ip),
+  message: emailChangeRateLimitMessage,
+});
+
+export const emailChangeAccountRateLimiter = rateLimit({
+  windowMs: config.emailChangeRateLimit.accountWindowMs,
+  max: config.emailChangeRateLimit.accountMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'email-change-account:' }),
+  keyGenerator: (req) => String(req.user._id),
+  message: emailChangeRateLimitMessage,
 });

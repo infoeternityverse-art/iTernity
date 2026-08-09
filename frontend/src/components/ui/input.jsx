@@ -1,6 +1,5 @@
 import { Eye, EyeOff, Search } from 'lucide-react';
 import { forwardRef, useState } from 'react';
-import { Button } from './button.jsx';
 import { cn, disabledClasses, fieldBase, fieldError, focusRing } from './ui-utils.js';
 
 const sizes = {
@@ -63,17 +62,19 @@ export const Input = forwardRef(function Input(
           {...props}
         />
         {isPassword && (
-          <Button
+          <button
             type="button"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
-            variant="icon"
-            size="sm"
-            className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full p-0"
+            className={cn(
+              'absolute inset-y-0 right-2 my-auto inline-flex h-8 w-8 items-center justify-center rounded-full border border-transparent p-0 text-[#8FA39B] transition-colors duration-200 hover:border-[rgba(45,232,196,0.15)] hover:bg-[#0E1310] hover:text-[#F5F7F6]',
+              focusRing,
+              disabledClasses
+            )}
             onClick={() => setShowPassword((value) => !value)}
             disabled={disabled || loading}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </Button>
+          </button>
         )}
       </div>
       {error && (

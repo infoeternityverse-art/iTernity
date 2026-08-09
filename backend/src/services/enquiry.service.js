@@ -65,9 +65,7 @@ class EnquiryService extends BaseService {
     const baseFilter = this.buildBaseFilter(options.filters);
     const sort = buildSort(options, this.allowedSortFields);
     const select = buildFieldSelection(options.fields, this.allowedSelectFields);
-    const ownershipFilter = {
-      $or: [{ customer: customer._id }, { contactEmail: customer.email }],
-    };
+    const ownershipFilter = { customer: customer._id };
     const filter =
       Object.keys(baseFilter).length > 0 ? { $and: [baseFilter, ownershipFilter] } : ownershipFilter;
 
@@ -136,10 +134,7 @@ class EnquiryService extends BaseService {
       return this.findById(id, options);
     }
 
-    let query = Enquiry.findOne({
-      _id: id,
-      $or: [{ customer: user._id }, { contactEmail: user.email }],
-    });
+    let query = Enquiry.findOne({ _id: id, customer: user._id });
     query = this.applyPopulate(query, options.populate);
 
     const enquiry = await query;

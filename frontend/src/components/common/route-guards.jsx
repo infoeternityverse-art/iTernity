@@ -94,6 +94,13 @@ export function GuestRoute({ children }) {
     return <RouteLoader />;
   }
 
+  if (
+    location.pathname === '/login' &&
+    new URLSearchParams(location.search).get('emailChange') === 'confirmed'
+  ) {
+    return children;
+  }
+
   if (isAuthenticated) {
     if (location.pathname === '/admin/login' && user?.role !== 'admin') {
       return children;

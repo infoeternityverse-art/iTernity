@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import { authService } from '@/services/auth-service.js';
+import { queryClient } from '@/config/query-client.js';
 
 let activeRestoreRequest = null;
 
 const applyAuthData = (data, set) => {
+  queryClient.clear();
   set({
     user: data.user,
     isAuthenticated: true,
@@ -26,6 +28,7 @@ export const useAuthStore = create((set, get) => ({
   pendingVerificationEmail: null,
 
   clearSession: () => {
+    queryClient.clear();
     set({
       user: null,
       isAuthenticated: false,
@@ -78,6 +81,18 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  resendConfirmation: async (payload) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      await authService.resendConfirmation(payload);
+      set({ isLoading: false, error: null });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+      throw error;
+    }
+  },
+
   adminLogin: async (payload) => {
     set({ isLoading: true, error: null });
 
@@ -123,9 +138,25 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const data = await authService.updateMe(payload);
-      set({ user: data.user, isLoading: false, error: null });
-      return data.user;
+      const currentEmail = String(get().user?.email || '').toLowerCase();
+      const requestedEmail = String(payload.email || '').toLowerCase().trim();
+      const emailChangePending = Boolean(requestedEmail && requestedEmail !== currentEmail);
+      const currentName = String(get().user?.name || '').trim();
+      const requestedName = String(payload.name || '').trim();
+      let updatedUser = get().user;
+
+      if (requestedName && requestedName !== currentName) {
+        const data = await authService.updateMe({ name: requestedName });
+        updatedUser = data.user;
+        set({ user: updatedUser, error: null });
+      }
+
+      if (emailChangePending) {
+        await authService.requestEmailChange({ newEmail: requestedEmail });
+      }
+
+      set({ isLoading: false, error: null });
+      return { user: updatedUser, emailChangePending };
     } catch (error) {
       set({ error: error.message, isLoading: false });
       throw error;

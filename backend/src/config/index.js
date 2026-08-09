@@ -38,6 +38,14 @@ export const config = {
     emailWindowMs: Number(loadEnv('PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS', 60 * 60 * 1000)),
     emailMax: Number(loadEnv('PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX', 3)),
   },
+  emailChangeRateLimit: {
+    ipWindowMs: Number(loadEnv('EMAIL_CHANGE_IP_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    ipMax: Number(loadEnv('EMAIL_CHANGE_IP_RATE_LIMIT_MAX', 10)),
+    accountWindowMs: Number(
+      loadEnv('EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_WINDOW_MS', 60 * 60 * 1000)
+    ),
+    accountMax: Number(loadEnv('EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_MAX', 3)),
+  },
   jwt: {
     accessSecret: requireEnv('JWT_ACCESS_SECRET'),
     refreshSecret: requireEnv('JWT_REFRESH_SECRET'),
