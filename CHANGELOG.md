@@ -17,6 +17,10 @@
   the prominent customer authentication path.
 - Added dual-confirmation branded email changes, a non-redirecting result page, `Retry-After`
   countdowns, and shared MongoDB-backed rate limits.
+- Isolated profile and password form errors/loading so email-change limits no longer leak into the
+  password panel.
+- Exposed standard rate-limit headers through CORS and added robust Axios header parsing so browser
+  cooldowns activate on the first `429` instead of allowing repeated blocked requests.
 - Hardened admin deletion with Supabase removal, active-workspace protection, credential revocation,
   MongoDB anonymization, and identity-preserving historical records.
 - Removed enquiry email fallback authorization, identity-scoped private query keys, and cleared

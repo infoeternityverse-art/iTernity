@@ -87,6 +87,8 @@
 
 - Enforce HTTPS at the load balancer or hosting layer.
 - Verify CORS allows only trusted origins.
+- Verify CORS exposes `Retry-After`, `RateLimit`, and `RateLimit-Policy` so the cross-origin frontend
+  can enforce and display server cooldowns.
 - Verify rate limiting is enabled.
 - Verify email-change limits remain effective after a backend restart and across multiple service replicas.
 - Verify password reset abuse protection is enabled.

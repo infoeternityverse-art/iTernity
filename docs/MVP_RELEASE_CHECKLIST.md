@@ -56,6 +56,10 @@
 - Request an email change and confirm separate links in the current and proposed inboxes.
 - Confirm each link shows a result page without automatic navigation.
 - Confirm email-change cooldown and `Retry-After` guidance appear after rate limiting.
+- Confirm the first email-change `429` disables repeat submissions locally and subsequent clicks do
+  not reach the API until the countdown expires.
+- Confirm an email-change `429` appears only in Update Profile and does not appear in or disable
+  Change Password.
 - Change password.
 - Confirm a newly registered identity cannot see enquiries, credentials, or workspaces from a previously deleted account that used the same email.
 

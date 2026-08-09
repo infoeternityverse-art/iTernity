@@ -23,6 +23,12 @@ const parseRetryAfterSeconds = (value) => {
   return Number.isNaN(retryAt) ? null : Math.max(0, Math.ceil((retryAt - Date.now()) / 1000));
 };
 
+const readResponseHeader = (headers, name) => {
+  if (!headers) return null;
+  if (typeof headers.get === 'function') return headers.get(name);
+  return headers[name.toLowerCase()] ?? headers[name] ?? null;
+};
+
 const NON_REFRESHABLE_AUTH_PATHS = new Set([
   '/auth/login',
   '/auth/admin/login',
@@ -63,7 +69,9 @@ apiClient.interceptors.response.use(
       status: error.response?.status || 500,
       message: error.response?.data?.message || error.message || 'Something went wrong.',
       errors: error.response?.data?.errors || [],
-      retryAfterSeconds: parseRetryAfterSeconds(error.response?.headers?.['retry-after']),
+      retryAfterSeconds: parseRetryAfterSeconds(
+        readResponseHeader(error.response?.headers, 'Retry-After')
+      ),
       originalError: error,
     };
 

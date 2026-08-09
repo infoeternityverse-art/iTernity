@@ -8,9 +8,11 @@ export function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const updateProfile = useAuthStore((state) => state.updateProfile);
   const changePassword = useAuthStore((state) => state.changePassword);
-  const loading = useAuthStore((state) => state.isLoading);
-  const error = useAuthStore((state) => state.error);
   const [success, setSuccess] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
   const [pendingEmailChange, setPendingEmailChange] = useState(null);
   const [emailChangeRetryAt, setEmailChangeRetryAt] = useState(0);
   const [clock, setClock] = useState(Date.now());
@@ -35,6 +37,9 @@ export function ProfilePage() {
 
   const handleProfileUpdate = async (payload) => {
     let result;
+    setProfileError('');
+    setSuccess('');
+    setProfileLoading(true);
 
     try {
       result = await updateProfile(payload);
@@ -43,8 +48,12 @@ export function ProfilePage() {
         const retryAt = Date.now() + requestError.retryAfterSeconds * 1000;
         setClock(Date.now());
         setEmailChangeRetryAt(retryAt);
+      } else {
+        setProfileError(requestError.message);
       }
       return;
+    } finally {
+      setProfileLoading(false);
     }
 
     if (result.emailChangePending) {
@@ -60,8 +69,20 @@ export function ProfilePage() {
   };
 
   const handlePasswordChange = async (payload) => {
-    await changePassword(payload);
-    setSuccess('Password updated successfully.');
+    setPasswordError('');
+    setSuccess('');
+    setPasswordLoading(true);
+
+    try {
+      await changePassword(payload);
+      setSuccess('Password updated successfully.');
+      return true;
+    } catch (requestError) {
+      setPasswordError(requestError.message);
+      return false;
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   return (
@@ -83,7 +104,8 @@ export function ProfilePage() {
         >
           <ol className="list-decimal space-y-2 pl-4">
             <li>
-              Confirm the security message sent to <strong>{pendingEmailChange.currentEmail}</strong>.
+              Confirm the security message sent to{' '}
+              <strong>{pendingEmailChange.currentEmail}</strong>.
             </li>
             <li>
               Confirm the ownership message sent to <strong>{pendingEmailChange.newEmail}</strong>.
@@ -116,8 +138,8 @@ export function ProfilePage() {
             <ProfileForm
               user={user}
               onSubmit={handleProfileUpdate}
-              loading={loading}
-              error={error}
+              loading={profileLoading}
+              error={profileError}
               emailChangeCooldownSeconds={emailChangeCooldownSeconds}
             />
           </CardContent>
@@ -125,7 +147,11 @@ export function ProfilePage() {
         <Card>
           <CardContent className="space-y-4 p-6">
             <SectionHeader title="Change Password" />
-            <ChangePasswordForm onSubmit={handlePasswordChange} loading={loading} error={error} />
+            <ChangePasswordForm
+              onSubmit={handlePasswordChange}
+              loading={passwordLoading}
+              error={passwordError}
+            />
           </CardContent>
         </Card>
       </div>

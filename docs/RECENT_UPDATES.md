@@ -94,6 +94,10 @@ Last updated: 2026-08-10
 
 ## Secure Email Changes
 
+- Isolated profile and password form error/loading state so an email-change limit appears only beside
+  the email workflow and cannot disable or contaminate the password form.
+- Exposed standard rate-limit response headers through CORS and normalized Axios header access so a
+  `429` immediately starts the visible countdown and disables repeat email-change submissions.
 - Removed direct email mutation from the ordinary profile endpoint.
 - Added `POST /auth/email-change` with authenticated IP and account limits.
 - Generate separate Supabase confirmation links for the current and proposed addresses.

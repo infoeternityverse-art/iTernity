@@ -41,7 +41,9 @@ export function ProfileForm({ user, onSubmit, loading, error, emailChangeCooldow
     if (user) reset({ name: user.name || '', email: user.email || '' });
   }, [reset, user]);
 
-  const requestedEmail = String(watch('email') || '').toLowerCase().trim();
+  const requestedEmail = String(watch('email') || '')
+    .toLowerCase()
+    .trim();
   const currentEmail = String(user?.email || '').toLowerCase();
   const isEmailChange = Boolean(requestedEmail && requestedEmail !== currentEmail);
   const isEmailChangeCoolingDown = isEmailChange && emailChangeCooldownSeconds > 0;
@@ -94,18 +96,19 @@ export function ChangePasswordForm({ onSubmit, loading, error }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm({
     resolver: zodResolver(passwordSchema),
     defaultValues: { currentPassword: '', newPassword: '' },
   });
 
-  useEffect(() => {
-    if (isSubmitSuccessful) reset();
-  }, [isSubmitSuccessful, reset]);
+  const handlePasswordSubmit = async (values) => {
+    const succeeded = await onSubmit(values);
+    if (succeeded) reset();
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handlePasswordSubmit)} className="space-y-4">
       {error && <Alert variant="danger">{error}</Alert>}
       <Input
         id="currentPassword"
