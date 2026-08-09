@@ -16101,3 +16101,233 @@ footer a:hover {
     transition: none;
   }
 }
+
+.footer-developer-credit {
+  display: inline-flex;
+  color: rgba(143, 163, 155, 0.9);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.footer-developer-credit:hover,
+.footer-developer-credit:focus-visible {
+  color: #2de8c4;
+}
+
+.footer-copyright-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  text-align: right;
+}
+
+.footer-copyright-block p {
+  margin: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .mobile-nav-overlay {
+    min-height: 100svh;
+  }
+
+  .mobile-nav-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .mobile-nav-link {
+    padding-top: 1.15rem !important;
+    padding-bottom: 1.15rem !important;
+  }
+
+  .public-footer .footer-social-heading {
+    display: none !important;
+  }
+
+  .public-footer .footer-ocean-nav-panel {
+    display: block !important;
+    width: 100% !important;
+    margin: 2rem 0 -1rem !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .public-footer .footer-ocean-nav-panel .footer-ocean-social {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    isolation: auto !important;
+    overflow-x: auto !important;
+    transform: translateY(3.25rem) !important;
+    scrollbar-width: none;
+  }
+
+  .public-footer .footer-ocean-nav-panel .footer-ocean-social::before,
+  .public-footer .footer-ocean-nav-panel .footer-ocean-social::after,
+  .public-footer .footer-ocean-social-link::before,
+  .public-footer .footer-ocean-social-link::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .public-footer .footer-ocean-nav-panel .footer-ocean-social::-webkit-scrollbar {
+    display: none;
+  }
+
+  .public-footer .footer-ocean-social-item,
+  .public-footer .footer-ocean-social:hover .footer-ocean-social-item,
+  .public-footer .footer-ocean-social:focus-within .footer-ocean-social-item {
+    width: 2.625rem !important;
+    height: 2.625rem !important;
+    flex: 0 0 2.625rem !important;
+  }
+
+  .public-footer .footer-ocean-social-link,
+  .public-footer .footer-ocean-social-link:hover,
+  .public-footer .footer-ocean-social-link:focus-visible,
+  .public-footer .footer-ocean-social-link[data-social='github'],
+  .public-footer .footer-ocean-social-link[data-social='x'],
+  .public-footer .footer-ocean-social-link[data-social='linkedin'],
+  .public-footer .footer-ocean-social-link[data-social='youtube'],
+  .public-footer .footer-ocean-social-link[data-social='instagram'],
+  .public-footer .footer-ocean-social-link[data-social='reddit'] {
+    display: grid !important;
+    place-items: center !important;
+    width: 2.625rem !important;
+    height: 2.625rem !important;
+    padding: 0.7rem !important;
+    border: 1px solid rgba(143, 163, 155, 0.55) !important;
+    border-radius: 0.45rem !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    color: var(--social-brand-color, #2de8c4) !important;
+  }
+
+  .public-footer .footer-ocean-social-link[data-social='github'],
+  .public-footer .footer-ocean-social-link[data-social='x'] {
+    --social-brand-color: #f5f7f6;
+  }
+
+  .public-footer .footer-ocean-social-icon,
+  .public-footer .footer-ocean-social-link:hover .footer-ocean-social-icon,
+  .public-footer .footer-ocean-social-link:focus-visible .footer-ocean-social-icon {
+    display: block !important;
+    width: 1.05rem !important;
+    height: 1.05rem !important;
+    color: currentColor !important;
+  }
+
+  .public-footer .footer-social-name {
+    display: none !important;
+  }
+
+  .public-footer .footer-legal-row {
+    margin-top: 0 !important;
+    padding-top: 0.5rem !important;
+  }
+
+  .public-footer .footer-copyright-block {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+}
+
+.blog-article {
+  margin-top: clamp(6.25rem, 7vw, 7.5rem);
+}
+
+.blog-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(45, 232, 196, 0.32);
+  border-radius: 999px;
+  color: #8cfff0;
+  background: rgba(3, 21, 17, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.2);
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 220ms ease,
+    color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.blog-back-link svg {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 220ms ease;
+}
+
+.blog-back-link:hover,
+.blog-back-link:focus-visible {
+  border-color: rgba(45, 232, 196, 0.72);
+  color: #ffffff;
+  background: rgba(14, 72, 61, 0.78);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 34px rgba(0, 0, 0, 0.24),
+    0 0 22px rgba(45, 232, 196, 0.12);
+  transform: translateY(-1px);
+}
+
+.blog-back-link:hover svg,
+.blog-back-link:focus-visible svg {
+  transform: translateX(-0.2rem);
+}
+
+@media (max-width: 640px) {
+  .blog-article {
+    margin-top: 5.5rem;
+  }
+
+  .blog-back-link {
+    display: inline-flex;
+    min-height: 2.5rem;
+    margin-bottom: 1rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-back-link,
+  .blog-back-link svg {
+    transition: none;
+  }
+}

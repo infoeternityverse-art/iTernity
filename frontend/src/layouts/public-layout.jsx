@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Github, Instagram, Linkedin, Menu, X, Youtube } from 'lucide-react';
 import * as VantaThree from 'three-r134';
 import BirdsEffectModule from 'vanta/dist/vanta.birds.min';
@@ -122,6 +122,7 @@ export function PublicLayout() {
     { label: 'Terms of Access', href: '/terms' },
     { label: 'Security', href: '/security' },
     { label: 'Acceptable Use', href: '/acceptable-use' },
+    { label: 'FAQ', href: '/faq' },
   ];
   const footerOceanLinks = [
     { label: 'Home', href: '/' },
@@ -221,7 +222,7 @@ export function PublicLayout() {
               </Button>
             </div>
 
-            <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 lg:hidden">
+            <div className="relative z-50 col-start-2 row-start-1 flex items-center justify-end gap-2 lg:hidden">
               <Button
                 variant="icon"
                 aria-label={isMobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -237,16 +238,28 @@ export function PublicLayout() {
             </div>
           </div>
 
-          {isMobileNavOpen && (
+          <AnimatePresence>
+            {isMobileNavOpen && (
             <motion.div
-              initial={{ opacity: 0, x: -28, y: -22, scale: 0.95, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, x: 36, y: -18, scale: 0.97, filter: 'blur(6px)' }}
               animate={{ opacity: 1, x: 0, y: 0, scale: 1, filter: 'blur(0px)' }}
-              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-              className="origin-top-left pb-5 lg:hidden"
+              exit={{
+                opacity: 0,
+                x: 36,
+                y: -18,
+                scale: 0.97,
+                filter: 'blur(6px)',
+                transition: { duration: 0.32, ease: [0.4, 0, 0.2, 1] },
+              }}
+              transition={{ duration: 0.46, ease: [0.16, 1, 0.3, 1] }}
+              className="mobile-nav-overlay fixed inset-0 z-40 flex origin-top-right items-start justify-center px-4 pb-6 pt-24 lg:hidden"
             >
-              <div className="relative max-w-[21rem] overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_16%_0%,rgba(45,232,196,0.24),transparent_34%),radial-gradient(circle_at_100%_18%,rgba(24,200,162,0.13),transparent_38%),linear-gradient(145deg,rgba(7,42,34,0.96),rgba(3,21,17,0.95)_58%,rgba(7,50,41,0.9))] shadow-[0_28px_84px_rgba(0,0,0,0.36),0_0_44px_rgba(45,232,196,0.08),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
+              <div className="mobile-nav-panel relative w-full max-w-[21rem] overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_16%_0%,rgba(45,232,196,0.24),transparent_34%),radial-gradient(circle_at_100%_18%,rgba(24,200,162,0.13),transparent_38%),linear-gradient(145deg,rgba(7,42,34,0.96),rgba(3,21,17,0.95)_58%,rgba(7,50,41,0.9))] shadow-[0_28px_84px_rgba(0,0,0,0.36),0_0_44px_rgba(45,232,196,0.08),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_118%,rgba(45,232,196,0.16),transparent_48%)]" />
-                <nav aria-label="Mobile public navigation" className="relative z-10 space-y-2 px-4 pb-5 pt-6">
+                <nav
+                  aria-label="Mobile public navigation"
+                  className="mobile-nav-list relative z-10 px-5 pb-6 pt-7"
+                >
                   {publicNavigation.map((item, index) => (
                     <motion.div
                       key={item.href}
@@ -268,7 +281,7 @@ export function PublicLayout() {
                       <Link
                         to={item.href}
                         onClick={closeMobileNav}
-                        className="block rounded-[18px] px-4 py-[1.125rem] text-center text-sm font-semibold leading-none text-[#F5F7F6] drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] transition duration-300 ease-premium hover:-translate-y-0.5 hover:text-[#2DE8C4]"
+                        className="mobile-nav-link block rounded-[18px] px-4 text-center text-sm font-semibold leading-none text-[#F5F7F6] drop-shadow-[0_1px_8px_rgba(0,0,0,0.55)] transition duration-300 ease-premium hover:-translate-y-0.5 hover:text-[#2DE8C4]"
                       >
                         {item.label}
                       </Link>
@@ -287,7 +300,8 @@ export function PublicLayout() {
                 </div>
               </div>
             </motion.div>
-          )}
+            )}
+          </AnimatePresence>
         </div>
       </header>
 
@@ -386,9 +400,19 @@ export function PublicLayout() {
                 </Link>
               ))}
             </nav>
-            <p>
-              © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
-            </p>
+            <div className="footer-copyright-block">
+              <p>
+                © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+              </p>
+              <a
+                className="footer-developer-credit"
+                href="https://vuntech.online"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Developed by Vuntech
+              </a>
+            </div>
           </div>
         </div>
       </footer>
