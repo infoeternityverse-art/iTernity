@@ -211,7 +211,7 @@ function TerminalOutput({ reduceMotion }) {
   const activeLine = reduceMotion ? null : terminalLines[lineIndex];
 
   return (
-    <div className="mt-6 min-h-[360px] space-y-1 overflow-hidden font-mono text-xs leading-5 sm:text-[0.8rem] sm:leading-5">
+    <div className="flex h-full min-h-0 flex-col space-y-1 overflow-hidden font-mono text-xs leading-5 sm:text-[0.8rem] sm:leading-5">
       {visibleLines.map((line, index) =>
         line.tone === 'spacer' ? (
           <div key={`terminal-spacer-${index}`} className="h-1" aria-hidden="true" />
@@ -236,6 +236,44 @@ function TerminalOutput({ reduceMotion }) {
           </div>
         )
       )}
+    </div>
+  );
+}
+
+function ReadyStackTool({ tool }) {
+  return (
+    <article className="ready-stack-tool">
+      <span className="ready-stack-tool-signal" aria-hidden="true" />
+      <div>
+        <p className="ready-stack-tool-name">{tool.name}</p>
+        <p className="ready-stack-tool-version">{tool.version}</p>
+      </div>
+      <p className="ready-stack-tool-tag">{tool.tag}</p>
+    </article>
+  );
+}
+
+function ReadyStackMarquee({ reduceMotion }) {
+  return (
+    <div
+      className={`ready-stack-marquee ${reduceMotion ? 'is-static' : ''}`}
+      aria-label="Pre-installed GPU workspace applications"
+      tabIndex={0}
+    >
+      <div className="ready-stack-track">
+        <div className="ready-stack-group">
+          {readyStackTools.map((tool) => (
+            <ReadyStackTool key={tool.name} tool={tool} />
+          ))}
+        </div>
+        {!reduceMotion && (
+          <div className="ready-stack-group" aria-hidden="true">
+            {readyStackTools.map((tool) => (
+              <ReadyStackTool key={`duplicate-${tool.name}`} tool={tool} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -310,7 +348,7 @@ export function HomePage() {
       <GpuComputeStory />
 
       <section
-        className="relative py-10 sm:py-14 lg:py-16"
+        className="relative pt-10 pb-4 sm:pt-14 sm:pb-6 lg:pt-16 lg:pb-8"
         aria-labelledby="ready-stack-title"
       >
         <div className="pointer-events-none absolute inset-x-1/2 top-10 h-72 w-[90vw] -translate-x-1/2 rounded-full bg-[#2DE8C4]/[0.035] blur-3xl" />
@@ -331,10 +369,10 @@ export function HomePage() {
           </p>
         </motion.header>
 
-        <div className="relative z-10 mt-10 grid gap-6 xl:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] xl:items-stretch">
+        <div className="relative z-10 mt-10 space-y-6">
           <motion.div {...createFadeInMotion(reduceMotion, 'left', 0.08)}>
-            <div className="cursor-spotlight-card group h-full rounded-[30px] transition duration-500">
-              <div className="relative z-10 flex h-full min-h-[380px] flex-col rounded-[26px] bg-[radial-gradient(circle_at_20%_0%,rgba(45,232,196,0.09),transparent_34%),linear-gradient(180deg,rgba(8,20,17,0.68),rgba(1,6,5,0.92))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.32)] sm:p-6">
+            <div className="cursor-spotlight-card group w-full rounded-[30px] transition duration-500">
+              <div className="relative z-10 flex h-[460px] w-full flex-col rounded-[26px] bg-[radial-gradient(circle_at_18%_0%,rgba(45,232,196,0.1),transparent_32%),radial-gradient(circle_at_88%_100%,rgba(116,247,255,0.045),transparent_34%),linear-gradient(180deg,rgba(8,20,17,0.68),rgba(1,6,5,0.92))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.32)] sm:h-[500px] sm:p-7 lg:p-8">
                 <div className="flex items-center justify-between gap-4 border-b border-[#2DE8C4]/10 pb-4">
                   <div className="flex items-center gap-2">
                     <span className="h-3 w-3 rounded-full bg-[#FF6B6B]" />
@@ -347,7 +385,9 @@ export function HomePage() {
                   </div>
                 </div>
 
-                <TerminalOutput reduceMotion={reduceMotion} />
+                <div className="mt-6 flex min-h-0 flex-1">
+                  <TerminalOutput reduceMotion={reduceMotion} />
+                </div>
 
                 <div className="mt-auto flex flex-wrap items-center gap-x-7 gap-y-3 pt-8 text-xs text-[#8FA39B]">
                   {[
@@ -355,10 +395,7 @@ export function HomePage() {
                     ['Access', 'Dashboard handoff'],
                     ['Stack', 'Pre-configured'],
                   ].map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="flex items-center gap-2"
-                    >
+                    <div key={label} className="flex items-center gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-[#2DE8C4] shadow-[0_0_14px_rgba(45,232,196,0.8)]" />
                       <span className="text-[0.62rem] font-bold uppercase tracking-[0.28em] text-[#2DE8C4]">
                         {label}
@@ -372,55 +409,38 @@ export function HomePage() {
           </motion.div>
 
           <motion.div {...createFadeInMotion(reduceMotion, 'right', 0.14)}>
-            <div className="cursor-spotlight-card group h-full rounded-[30px] bg-[radial-gradient(circle_at_10%_0%,rgba(45,232,196,0.08),transparent_38%)] px-5 py-6 transition duration-500 sm:px-7 sm:py-8 lg:px-8">
-              <div className="relative z-10 flex h-full flex-col">
-                <div className="flex flex-wrap items-start justify-between gap-5">
-                  <div>
-                    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.36em] text-[#2DE8C4]">
-                      <PackageCheck className="h-4 w-4" />
-                      Pre-installed
-                    </p>
-                    <h3 className="mt-4 max-w-xl text-2xl font-semibold tracking-tight text-[#F5F7F6] sm:text-3xl">
-                      A launch-ready software shelf for serious GPU workloads.
-                    </h3>
-                  </div>
-                  <span className="rounded-full border border-[#2DE8C4]/18 bg-[#2DE8C4]/[0.06] px-4 py-2 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-[#A8FFF0]">
-                    Updated weekly
-                  </span>
-                </div>
-
-                <div className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-3">
-                  {readyStackTools.map((tool) => (
-                    <div
-                      key={tool.name}
-                      className="relative min-h-[118px] overflow-hidden rounded-2xl border border-white/[0.11] bg-[linear-gradient(145deg,rgba(255,255,255,0.105),rgba(45,232,196,0.035)_42%,rgba(2,10,8,0.28)_100%)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_18px_42px_rgba(0,0,0,0.2)] backdrop-blur-xl transition duration-300 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white/55 before:to-transparent after:pointer-events-none after:absolute after:-right-10 after:-top-10 after:h-24 after:w-24 after:rounded-full after:bg-[#2DE8C4]/12 after:blur-2xl group-hover:border-[#2DE8C4]/28 group-hover:bg-[linear-gradient(145deg,rgba(255,255,255,0.13),rgba(45,232,196,0.06)_46%,rgba(2,10,8,0.34)_100%)] group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_24px_58px_rgba(45,232,196,0.08)] sm:p-4"
-                    >
-                      <p className="relative z-10 text-sm font-semibold text-[#F5F7F6]">
-                        {tool.name}
-                      </p>
-                      <p className="relative z-10 mt-2 text-xs text-[#A8B8B1]">{tool.version}</p>
-                      <p className="relative z-10 mt-3 text-[0.6rem] font-bold uppercase tracking-[0.26em] text-[#2DE8C4]">
-                        {tool.tag}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-auto flex flex-col gap-4 border-t border-[#2DE8C4]/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="max-w-md text-xs leading-6 text-[#7E928B]">
-                    Final packages depend on selected GPU, operating system, storage, and approved
-                    workload requirements.
+            <div className="relative z-10 my-2 px-0 py-6 sm:my-3 sm:py-8 lg:my-4 lg:py-10">
+              <div className="flex flex-wrap items-start justify-between gap-5">
+                <div>
+                  <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.36em] text-[#2DE8C4]">
+                    <PackageCheck className="h-4 w-4" />
+                    Pre-installed
                   </p>
-                  <Button
-                    asChild
-                    className="border-0 bg-[linear-gradient(135deg,#2DE8C4_0%,#18C8A2_100%)] font-bold text-[#03100D] shadow-[0_14px_38px_rgba(45,232,196,0.2)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(45,232,196,0.32)]"
-                  >
-                    <Link to="/gpus">
-                      Explore GPU packages
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <h3 className="mt-4 max-w-xl text-2xl font-semibold tracking-tight text-[#F5F7F6] sm:text-3xl">
+                    A launch-ready software shelf for serious GPU workloads.
+                  </h3>
                 </div>
+                <span className="rounded-full border border-[#2DE8C4]/18 bg-[#2DE8C4]/[0.06] px-4 py-2 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-[#A8FFF0]">
+                  Updated weekly
+                </span>
+              </div>
+
+              <ReadyStackMarquee reduceMotion={reduceMotion} />
+
+              <div className="mt-5 flex flex-col gap-4 border-t border-[#2DE8C4]/10 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="max-w-md text-xs leading-6 text-[#7E928B]">
+                  Final packages depend on selected GPU, operating system, storage, and approved
+                  workload requirements.
+                </p>
+                <Button
+                  asChild
+                  className="border-0 bg-[linear-gradient(135deg,#2DE8C4_0%,#18C8A2_100%)] font-bold text-[#03100D] shadow-[0_14px_38px_rgba(45,232,196,0.2)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(45,232,196,0.32)]"
+                >
+                  <Link to="/gpus">
+                    Explore GPU packages
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -428,14 +448,14 @@ export function HomePage() {
       </section>
 
       <section
-        className="relative py-4 sm:py-6 lg:py-8"
+        className="relative pt-0 pb-4 sm:pb-6 lg:pb-8"
         aria-labelledby="features-title how-it-works-title"
       >
           <section
             id="features"
             aria-labelledby="features-title"
             aria-describedby="features-description"
-            className="relative z-10 py-8 sm:py-10 lg:py-12"
+            className="relative z-10 py-4 sm:py-6 lg:py-8"
             itemScope
             itemType="https://schema.org/ItemList"
           >

@@ -19,6 +19,9 @@ Last updated: 2026-08-10
 - Added eager/high-priority loading only for the homepage hero image; secondary hero images remain
   lazy.
 - Paused or avoided continuous visual work when sections are inactive and retained static fallbacks.
+- Restructured the Zero Setup section with a full-width secure terminal followed by a separate
+  pre-installed software shelf. Applications now move through a seamless transform-only horizontal
+  rail that pauses for interaction and becomes a static scrollable row for reduced-motion users.
 
 ### About
 
