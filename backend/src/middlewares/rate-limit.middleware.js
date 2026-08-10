@@ -23,10 +23,11 @@ const createLoginLimiter = ({ max, scope, byAccount = false }) =>
     max,
     standardHeaders: true,
     legacyHeaders: false,
+    store: new MongoRateLimitStore({ prefix: `${scope}:` }),
     skipSuccessfulRequests: true,
     keyGenerator: byAccount
-      ? (req) => loginKey(scope, req)
-      : (req) => `${scope}:${ipKeyGenerator(req.ip)}`,
+      ? (req) => loginKey('account', req)
+      : (req) => ipKeyGenerator(req.ip),
     message: createMessage('Too many login attempts. Please wait before trying again.'),
   });
 
@@ -63,7 +64,8 @@ const createAiLimiter = (max, scope) =>
     max,
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator: (req) => `${scope}:${ipKeyGenerator(req.ip)}`,
+    store: new MongoRateLimitStore({ prefix: `${scope}:` }),
+    keyGenerator: (req) => ipKeyGenerator(req.ip),
     message: createMessage('AI request limit reached. Please try again later.'),
   });
 
@@ -77,12 +79,23 @@ export const siteAssistantRateLimiter = createAiLimiter(
   'ai-site-assistant'
 );
 
+export const contactEnquiryRateLimiter = rateLimit({
+  windowMs: config.contactRateLimit.windowMs,
+  max: config.contactRateLimit.max,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'contact-enquiry-ip:' }),
+  keyGenerator: (req) => ipKeyGenerator(req.ip),
+  message: createMessage('Too many contact requests. Please wait before trying again.'),
+});
+
 export const passwordResetIpRateLimiter = rateLimit({
   windowMs: config.passwordResetRateLimit.ipWindowMs,
   max: config.passwordResetRateLimit.ipMax,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => `password-reset-ip:${ipKeyGenerator(req.ip)}`,
+  store: new MongoRateLimitStore({ prefix: 'password-reset-ip:' }),
+  keyGenerator: (req) => ipKeyGenerator(req.ip),
   message: passwordResetRateLimitMessage,
 });
 
@@ -91,14 +104,15 @@ export const passwordResetEmailRateLimiter = rateLimit({
   max: config.passwordResetRateLimit.emailMax,
   standardHeaders: true,
   legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'password-reset-email:' }),
   keyGenerator: (req) => {
     const email = req.validated?.body?.email;
 
     if (email) {
-      return `password-reset-email:${String(email).toLowerCase().trim()}`;
+      return String(email).toLowerCase().trim();
     }
 
-    return `password-reset-email:${ipKeyGenerator(req.ip)}`;
+    return ipKeyGenerator(req.ip);
   },
   message: passwordResetRateLimitMessage,
 });
@@ -125,4 +139,28 @@ export const emailChangeAccountRateLimiter = rateLimit({
   store: new MongoRateLimitStore({ prefix: 'email-change-account:' }),
   keyGenerator: (req) => String(req.user._id),
   message: emailChangeRateLimitMessage,
+});
+
+const passwordChangeRateLimitMessage = createMessage(
+  'Too many password change attempts. Please wait before trying again.'
+);
+
+export const passwordChangeIpRateLimiter = rateLimit({
+  windowMs: config.passwordChangeRateLimit.windowMs,
+  max: config.passwordChangeRateLimit.ipMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'password-change-ip:' }),
+  keyGenerator: (req) => ipKeyGenerator(req.ip),
+  message: passwordChangeRateLimitMessage,
+});
+
+export const passwordChangeAccountRateLimiter = rateLimit({
+  windowMs: config.passwordChangeRateLimit.windowMs,
+  max: config.passwordChangeRateLimit.accountMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new MongoRateLimitStore({ prefix: 'password-change-account:' }),
+  keyGenerator: (req) => String(req.user._id),
+  message: passwordChangeRateLimitMessage,
 });

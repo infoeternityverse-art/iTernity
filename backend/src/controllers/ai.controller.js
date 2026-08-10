@@ -129,7 +129,7 @@ const generateFallbackEnquiryAnalysis = ({ projectDescription, expectedUsage, du
       'What model size, batch size, or render workload do you expect?',
       'How many hours or days of access are needed?',
     ],
-    adminNotesDraft: `Workload type: ${decision.workloadType}. Estimated VRAM need: ${decision.requiredVramGb}GB. Follow up to confirm runtime, framework, and availability before approval.`,
+    adminNotesDraft: `Workload type: ${decision.workloadType}. Estimated VRAM need: ${decision.requiredVramGb}GB. Requested duration: ${duration || 'not specified'}. Follow up to confirm runtime, framework, and availability before approval.`,
     customerReplyDraft:
       'Thanks for sharing your workload. We are reviewing the selected GPU package for fit and availability. Could you confirm your framework/application, expected runtime, and memory requirements?',
     provider: 'local-fallback',

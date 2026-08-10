@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unknown-property */
 import { useMemo, useRef } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -6,7 +7,6 @@ const TEAL = '#28F5D0';
 const CYAN = '#74F7FF';
 const VIOLET = '#7B61FF';
 const WHITE = '#F5F7F6';
-const SPACE = '#020504';
 const FOG = '#020806';
 const MAX_TILT_X = THREE.MathUtils.degToRad(7);
 const MAX_TILT_Y = THREE.MathUtils.degToRad(10);
@@ -63,7 +63,7 @@ function seededRandom(seed) {
   return x - Math.floor(x);
 }
 
-function PanoramaBackdrop({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
+function PanoramaBackdrop({ panoramaSrc, pointerRef, scrollRef }) {
   const meshRef = useRef(null);
   const texture = useLoader(THREE.TextureLoader, panoramaSrc);
 
@@ -438,6 +438,7 @@ function BladeSparkles({ count }) {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 function WireframeBlade({ isMobile, pointerRef, scrollRef }) {
   const groupRef = useRef(null);
   const idleRotationRef = useRef(-0.18);
@@ -471,6 +472,7 @@ function WireframeBlade({ isMobile, pointerRef, scrollRef }) {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 function PlanetarySystem({ isMobile, pointerRef, scrollRef }) {
   const groupRef = useRef(null);
   const moonOrbitRef = useRef(null);
@@ -532,6 +534,7 @@ function PlanetarySystem({ isMobile, pointerRef, scrollRef }) {
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 function OrbitalRings({ pointerRef, scrollRef }) {
   const groupRef = useRef(null);
   const rings = useMemo(
@@ -704,7 +707,7 @@ function HeroScene({ isMobile, panoramaSrc, pointerRef, scrollRef }) {
   return (
     <>
       <fogExp2 attach="fog" args={[FOG, 0.032]} />
-      <PanoramaBackdrop isMobile={isMobile} panoramaSrc={panoramaSrc} pointerRef={pointerRef} scrollRef={scrollRef} />
+      <PanoramaBackdrop panoramaSrc={panoramaSrc} pointerRef={pointerRef} scrollRef={scrollRef} />
       <CameraDrift pointerRef={pointerRef} scrollRef={scrollRef} isMobile={isMobile} />
       <StarTunnel isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />
       <ShimmerField isMobile={isMobile} pointerRef={pointerRef} scrollRef={scrollRef} />

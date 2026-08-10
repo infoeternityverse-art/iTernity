@@ -1,8 +1,12 @@
 import { buildServiceResponse } from '../../utils/response-builder.js';
 import { getQueryOptions } from '../../utils/request-options.js';
 import { BaseService } from '../../services/base.service.js';
-import { decryptCredentialSecret } from '../../utils/credential-secret.js';
-import { ForbiddenError, NotFoundError } from '../../utils/errors.js';
+import {
+  decryptCredentialSecret,
+  encryptCredentialSecret,
+} from '../../utils/credential-secret.js';
+import { ForbiddenError, NotFoundError, ValidationError } from '../../utils/errors.js';
+import { GpuPackage, User, USER_ROLES } from '../../models/index.js';
 import { Workspace } from '../models/index.js';
 
 class WorkspaceService extends BaseService {
@@ -39,15 +43,41 @@ class WorkspaceService extends BaseService {
   }
 
   async createWorkspace(payload, options = {}) {
+    await this.validateAssociations(payload);
     const response = await this.create(payload, options);
     await this.emitWorkspaceEvent('workspace.created', response.data);
     return response;
   }
 
   async updateWorkspace(id, payload, options = {}) {
-    const response = await this.update(id, payload, options);
+    const current = await this.findById(id, { unwrap: true });
+    await this.validateAssociations({
+      customer: payload.customer || current.customer,
+      package: payload.package || current.package,
+    });
+    const response = await this.update(
+      id,
+      {
+        ...payload,
+        ...(payload.sshPassword
+          ? { sshPassword: encryptCredentialSecret(payload.sshPassword) }
+          : {}),
+      },
+      options
+    );
     await this.emitWorkspaceEvent('workspace.updated', response.data);
     return response;
+  }
+
+  async validateAssociations({ customer, package: gpuPackage }) {
+    const [customerExists, packageExists] = await Promise.all([
+      User.exists({ _id: customer, role: USER_ROLES.CUSTOMER, isActive: true }),
+      GpuPackage.exists({ _id: gpuPackage }),
+    ]);
+
+    if (!customerExists || !packageExists) {
+      throw new ValidationError('Workspace customer or GPU package is invalid.');
+    }
   }
 
   async deleteWorkspace(id, options = {}) {

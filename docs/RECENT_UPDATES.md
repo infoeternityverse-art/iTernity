@@ -91,6 +91,17 @@ Last updated: 2026-08-10
   endpoint-specific AI limits.
 - Added trusted-origin enforcement for state-changing authenticated requests alongside strict CORS,
   Helmet, validation, body limits, and Mongo sanitization.
+- Corrected authenticated password changes so Supabase customers verify and update their password
+  through Supabase instead of comparing against the Mongo random fallback hash.
+- Added per-user session generations to access and refresh JWTs. Password changes and resets now
+  revoke old backend sessions while replacing the successful browser's cookies.
+- Reject Supabase access tokens issued before a password-security event so a stale external token
+  cannot recreate a backend session.
+- Routed forgot-password requests through the enumeration-resistant backend endpoint, preserving
+  branded SMTP delivery and shared application rate limits.
+- Prevent generic admin email edits for Supabase-linked accounts so the external identity and Mongo
+  profile cannot become desynchronized.
+- Added a partial unique index for immutable Supabase user IDs.
 
 ## Secure Email Changes
 
@@ -130,6 +141,29 @@ Last updated: 2026-08-10
 - Clear TanStack Query caches on login, logout, session replacement, and identity synchronization.
 - Prevent a newly created account from inheriting private records belonging to a deleted account that
   previously used the same email.
+- Validate credential customer/package references against the selected enquiry and validate
+  workspace customer/package references before provisioning records are saved.
+
+## Security and Operations Audit
+
+- Moved login, admin login, password reset, password change, email change, public AI, and public
+  contact limits to shared MongoDB counters where endpoint-specific enforcement is required across
+  replicas.
+- Added password-change IP/account limits with a default 15-minute window and standard
+  `Retry-After` headers.
+- Corrected credential and workspace update paths to encrypt secrets before `findByIdAndUpdate`,
+  which does not execute document `save` middleware.
+- Added an idempotent `npm run security:migrate-secrets` migration; the audit run found zero existing
+  plaintext credential or workspace records.
+- Restricted workspace links to HTTP/HTTPS URLs with bounded labels/counts before those links can be
+  rendered to customers.
+- Added Vercel HSTS, clickjacking, MIME-sniffing, referrer, permissions, and static-asset cache
+  headers.
+- Verified the installed dependency graph with npm advisories: zero known vulnerabilities across
+  561 dependencies on 2026-08-10.
+- Restored a clean repository-wide ESLint result and retained a successful production Vite build.
+- Recorded remaining performance pressure from the 7.1 MB GPU hero, 3.15 MB About GLB, 15.2 MB frame
+  sequence, 314 KB CSS bundle, and large Three/React Three Fiber chunks.
 
 ## Admin Account Deletion
 

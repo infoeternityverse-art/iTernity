@@ -18,6 +18,13 @@ const getBearerToken = (req) => {
 const getAccessToken = (req) =>
   getBearerToken(req) || req.cookies?.[config.authCookies.accessName] || null;
 
+const isCurrentBackendSession = (payload, user) =>
+  Boolean(
+    user &&
+      user.role === payload.role &&
+      (user.sessionVersion || 0) === Number(payload.sv || 0)
+  );
+
 export const attachCurrentUser = asyncHandler(async (req, res, next) => {
   const token = getAccessToken(req);
   const bearerToken = getBearerToken(req);
@@ -29,7 +36,8 @@ export const attachCurrentUser = asyncHandler(async (req, res, next) => {
 
   try {
     const payload = verifyAccessToken(token);
-    req.user = await User.findActiveById(payload.sub);
+    const user = await User.findActiveById(payload.sub);
+    req.user = isCurrentBackendSession(payload, user) ? user : null;
   } catch {
     req.user = bearerToken ? await syncSupabaseUser(bearerToken) : null;
   }
@@ -62,8 +70,8 @@ export const authenticate = asyncHandler(async (req, res, next) => {
 
   const user = await User.findActiveById(payload.sub);
 
-  if (!user) {
-    throw new ApiError(401, 'Authenticated user was not found.');
+  if (!isCurrentBackendSession(payload, user)) {
+    throw new ApiError(401, 'Authentication session is no longer valid.');
   }
 
   req.user = user;

@@ -18,6 +18,7 @@
     "generate:sitemap": "npm run generate:sitemap --workspace frontend",
     "media:sync-cloudinary": "npm run media:sync-cloudinary --workspace backend",
     "email:test": "npm run email:test --workspace backend",
+    "security:migrate-secrets": "npm run security:migrate-secrets --workspace backend",
     "lint": "eslint frontend backend",
     "format": "prettier . --write",
     "format:check": "prettier . --check"

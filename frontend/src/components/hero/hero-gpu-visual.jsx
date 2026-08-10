@@ -365,6 +365,8 @@ export function HeroGpuVisual({ variant = 'home' }) {
       window.removeEventListener('touchend', endTouch);
       window.removeEventListener('touchcancel', endTouch);
     };
+    // Navigation helpers intentionally read the current refs without reinstalling global listeners.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePointerMove = (event) => {

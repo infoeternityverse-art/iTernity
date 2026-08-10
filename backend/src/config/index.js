@@ -32,6 +32,10 @@ export const config = {
     recommendationMax: Number(loadEnv('AI_RECOMMENDATION_RATE_LIMIT_MAX', 10)),
     assistantMax: Number(loadEnv('AI_ASSISTANT_RATE_LIMIT_MAX', 20)),
   },
+  contactRateLimit: {
+    windowMs: Number(loadEnv('CONTACT_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    max: Number(loadEnv('CONTACT_RATE_LIMIT_MAX', 5)),
+  },
   passwordResetRateLimit: {
     ipWindowMs: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
     ipMax: Number(loadEnv('PASSWORD_RESET_IP_RATE_LIMIT_MAX', 10)),
@@ -45,6 +49,11 @@ export const config = {
       loadEnv('EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_WINDOW_MS', 60 * 60 * 1000)
     ),
     accountMax: Number(loadEnv('EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_MAX', 3)),
+  },
+  passwordChangeRateLimit: {
+    windowMs: Number(loadEnv('PASSWORD_CHANGE_RATE_LIMIT_WINDOW_MS', 15 * 60 * 1000)),
+    ipMax: Number(loadEnv('PASSWORD_CHANGE_RATE_LIMIT_IP_MAX', 10)),
+    accountMax: Number(loadEnv('PASSWORD_CHANGE_RATE_LIMIT_ACCOUNT_MAX', 5)),
   },
   jwt: {
     accessSecret: requireEnv('JWT_ACCESS_SECRET'),

@@ -9,7 +9,22 @@ import { WORKSPACE_PROVIDERS, WORKSPACE_STATUSES } from '../models/index.js';
 
 export const listWorkspacesSchema = listQuerySchema;
 
-const workspaceUrlsSchema = z.record(z.string().trim().max(2048)).optional();
+const workspaceUrlSchema = z
+  .string()
+  .trim()
+  .max(2048)
+  .url('Workspace links must be valid URLs.')
+  .refine((value) => ['https:', 'http:'].includes(new URL(value).protocol), {
+    message: 'Workspace links must use HTTPS or HTTP.',
+  });
+
+const workspaceUrlsSchema = z
+  .record(
+    z.string().trim().min(1).max(80).regex(/^[a-z0-9 _.-]+$/i, 'Use a simple link label.'),
+    workspaceUrlSchema
+  )
+  .refine((value) => Object.keys(value).length <= 20, 'Add no more than 20 workspace links.')
+  .optional();
 
 const workspaceBodySchema = z
   .object({
@@ -22,8 +37,8 @@ const workspaceBodySchema = z
     instanceIP: z.string().trim().max(120).optional(),
     sshPort: z.coerce.number().int().min(1).max(65535).optional(),
     sshUsername: z.string().trim().max(120).optional(),
-    sshPassword: z.string().min(1).optional(),
-    installedApps: z.array(z.string().trim().min(1).max(80)).optional(),
+    sshPassword: z.string().min(1).max(4096).optional(),
+    installedApps: z.array(z.string().trim().min(1).max(80)).max(30).optional(),
     workspaceUrls: workspaceUrlsSchema,
     expiryDate: z.coerce.date().nullable().optional(),
     notes: z.string().trim().max(5000).optional(),

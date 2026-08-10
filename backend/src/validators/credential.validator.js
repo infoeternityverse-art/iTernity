@@ -11,7 +11,7 @@ const credentialBodySchema = z.object({
   host: z.string().trim().min(1).max(255),
   port: z.coerce.number().int().min(1).max(65535).optional(),
   username: z.string().trim().min(1).max(120),
-  passwordEncrypted: z.string().min(1),
+  passwordEncrypted: z.string().min(1).max(4096),
   sshCommand: z.string().trim().max(500).optional(),
   accessInstructions: z.string().trim().max(5000).optional(),
   status: z.enum(Object.values(CREDENTIAL_STATUSES)).optional(),

@@ -4,6 +4,7 @@ import { config } from '../config/index.js';
 const createTokenPayload = (user) => ({
   sub: user._id.toString(),
   role: user.role,
+  sv: user.sessionVersion || 0,
 });
 
 export const signAccessToken = (user) =>
@@ -19,6 +20,8 @@ export const signRefreshToken = (user) =>
 export const verifyAccessToken = (token) => jwt.verify(token, config.jwt.accessSecret);
 
 export const verifyRefreshToken = (token) => jwt.verify(token, config.jwt.refreshSecret);
+
+export const decodeToken = (token) => jwt.decode(token);
 
 const getPasswordResetSecret = (user) => `${config.jwt.refreshSecret}.${user.passwordHash}`;
 

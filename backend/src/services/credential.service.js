@@ -1,6 +1,14 @@
-import { Credential, CREDENTIAL_STATUSES } from '../models/index.js';
+import {
+  Credential,
+  CREDENTIAL_STATUSES,
+  Enquiry,
+  GpuPackage,
+  User,
+  USER_ROLES,
+} from '../models/index.js';
 import { notificationService } from '../notifications/index.js';
-import { decryptCredentialSecret } from '../utils/credential-secret.js';
+import { decryptCredentialSecret, encryptCredentialSecret } from '../utils/credential-secret.js';
+import { ValidationError } from '../utils/errors.js';
 import { BaseService } from './base.service.js';
 
 class CredentialService extends BaseService {
@@ -31,7 +39,29 @@ class CredentialService extends BaseService {
     });
   }
 
+  async validateAssociations({ customer, enquiry, gpuPackage }) {
+    const [customerRecord, enquiryRecord, packageExists] = await Promise.all([
+      User.findOne({ _id: customer, role: USER_ROLES.CUSTOMER, isActive: true }).select('_id'),
+      Enquiry.findById(enquiry).select('customer gpuPackage'),
+      GpuPackage.exists({ _id: gpuPackage }),
+    ]);
+
+    if (!customerRecord || !enquiryRecord || !packageExists) {
+      throw new ValidationError('Credential customer, enquiry, or GPU package is invalid.');
+    }
+
+    if (
+      String(enquiryRecord.customer || '') !== String(customer) ||
+      String(enquiryRecord.gpuPackage) !== String(gpuPackage)
+    ) {
+      throw new ValidationError(
+        'Credential customer and GPU package must match the selected enquiry.'
+      );
+    }
+  }
+
   async create(payload, options = {}) {
+    await this.validateAssociations(payload);
     const response = await super.create(payload, options);
     const credential = await this.findById(response.data._id, {
       populate: ['customer', 'gpuPackage'],
@@ -45,6 +75,28 @@ class CredentialService extends BaseService {
     });
 
     return response;
+  }
+
+  async update(id, payload, options = {}) {
+    const current = await this.findById(id, { unwrap: true });
+    const associations = {
+      customer: payload.customer || current.customer,
+      enquiry: payload.enquiry || current.enquiry,
+      gpuPackage: payload.gpuPackage || current.gpuPackage,
+    };
+
+    await this.validateAssociations(associations);
+
+    return super.update(
+      id,
+      {
+        ...payload,
+        ...(payload.passwordEncrypted
+          ? { passwordEncrypted: encryptCredentialSecret(payload.passwordEncrypted) }
+          : {}),
+      },
+      options
+    );
   }
 
   findActiveForCustomer(customerId, options = {}) {

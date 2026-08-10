@@ -38,6 +38,20 @@ class UserService extends BaseService {
     return true;
   }
 
+  async ensureEmailCanBeEdited(id) {
+    const user = await User.findById(id).select('supabaseUserId');
+
+    if (!user) {
+      return;
+    }
+
+    if (user.supabaseUserId) {
+      throw new ConflictError(
+        'This sign-in email is managed by Supabase and must use the verified customer email-change flow.'
+      );
+    }
+  }
+
   findMany(options = {}) {
     const filters = {
       ...options.filters,

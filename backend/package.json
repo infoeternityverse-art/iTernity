@@ -10,6 +10,7 @@
     "seed:admin": "node src/scripts/seed-admin.js",
     "media:sync-cloudinary": "node src/scripts/sync-cloudinary-media.js",
     "email:test": "node src/scripts/send-test-email.js",
+    "security:migrate-secrets": "node src/scripts/encrypt-legacy-secrets.js",
     "lint": "eslint ."
   },
   "dependencies": {

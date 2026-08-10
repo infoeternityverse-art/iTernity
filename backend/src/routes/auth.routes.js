@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   adminLogin,
   changePassword,
+  completePasswordReset,
   createSession,
   forgotPassword,
   login,
@@ -23,6 +24,8 @@ import {
   passwordResetIpRateLimiter,
   emailChangeAccountRateLimiter,
   emailChangeIpRateLimiter,
+  passwordChangeAccountRateLimiter,
+  passwordChangeIpRateLimiter,
 } from '../middlewares/rate-limit.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import {
@@ -71,4 +74,12 @@ authRouter.post(
   validate(requestEmailChangeSchema),
   requestEmailChange
 );
-authRouter.patch('/password', authenticate, validate(changePasswordSchema), changePassword);
+authRouter.patch(
+  '/password',
+  authenticate,
+  passwordChangeIpRateLimiter,
+  passwordChangeAccountRateLimiter,
+  validate(changePasswordSchema),
+  changePassword
+);
+authRouter.post('/password-reset-complete', authSessionRateLimiter, authenticate, completePasswordReset);

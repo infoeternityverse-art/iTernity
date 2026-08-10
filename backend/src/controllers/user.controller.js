@@ -16,6 +16,7 @@ export const getUser = asyncHandler(async (req, res) => {
 
 export const updateUser = asyncHandler(async (req, res) => {
   if (req.validated.body.email) {
+    await userService.ensureEmailCanBeEdited(req.validated.params.id);
     await userService.ensureEmailAvailable(req.validated.body.email, req.validated.params.id);
   }
 

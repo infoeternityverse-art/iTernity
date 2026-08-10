@@ -216,6 +216,7 @@ npm run start
 npm run lint
 npm run format
 npm run format:check
+npm run security:migrate-secrets
 ```
 
 ## Authentication and Account Lifecycle
@@ -243,6 +244,11 @@ Email changes use a secure dual-confirmation flow:
 
 Email-change limits are shared through MongoDB, survive backend restarts, and return `Retry-After`.
 The UI presents the remaining cooldown while still allowing non-email profile changes.
+
+Password changes verify Supabase-backed customers against Supabase rather than the random local
+fallback hash. A successful password change or reset increments the backend session generation,
+invalidates older access/refresh cookies, rejects older Supabase access tokens at the identity
+bridge, and replaces the current browser's backend cookies.
 
 Admin account deletion is an access-revocation and anonymization operation. It blocks deletion while
 the customer has a provisioning or running workspace, deletes the linked Supabase identity, revokes
@@ -345,7 +351,15 @@ EMAIL_CHANGE_IP_RATE_LIMIT_WINDOW_MS=900000
 EMAIL_CHANGE_IP_RATE_LIMIT_MAX=10
 EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_WINDOW_MS=3600000
 EMAIL_CHANGE_ACCOUNT_RATE_LIMIT_MAX=3
+PASSWORD_CHANGE_RATE_LIMIT_WINDOW_MS=900000
+PASSWORD_CHANGE_RATE_LIMIT_IP_MAX=10
+PASSWORD_CHANGE_RATE_LIMIT_ACCOUNT_MAX=5
+CONTACT_RATE_LIMIT_WINDOW_MS=900000
+CONTACT_RATE_LIMIT_MAX=5
 ```
+
+Login, admin login, password reset, password change, email change, public AI, and contact-form
+limits use MongoDB-backed counters so enforcement is consistent across backend replicas.
 
 Supabase recovery links follow the configured Supabase expiry and one-time verification behavior.
 When the backend fallback reset flow is used, links are signed, short-lived, and tied to the user's
@@ -367,6 +381,7 @@ npm run build
 - Deployment checklist: [docs/DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md)
 - MVP release checklist: [docs/MVP_RELEASE_CHECKLIST.md](docs/MVP_RELEASE_CHECKLIST.md)
 - Consolidated recent updates: [docs/RECENT_UPDATES.md](docs/RECENT_UPDATES.md)
+- Security and performance audit: [docs/SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 ## Security Notes
@@ -376,7 +391,9 @@ npm run build
 - Bearer tokens are accepted only where required to bridge a freshly verified Supabase identity into
   a backend session.
 - Password hashes are never selected or returned by default.
-- Credential secrets are encrypted at rest for new writes.
+- Credential and workspace secrets are encrypted at rest on create and update paths. Run
+  `npm run security:migrate-secrets` once after deploying this release to encrypt any legacy
+  plaintext update records; the command is idempotent and does not print secret values.
 - Passwords, credential passwords, API keys, tokens, and secrets are never sent in notification emails.
 - Password reset links are signed and short-lived.
 - Admin APIs require admin role authorization.
@@ -385,8 +402,8 @@ npm run build
   prevent data from a previous browser user appearing in a later session.
 - Login uses IP and normalized-account limits; successful attempts are not counted. Password reset,
   email change, AI, refresh, and session creation have endpoint-specific limits.
-- Email-change limits use shared MongoDB counters with TTL cleanup so multiple backend instances
-  enforce the same window.
+- Security-sensitive endpoint limits use shared MongoDB counters with TTL cleanup so multiple
+  backend instances enforce the same windows.
 - Helmet, trusted-origin checks, strict CORS, JSON body limits, request rate limiting, validation,
   role guards, and Mongo operator sanitization are enabled.
 - No application can honestly guarantee "100% secure." Keep dependencies patched, rotate secrets,

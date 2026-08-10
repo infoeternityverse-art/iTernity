@@ -7,12 +7,14 @@ import { ApiError } from '../utils/api-error.js';
 import { comparePassword, hashPassword } from './password.service.js';
 import {
   issueAuthTokens,
+  decodeToken,
   signPasswordResetToken,
   verifyRefreshToken,
   verifyPasswordResetToken,
 } from './token.service.js';
 
 const sanitizeUser = (user) => user.toJSON();
+const getNextTokenSecond = () => new Date((Math.floor(Date.now() / 1000) + 1) * 1000);
 
 export const buildAuthResponse = (user) => ({
   user: sanitizeUser(user),
@@ -34,7 +36,11 @@ export const refreshAuthSession = async (refreshToken) => {
 
   const user = await User.findActiveById(payload.sub);
 
-  if (!user || user.role !== payload.role) {
+  if (
+    !user ||
+    user.role !== payload.role ||
+    (user.sessionVersion || 0) !== Number(payload.sv || 0)
+  ) {
     throw new ApiError(401, 'Refresh session is no longer valid.');
   }
 
@@ -67,6 +73,42 @@ const getSupabaseErrorMessage = async (response) => {
   } catch {
     return null;
   }
+};
+
+const authenticateSupabasePassword = async ({ email, password, expectedUserId }) => {
+  if (!config.supabase.url || !config.supabase.anonKey) {
+    throw new ApiError(503, 'Supabase password verification is not configured.');
+  }
+
+  let response;
+
+  try {
+    response = await fetch(
+      `${config.supabase.url.replace(/\/+$/g, '')}/auth/v1/token?grant_type=password`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: config.supabase.anonKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
+  } catch {
+    throw new ApiError(502, 'Password verification is temporarily unavailable.');
+  }
+
+  if (!response.ok) {
+    throw new ApiError(401, 'Current password is incorrect.');
+  }
+
+  const data = await response.json();
+
+  if (!data?.user?.id || data.user.id !== expectedUserId) {
+    throw new ApiError(401, 'Current password is incorrect.');
+  }
+
+  return data;
 };
 
 const callSupabaseAdmin = async (
@@ -254,6 +296,14 @@ export const syncSupabaseUser = async (token) => {
       throw new ApiError(403, 'This account is inactive.');
     }
 
+    const tokenPayload = decodeToken(token);
+    const tokenIssuedAt = Number(tokenPayload?.iat || 0) * 1000;
+    const validAfter = user.supabaseSessionsValidAfter?.getTime() || 0;
+
+    if (validAfter && tokenIssuedAt < validAfter) {
+      throw new ApiError(401, 'Authentication session is no longer valid.');
+    }
+
     if (user.email !== email) {
       const emailOwner = await User.findByEmail(email);
 
@@ -397,14 +447,61 @@ export const requestCurrentUserEmailChange = async (user, { newEmail }) => {
 export const changeCurrentUserPassword = async (user, { currentPassword, newPassword }) => {
   const userWithPassword = await User.findById(user._id).select('+passwordHash');
 
-  if (!(await comparePassword(currentPassword, userWithPassword.passwordHash))) {
-    throw new ApiError(401, 'Current password is incorrect.');
+  if (userWithPassword.supabaseUserId) {
+    const supabaseAuth = await authenticateSupabasePassword({
+      email: userWithPassword.email,
+      password: currentPassword,
+      expectedUserId: userWithPassword.supabaseUserId,
+    });
+
+    // Rotate local sessions before the external password write so a database failure can never
+    // leave old backend sessions valid after Supabase accepts the new password.
+    userWithPassword.supabaseSessionsValidAfter = getNextTokenSecond();
+    userWithPassword.passwordHash = await hashPassword(randomBytes(48).toString('hex'));
+    userWithPassword.sessionVersion = (userWithPassword.sessionVersion || 0) + 1;
+    await userWithPassword.save();
+
+    await callSupabaseAdmin(
+      `/auth/v1/admin/users/${encodeURIComponent(userWithPassword.supabaseUserId)}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({ password: newPassword }),
+      },
+      { required: true }
+    );
+
+    if (supabaseAuth.access_token) {
+      fetch(`${config.supabase.url.replace(/\/+$/g, '')}/auth/v1/logout?scope=global`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${supabaseAuth.access_token}`,
+          apikey: config.supabase.anonKey,
+        },
+      }).catch(() => {});
+    }
+  } else {
+    if (!(await comparePassword(currentPassword, userWithPassword.passwordHash))) {
+      throw new ApiError(401, 'Current password is incorrect.');
+    }
+
+    userWithPassword.passwordHash = await hashPassword(newPassword);
+    userWithPassword.sessionVersion = (userWithPassword.sessionVersion || 0) + 1;
+    await userWithPassword.save();
   }
 
-  userWithPassword.passwordHash = await hashPassword(newPassword);
-  await userWithPassword.save();
-
   notificationService.sendPasswordChanged(userWithPassword);
+  return userWithPassword;
+};
+
+export const completeCurrentUserPasswordReset = async (user) => {
+  const currentUser = await User.findById(user._id);
+
+  currentUser.sessionVersion = (currentUser.sessionVersion || 0) + 1;
+  currentUser.supabaseSessionsValidAfter = getNextTokenSecond();
+  await currentUser.save();
+
+  notificationService.sendPasswordChanged(currentUser);
+  return currentUser;
 };
 
 export const requestPasswordReset = async ({ email }) => {
@@ -447,6 +544,7 @@ export const resetPassword = async ({ email, token, password }) => {
   }
 
   user.passwordHash = await hashPassword(password);
+  user.sessionVersion = (user.sessionVersion || 0) + 1;
   await user.save();
 
   notificationService.sendPasswordChanged(user);

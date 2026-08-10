@@ -45,17 +45,25 @@ Authentication endpoints:
 - `POST /auth/login` - email/password backend login; IP and account limited.
 - `POST /auth/admin/login` - separate admin login with stricter limits.
 - `POST /auth/forgot-password` - enumeration-resistant reset request with IP/email limits.
-- `POST /auth/reset-password` - complete a valid password reset.
+- `POST /auth/reset-password` - complete a valid backend fallback password reset.
+- `POST /auth/password-reset-complete` - secure the backend session generation after a Supabase
+  recovery password update.
 - `POST /auth/session` - exchange a verified Supabase identity for backend cookies.
 - `POST /auth/refresh` - rotate/refresh the backend session from the refresh cookie.
 - `POST /auth/logout` - clear backend authentication cookies.
 - `GET /auth/me` - return the authenticated backend user.
 - `PATCH /auth/me` - update allowed non-email profile fields.
 - `POST /auth/email-change` - issue dual confirmation links for current and proposed addresses.
-- `PATCH /auth/password` - authenticated password change.
+- `PATCH /auth/password` - authenticated password change with current-password verification and
+  backend session rotation.
 
 Customer email registration and Google OAuth begin through Supabase JS in the frontend rather than a
 public backend `/auth/register` endpoint.
+
+Password-change and reset completion invalidate older backend sessions through a per-user session
+generation. Supabase-backed password changes are verified and persisted through Supabase; local
+Mongo password hashes remain the authentication source only for non-Supabase accounts such as the
+seeded admin.
 
 ## Query Standard
 
@@ -101,6 +109,9 @@ Customers:
 - `PATCH /users/:id`
 - `POST /users/:id/send-password-reset`
 - `DELETE /users/:id`
+
+The generic admin update endpoint rejects email edits for Supabase-linked users. Those identities
+must use the customer dual-confirmation email-change flow so MongoDB and Supabase cannot diverge.
 
 GPU packages:
 

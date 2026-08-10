@@ -20,6 +20,9 @@
 - Configure `RATE_LIMIT_WINDOW_MS` and `RATE_LIMIT_MAX` for expected traffic.
 - Configure login/session limits: `AUTH_RATE_LIMIT_WINDOW_MS`, `AUTH_RATE_LIMIT_IP_MAX`, `AUTH_RATE_LIMIT_ACCOUNT_MAX`, `ADMIN_AUTH_RATE_LIMIT_IP_MAX`, `ADMIN_AUTH_RATE_LIMIT_ACCOUNT_MAX`, and `AUTH_SESSION_RATE_LIMIT_MAX`.
 - Configure public AI limits: `AI_RATE_LIMIT_WINDOW_MS`, `AI_RECOMMENDATION_RATE_LIMIT_MAX`, and `AI_ASSISTANT_RATE_LIMIT_MAX`.
+- Configure contact limits: `CONTACT_RATE_LIMIT_WINDOW_MS=900000` and `CONTACT_RATE_LIMIT_MAX=5`.
+- Configure password-change limits: `PASSWORD_CHANGE_RATE_LIMIT_WINDOW_MS=900000`,
+  `PASSWORD_CHANGE_RATE_LIMIT_IP_MAX=10`, and `PASSWORD_CHANGE_RATE_LIMIT_ACCOUNT_MAX=5`.
 - Configure password reset limits:
   - `PASSWORD_RESET_IP_RATE_LIMIT_WINDOW_MS=900000`
   - `PASSWORD_RESET_IP_RATE_LIMIT_MAX=10`
@@ -79,7 +82,12 @@
 
 - Confirm MongoDB backups are enabled.
 - Confirm indexes are built.
-- Confirm the `RateLimitBucket` unique key and TTL indexes exist; email-change counters rely on them for shared enforcement and cleanup.
+- Confirm the `RateLimitBucket` unique key and TTL indexes exist; security-sensitive endpoint
+  counters rely on them for shared enforcement and cleanup.
+- Confirm the partial unique `User.supabaseUserId` index exists and resolve any historical duplicate
+  identity records before enabling it.
+- Run `npm run security:migrate-secrets` once. It must report zero remaining plaintext records on a
+  second run.
 - Confirm least-privilege database credentials are used.
 - Seed or create the first admin account through an approved operational process.
 
@@ -95,6 +103,9 @@
 - Verify logs do not include credential secrets, JWTs, or passwords.
 - Rotate initial bootstrap credentials after first login.
 - Confirm password reset links expire and old links stop working after password change.
+- Confirm changing or resetting a password invalidates older backend access/refresh cookies and an
+  older Supabase access token cannot mint a fresh backend session.
+- Confirm edited credential and workspace passwords remain encrypted at rest and are never logged.
 - Confirm customer enquiries, credentials, and workspaces are scoped by immutable customer ID and query caches clear during identity changes.
 - Confirm admin deletion is blocked for running/provisioning workspaces, removes the Supabase identity, revokes active credentials, anonymizes the MongoDB account, and records an audit event.
 
@@ -139,3 +150,6 @@
 - Confirm mobile footer social icons, legal links, FAQ, copyright, and "Developed by VUN Tech" remain visible and operable.
 - Confirm blog detail header spacing and "Back to blog" behavior at all supported widths.
 - Run Lighthouse on a production build and investigate regressions in LCP, TBT, speed index, unused JavaScript, long tasks, and non-composited animation warnings.
+- Track the current high-cost assets during performance work: `hero_gpu.webp` is about 7.1 MB,
+  `about_page.glb` is about 3.15 MB, and the 240-frame GPU sequence totals about 15.2 MB before CDN
+  transfer compression/caching.

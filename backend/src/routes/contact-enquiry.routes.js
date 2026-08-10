@@ -6,6 +6,7 @@ import {
 } from '../controllers/contact-enquiry.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
 import { requireAdmin } from '../middlewares/role.middleware.js';
+import { contactEnquiryRateLimiter } from '../middlewares/rate-limit.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import {
   createContactEnquirySchema,
@@ -16,7 +17,12 @@ import {
 export const contactEnquiryRouter = Router();
 export const adminContactEnquiryRouter = Router();
 
-contactEnquiryRouter.post('/', validate(createContactEnquirySchema), createContactEnquiry);
+contactEnquiryRouter.post(
+  '/',
+  contactEnquiryRateLimiter,
+  validate(createContactEnquirySchema),
+  createContactEnquiry
+);
 
 adminContactEnquiryRouter.use(authenticate, requireAdmin);
 adminContactEnquiryRouter.get('/', validate(listContactEnquiriesSchema), listAdminContactEnquiries);

@@ -34,7 +34,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: null,
-      index: true,
+    },
+    sessionVersion: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    supabaseSessionsValidAfter: {
+      type: Date,
+      default: null,
     },
     role: {
       type: String,
@@ -59,6 +67,8 @@ const userSchema = new mongoose.Schema(
       virtuals: true,
       transform: (doc, ret) => {
         delete ret.passwordHash;
+        delete ret.sessionVersion;
+        delete ret.supabaseSessionsValidAfter;
         return ret;
       },
     },
@@ -69,6 +79,10 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ email: 1 }, { unique: true });
+userSchema.index(
+  { supabaseUserId: 1 },
+  { unique: true, partialFilterExpression: { supabaseUserId: { $type: 'string' } } }
+);
 userSchema.index({ role: 1, isActive: 1 });
 userSchema.index({ createdAt: -1 });
 

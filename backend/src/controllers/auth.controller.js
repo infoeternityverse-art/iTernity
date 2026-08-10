@@ -1,6 +1,7 @@
 import {
   getCurrentUser,
   changeCurrentUserPassword,
+  completeCurrentUserPasswordReset,
   loginAdmin,
   loginUser,
   requestPasswordReset,
@@ -108,11 +109,24 @@ export const requestEmailChange = asyncHandler(async (req, res) => {
 });
 
 export const changePassword = asyncHandler(async (req, res) => {
-  await changeCurrentUserPassword(req.user, req.validated.body);
+  const user = await changeCurrentUserPassword(req.user, req.validated.body);
+  const data = buildAuthResponse(user);
+  setAuthCookies(res, data.tokens);
 
   return sendSuccess(res, {
     message: 'Password updated successfully.',
-    data: null,
+    data: { user: data.user },
+  });
+});
+
+export const completePasswordReset = asyncHandler(async (req, res) => {
+  const user = await completeCurrentUserPasswordReset(req.user);
+  const data = buildAuthResponse(user);
+  setAuthCookies(res, data.tokens);
+
+  return sendSuccess(res, {
+    message: 'Password reset session secured successfully.',
+    data: { user: data.user },
   });
 });
 

@@ -146,16 +146,7 @@ export const authService = {
   changePassword: async (payload) =>
     normalizeAuthPayload(await apiClient.patch('/auth/password', payload)),
   forgotPassword: async ({ email }) => {
-    const client = requireSupabase();
-    const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${env.siteUrl}/reset-password`,
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return null;
+    return normalizeAuthPayload(await apiClient.post('/auth/forgot-password', { email }));
   },
   resetPassword: async ({ email, token, password }) => {
     if (email && token) {
@@ -171,6 +162,19 @@ export const authService = {
       throw new Error(error.message);
     }
 
-    return null;
+    const { data } = await client.auth.getSession();
+    const accessToken = data.session?.access_token;
+
+    if (!accessToken) {
+      throw new Error('Password recovery session expired. Request a new reset link.');
+    }
+
+    return normalizeAuthPayload(
+      await apiClient.post(
+        '/auth/password-reset-complete',
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+    );
   },
 };
