@@ -101,6 +101,11 @@ export function GuestRoute({ children }) {
     return children;
   }
 
+  // Supabase recovery links create an authenticated recovery session before this route renders.
+  if (location.pathname === '/reset-password') {
+    return children;
+  }
+
   if (isAuthenticated) {
     if (location.pathname === '/admin/login' && user?.role !== 'admin') {
       return children;

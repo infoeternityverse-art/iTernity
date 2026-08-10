@@ -20,6 +20,9 @@ animation/assets that affect main-thread or network performance.
   Tokens issued before the user's Supabase validity cutoff are now rejected.
 - Forgot-password used Supabase directly in the browser and bypassed backend branding and limits. It
   now uses the enumeration-resistant backend reset endpoint.
+- Supabase recovery sessions were treated as ordinary authenticated sessions by the guest-route
+  guard and redirected to the dashboard. The reset route now remains available until the recovery
+  password is submitted.
 - Credential and workspace updates bypassed document encryption middleware. Services now encrypt
   secrets before query updates, and an idempotent migration checks legacy records.
 - Process-local security limits weakened across replicas/restarts. Endpoint-specific auth, reset,

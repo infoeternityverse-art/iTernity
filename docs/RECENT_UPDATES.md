@@ -99,6 +99,9 @@ Last updated: 2026-08-10
   cannot recreate a backend session.
 - Routed forgot-password requests through the enumeration-resistant backend endpoint, preserving
   branded SMTP delivery and shared application rate limits.
+- Kept `/reset-password` accessible when Supabase creates its temporary authenticated recovery
+  session, preventing the guest-route guard from redirecting the user to the dashboard before the
+  new password is submitted.
 - Prevent generic admin email edits for Supabase-linked accounts so the external identity and Mongo
   profile cannot become desynchronized.
 - Added a partial unique index for immutable Supabase user IDs.
