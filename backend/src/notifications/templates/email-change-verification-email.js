@@ -1,4 +1,5 @@
 import { renderButton } from './components/button.js';
+import { renderDivider } from './components/divider.js';
 import { escapeHtml } from './components/html.js';
 import { emailTextStyles } from './components/text.js';
 import { renderEmailLayout } from './layout/email-layout.js';
@@ -15,6 +16,7 @@ export const emailChangeVerificationEmailTemplate = ({ verificationUrl, newEmail
           : `Confirm that ${escapeHtml(newEmail)} should become your iTernityverse sign-in email.`
       }</p>
       <p style="${emailTextStyles.body}">The address will not change until the required confirmations are completed.</p>
+      ${renderDivider()}
       ${renderButton({ href: verificationUrl, label: 'Confirm email change' })}
       <p style="${emailTextStyles.muted}">If you did not request this change, do not use this link and contact support.</p>
     `,
