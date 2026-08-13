@@ -444,14 +444,14 @@ export function PublicLayout() {
               <p>
                 © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
               </p>
-              <a
+              {/* <a
                 className="footer-developer-credit"
                 href="https://vuntech.online"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Developed by Vuntech
-              </a>
+              </a> */}
             </div>
           </div>
         </div>
